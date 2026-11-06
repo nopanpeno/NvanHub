@@ -74,7 +74,9 @@ function showMessage(text, buttonText, onClick) {
 }
 
 function render() {
-  const q = document.getElementById('search').value.trim().toLowerCase();
+  const raw = document.getElementById('search').value;
+  document.getElementById('clear').hidden = raw === '';
+  const q = raw.trim().toLowerCase();
   const shown = allProjects.filter((p) => {
     const hay = [p.name, p.tagline, p.desc, ...p.tags].join(' ').toLowerCase();
     const matchText = !q || hay.includes(q);
@@ -119,6 +121,14 @@ function updateTagButtons() {
 }
 
 document.getElementById('search').addEventListener('input', render);
+
+// Hapus teks pencarian saja. Filter tag tetap.
+document.getElementById('clear').addEventListener('click', () => {
+  const search = document.getElementById('search');
+  search.value = '';
+  render();
+  search.focus();
+});
 
 loadProjects()
   .then((list) => {
