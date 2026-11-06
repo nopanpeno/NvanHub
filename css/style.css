@@ -1,0 +1,14 @@
+:root {
+  --bg: #0b0d12;
+  --card: #151922;
+  --text: #e8ebf2;
+  --muted: #8a93a6;
+  --accent: #4f8cff;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, sans-serif;
+}
