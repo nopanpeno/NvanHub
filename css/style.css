@@ -125,3 +125,33 @@ body {
 }
 .links-list a { color: var(--accent); text-decoration: none; }
 .links-list a:hover { text-decoration: underline; }
+
+/* Pencarian dan filter tag */
+.controls { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
+
+#search {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font: inherit;
+}
+#search:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+
+.filters { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.filter {
+  background: none;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 12px;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+.filter:hover { color: var(--text); }
+.filter.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.empty { color: var(--muted); }
