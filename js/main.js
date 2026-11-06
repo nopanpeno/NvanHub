@@ -4,6 +4,7 @@ let activeTag = null;
 
 async function loadProjects() {
   const res = await fetch('data/projects.json');
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
@@ -11,7 +12,7 @@ function makeCard(p) {
   const card = document.createElement('article');
   card.className = 'card';
 
-  const title = document.createElement('h2');
+  const title = document.createElement('h3');
   title.textContent = p.name;
 
   const tagline = document.createElement('p');
@@ -32,19 +33,44 @@ function makeCard(p) {
 
   const links = document.createElement('div');
   links.className = 'links';
-  links.append(makeLink(p.live, 'Live'), makeLink(p.repo, 'Repo'));
+  links.append(makeLink(p.live, `Buka demo ${p.name}`, 'Buka demo'), makeLink(p.repo, `Lihat kode ${p.name}`, 'Lihat kode'));
 
   card.append(title, tagline, desc, tags, links);
   return card;
 }
 
-function makeLink(href, text) {
+function makeLink(href, label, text) {
   const a = document.createElement('a');
   a.href = href;
   a.textContent = text;
+  a.setAttribute('aria-label', label);
   a.target = '_blank';
   a.rel = 'noopener';
   return a;
+}
+
+function clearFilters() {
+  document.getElementById('search').value = '';
+  activeTag = null;
+  render();
+}
+
+// Tampilkan satu pesan dengan satu tombol aksi di area grid.
+function showMessage(text, buttonText, onClick) {
+  const box = document.createElement('div');
+  box.className = 'empty';
+
+  const msg = document.createElement('p');
+  msg.textContent = text;
+
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'filter';
+  btn.textContent = buttonText;
+  btn.addEventListener('click', onClick);
+
+  box.append(msg, btn);
+  document.getElementById('grid').replaceChildren(box);
 }
 
 function render() {
@@ -56,14 +82,10 @@ function render() {
     return matchText && matchTag;
   });
 
-  const grid = document.getElementById('grid');
   if (shown.length === 0) {
-    const msg = document.createElement('p');
-    msg.className = 'empty';
-    msg.textContent = 'Tidak ada proyek yang cocok.';
-    grid.replaceChildren(msg);
+    showMessage('Tidak ada proyek yang cocok.', 'Hapus filter', clearFilters);
   } else {
-    grid.replaceChildren(...shown.map(makeCard));
+    document.getElementById('grid').replaceChildren(...shown.map(makeCard));
   }
   updateTagButtons();
 }
@@ -71,23 +93,26 @@ function render() {
 function renderTags() {
   const box = document.getElementById('tags');
   const all = [...new Set(allProjects.flatMap((p) => p.tags))].sort();
-  const buttons = all.map((tag) => {
+
+  const makeTag = (label, tag) => {
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'filter';
-    b.textContent = tag;
+    b.dataset.tag = tag ?? '';
+    b.textContent = label;
     b.addEventListener('click', () => {
-      activeTag = activeTag === tag ? null : tag;
+      activeTag = tag === null || activeTag === tag ? null : tag;
       render();
     });
     return b;
-  });
-  box.replaceChildren(...buttons);
+  };
+
+  box.replaceChildren(makeTag('Semua', null), ...all.map((t) => makeTag(t, t)));
 }
 
 function updateTagButtons() {
   for (const b of document.querySelectorAll('#tags .filter')) {
-    const on = b.textContent === activeTag;
+    const on = (activeTag ?? '') === b.dataset.tag;
     b.classList.toggle('active', on);
     b.setAttribute('aria-pressed', String(on));
   }
@@ -95,8 +120,12 @@ function updateTagButtons() {
 
 document.getElementById('search').addEventListener('input', render);
 
-loadProjects().then((list) => {
-  allProjects = list;
-  renderTags();
-  render();
-});
+loadProjects()
+  .then((list) => {
+    allProjects = list;
+    renderTags();
+    render();
+  })
+  .catch(() => {
+    showMessage('Proyek belum bisa dimuat. Coba muat ulang.', 'Muat ulang', () => location.reload());
+  });
