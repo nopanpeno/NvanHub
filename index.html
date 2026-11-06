@@ -30,7 +30,10 @@
       <h2 class="label">// proyek</h2>
       <div class="controls">
         <label for="search" class="label">Cari proyek</label>
-        <input id="search" type="search" autocomplete="off">
+        <div class="search-field">
+          <input id="search" type="search" autocomplete="off">
+          <button id="clear" type="button" class="clear" aria-label="Hapus pencarian" hidden></button>
+        </div>
         <div id="tags" class="filters" role="group" aria-label="Filter tag"></div>
       </div>
       <div id="grid" class="grid"></div>
