@@ -71,9 +71,12 @@ function showMessage(text, buttonText, onClick) {
 
   box.append(msg, btn);
   document.getElementById('grid').replaceChildren(box);
+  window.NvanMotion?.revealCards([]); // hentikan animasi kartu yang tersisa
+  window.NvanMotion?.fadeIn(box);
 }
 
-function render() {
+// animate=false: dipakai saat mengetik di kolom cari, kartu ganti tanpa gerak.
+function render(animate = true) {
   const raw = document.getElementById('search').value;
   document.getElementById('clear').hidden = raw === '';
   const q = raw.trim().toLowerCase();
@@ -87,7 +90,9 @@ function render() {
   if (shown.length === 0) {
     showMessage('Tidak ada proyek yang cocok.', 'Hapus filter', clearFilters);
   } else {
-    document.getElementById('grid').replaceChildren(...shown.map(makeCard));
+    const cards = shown.map(makeCard);
+    document.getElementById('grid').replaceChildren(...cards);
+    window.NvanMotion?.revealCards(cards, animate);
   }
   updateTagButtons();
 }
@@ -120,13 +125,13 @@ function updateTagButtons() {
   }
 }
 
-document.getElementById('search').addEventListener('input', render);
+document.getElementById('search').addEventListener('input', () => render(false));
 
 // Hapus teks pencarian saja. Filter tag tetap.
 document.getElementById('clear').addEventListener('click', () => {
   const search = document.getElementById('search');
   search.value = '';
-  render();
+  render(false);
   search.focus();
 });
 
