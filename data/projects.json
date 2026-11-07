@@ -22,5 +22,21 @@
     "tags": ["JavaScript", "SVG", "Alight Motion"],
     "repo": "https://github.com/nopanpeno/NvanVector",
     "live": "https://nopanpeno.github.io/NvanVector/"
+  },
+  {
+    "name": "NvanQR",
+    "tagline": "Bikin dan pindai QR code, langsung di browser.",
+    "desc": "QR untuk tautan, teks, dan Wi-Fi. Dibuat dan dipindai di perangkat, tidak dikirim ke server.",
+    "tags": ["JavaScript", "QR Code", "Vite"],
+    "repo": "https://github.com/nopanpeno/NvanQR",
+    "live": "https://nopanpeno.github.io/NvanQR/"
+  },
+  {
+    "name": "NvanCut",
+    "tagline": "Shortlink sederhana, pakai GitHub Pages.",
+    "desc": "Tanpa backend. Alias disimpan di links.json, situs diterbitkan ulang lewat GitHub Actions.",
+    "tags": ["Shortlink", "HTML", "GitHub Actions"],
+    "repo": "https://github.com/nopanpeno/NvanCut",
+    "live": "https://nopanpeno.github.io/NvanCut/"
   }
 ]
