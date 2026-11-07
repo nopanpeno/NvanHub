@@ -38,5 +38,13 @@
     "tags": ["Shortlink", "HTML", "GitHub Actions"],
     "repo": "https://github.com/nopanpeno/NvanCut",
     "live": "https://nopanpeno.github.io/NvanCut/"
+  },
+  {
+    "name": "NvanExif",
+    "tagline": "Lihat dan hapus metadata foto, langsung di browser.",
+    "desc": "Pilih metadata yang mau dibuang, lalu simpan foto yang sudah bersih. Foto tidak dikirim ke server.",
+    "tags": ["JavaScript", "EXIF", "Vite"],
+    "repo": "https://github.com/nopanpeno/NvanExif",
+    "live": "https://nopanpeno.github.io/NvanExif/"
   }
 ]
