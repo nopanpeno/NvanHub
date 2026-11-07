@@ -302,6 +302,9 @@ body {
 }
 @keyframes motion-failsafe { to { opacity: 1; } }
 
+/* Elemen yang sedang masuk lewat GSAP: matikan transisi CSS supaya tidak saling tarik. */
+.revealing { transition: none !important; }
+
 /* Hasil pecah teks. Kata tidak boleh putus di tengah. */
 .word { display: inline-block; white-space: nowrap; }
 .char { display: inline-block; }
