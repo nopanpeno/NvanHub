@@ -88,7 +88,7 @@ function render(animate = true) {
   });
 
   if (shown.length === 0) {
-    showMessage('Tidak ada proyek yang cocok.', 'Hapus filter', clearFilters);
+    showMessage('Tidak ada proyek yang cocok. Coba kata kunci lain atau hapus filter.', 'Hapus filter', clearFilters);
   } else {
     const cards = shown.map(makeCard);
     document.getElementById('grid').replaceChildren(...cards);
