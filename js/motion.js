@@ -22,6 +22,7 @@
   // Stagger 30ms per item, tapi total dibatasi 200ms supaya daftar panjang tidak jadi teatrikal.
   const show = (els) => gsap.to(els, {
     opacity: 1,
+    x: 0,
     y: 0,
     duration: dur.slow,
     stagger: Math.min(STAGGER, 0.2 / Math.max(els.length - 1, 1)),
@@ -62,12 +63,35 @@
 
   // Sembunyikan dulu, lalu muncul saat terlihat. class revealing mematikan transisi CSS
   // selama GSAP jalan, supaya keduanya tidak saling tarik.
-  function enter(els, y = 12) {
+  // from: { x, y } untuk semua elemen, atau fungsi (el, i) yang memberi { x, y } per elemen.
+  function enter(els, from = { y: 12 }) {
     if (!canMotion() || els.length === 0) return null;
-    gsap.set(els, { opacity: 0, y });
-    els.forEach((e) => e.classList.add('revealing'));
+    els.forEach((e, i) => {
+      gsap.set(e, { opacity: 0, ...(typeof from === 'function' ? from(e, i) : from) });
+      e.classList.add('revealing');
+    });
     return watch(els);
   }
+
+  // Arah masuk kartu tergantung posisinya di grid: kolom kiri dari kiri, kolom kanan dari kanan,
+  // kolom tengah dari bawah (baris ganjil dari atas). Satu kolom: kiri dan kanan bergantian.
+  // Posisi dibaca dari layout, jadi ikut berubah saat jumlah kolom berubah.
+  const SLIDE = 24; // sama dengan gutter halaman, jadi kartu tidak pernah melewati tepi layar
+  function cardFrom(card, i) {
+    const g = card.parentElement.getBoundingClientRect();
+    const r = card.getBoundingClientRect();
+    const gap = 24;
+    const cols = Math.max(1, Math.round((g.width + gap) / (r.width + gap)));
+    if (cols === 1) return { x: i % 2 ? SLIDE : -SLIDE };
+    const col = Math.round((r.left - g.left) / (r.width + gap));
+    const row = Math.floor(i / cols);
+    if (col === 0) return { x: -SLIDE };
+    if (col === cols - 1) return { x: SLIDE };
+    return { y: row % 2 ? -24 : 24 };
+  }
+
+  // Judul bagian masuk dari kiri, yang lain naik sedikit.
+  const sectionFrom = (e) => (e.matches('.label') ? { x: -24 } : { y: 12 });
 
   // Bagian bawah (tentang, footer) disembunyikan di awal, tapi baru dipantau setelah kartu
   // pertama dirender. Sebelum itu halaman masih pendek dan semuanya terhitung "sudah terlihat".
@@ -82,7 +106,7 @@
   // Dipakai main.js. animate=false (mengetik di kolom cari): kartu ganti tanpa gerak.
   function revealCards(cards, animate = true) {
     cardWatch?.disconnect();
-    cardWatch = animate ? enter(cards) : null;
+    cardWatch = animate ? enter(cards, cardFrom) : null;
     startBottom();
     sectionWatch2?.check(); // tinggi halaman berubah, bagian bawah mungkin kini terlihat
   }
@@ -190,11 +214,86 @@
 
   // Bagian halaman di bawah hero muncul saat di-scroll.
   const SECTIONS = '.projects > .label, .controls, .about > *, .site-footer > *';
-  sectionWatch = enter([...document.querySelectorAll('.projects > .label, .controls')], 8);
+  sectionWatch = enter([...document.querySelectorAll('.projects > .label, .controls')], sectionFrom);
   bottomEls = [...document.querySelectorAll('.about > *, .site-footer > *')];
-  gsap.set(bottomEls, { opacity: 0, y: 8 });
-  bottomEls.forEach((e) => e.classList.add('revealing'));
+  bottomEls.forEach((e) => {
+    gsap.set(e, { opacity: 0, ...sectionFrom(e) });
+    e.classList.add('revealing');
+  });
   setTimeout(startBottom, 2500); // jaring pengaman kalau kartu tak pernah dirender
+
+  // Scroll mulus untuk tautan #bagian (tombol Lihat proyek, menu). Tween GSAP, tanpa plugin.
+  // Skip link dibiarkan: ia harus memindah fokus, bukan menggulung.
+  let scrollTween = null;
+  function smoothTo(target) {
+    const startY = window.scrollY;
+    const maxY = document.documentElement.scrollHeight - window.innerHeight;
+    const endY = Math.min(maxY, Math.max(0, target.getBoundingClientRect().top + startY - 16));
+    const proxy = { y: startY };
+    scrollTween?.kill();
+    scrollTween = gsap.to(proxy, {
+      y: endY,
+      duration: Math.min(0.6, Math.max(0.3, Math.abs(endY - startY) / 2000)),
+      ease: 'power2.inOut',
+      onUpdate: () => window.scrollTo(0, proxy.y),
+      onComplete: () => { scrollTween = null; },
+    });
+  }
+  const stopScroll = () => { scrollTween?.kill(); scrollTween = null; };
+  // User menggulung sendiri: berhenti, jangan lawan.
+  ['wheel', 'touchstart', 'keydown'].forEach((t) => window.addEventListener(t, stopScroll, { passive: true }));
+  document.addEventListener('click', (ev) => {
+    const a = ev.target.closest?.('a[href^="#"]');
+    if (!a || a.classList.contains('skip-link') || !canMotion()) return;
+    if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
+    const target = a.hash.length > 1 && document.getElementById(decodeURIComponent(a.hash.slice(1)));
+    if (!target) return;
+    ev.preventDefault();
+    smoothTo(target);
+    history.pushState(null, '', a.hash);
+    if (!target.hasAttribute('tabindex')) target.setAttribute('tabindex', '-1');
+    target.focus({ preventScroll: true });
+  });
+
+  // Latar dan penanda scroll: grid bergeser 25% kecepatan scroll (kotak 32px, jadi mulus),
+  // garis di atas layar memanjang sesuai posisi. Bukan loop: bergerak hanya saat user scroll.
+  const gridBg = document.querySelector('.bg-grid');
+  const bar = document.createElement('div');
+  bar.className = 'progress';
+  bar.setAttribute('aria-hidden', 'true');
+  document.body.append(bar);
+  let scrollQueued = false;
+  const paintScroll = () => {
+    scrollQueued = false;
+    const max = document.documentElement.scrollHeight - window.innerHeight;
+    gsap.set(bar, { scaleX: max > 0 ? Math.min(1, window.scrollY / max) : 0 });
+    if (gridBg) gsap.set(gridBg, { y: -((window.scrollY * 0.25) % 32) });
+  };
+  const onScrollPaint = () => {
+    if (scrollQueued) return;
+    scrollQueued = true;
+    requestAnimationFrame(paintScroll);
+  };
+  window.addEventListener('scroll', onScrollPaint, { passive: true });
+  window.addEventListener('resize', onScrollPaint);
+  paintScroll();
+
+  // Mata maskot menoleh ke kursor, selangkah piksel. Hanya untuk mouse. Bukan loop.
+  let lookX = 0;
+  let lookY = 0;
+  const lookAt = (ev) => {
+    if (!bot || ev.pointerType === 'touch') return;
+    const r = bot.getBoundingClientRect();
+    const dx = ev.clientX - (r.left + r.width / 2);
+    const dy = ev.clientY - (r.top + r.height / 2);
+    const x = Math.abs(dx) < 48 ? 0 : Math.sign(dx);
+    const y = Math.abs(dy) < 48 ? 0 : Math.sign(dy);
+    if (x === lookX && y === lookY) return;
+    lookX = x;
+    lookY = y;
+    gsap.set(eyes, { x, y });
+  };
+  if (bot) window.addEventListener('pointermove', lookAt, { passive: true });
 
   // User nyalakan reduced-motion saat animasi jalan: hentikan semua, tampilkan langsung.
   reduce.addEventListener('change', () => {
@@ -202,6 +301,12 @@
     if (intro) intro.progress(1).kill();
     loop?.kill();
     hop?.kill();
+    stopScroll();
+    window.removeEventListener('pointermove', lookAt);
+    window.removeEventListener('scroll', onScrollPaint);
+    window.removeEventListener('resize', onScrollPaint);
+    bar.remove();
+    if (gridBg) gsap.set(gridBg, { clearProps: 'all' });
     gsap.killTweensOf([bot, ring, ...segs, ...eyes].filter(Boolean));
     gsap.set([bot, ring, ...segs, ...eyes].filter(Boolean), { clearProps: 'all' });
     cardWatch?.disconnect();
