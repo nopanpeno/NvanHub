@@ -1,17 +1,17 @@
 /* Palet gelap-biru dan gaya pixel-retro. Sumber: .ux-profile.md */
 :root {
   color-scheme: dark;
-  --bg: #0b1024;            /* latar halaman (60%) */
-  --surface: #151e3b;       /* kartu (30%) */
-  --ink: #e8efff;           /* teks utama, border, fokus (16:1 di atas bg) */
-  --muted: #9fb0d6;         /* teks sekunder (7.5:1 di atas surface) */
-  --blue: #1f5eff;          /* tombol utama, teks putih 5.1:1 */
-  --blue-hover: #1849d6;    /* hover tombol, teks putih 7.1:1 */
-  --blue-pressed: #0a2a8c;  /* pressed tombol */
-  --link: #7aa8ff;          /* link dan aksen teks (6.9:1 di atas surface) */
-  --link-hover: #b5cdff;    /* hover link (10:1 di atas surface) */
-  --sky: #7cc4ff;           /* dekorasi saja, bukan teks */
-  --shadow-color: #0a2a8c;  /* bayangan solid offset, tanpa blur */
+  --bg: #06161f;            /* latar halaman (60%) */
+  --surface: #0d2633;       /* kartu (30%) */
+  --ink: #e6f4ff;           /* teks utama, border, fokus (14:1 di atas bg) */
+  --muted: #a6c0d1;         /* teks sekunder (8.3:1 di atas surface) */
+  --blue: #0a6bd6;          /* tombol utama, teks putih 5.1:1 */
+  --blue-hover: #0856ad;    /* hover tombol, teks putih 7.1:1 */
+  --blue-pressed: #063a78;  /* pressed tombol */
+  --link: #6cc4ff;          /* link dan aksen teks (8.2:1 di atas surface) */
+  --link-hover: #b3e0ff;      /* hover link (11:1 di atas surface) */
+  --sky: #38a8f0;           /* dekorasi saja, bukan teks */
+  --shadow-color: #0b5aa8;  /* bayangan solid offset, tanpa blur */
 
   /* Maskot robot: biru cyber. Hanya fill rata, tanpa glow. Visor memakai warna latar. */
   --bot: #2b7bff;
