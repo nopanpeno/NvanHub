@@ -142,13 +142,51 @@
     gsap.set(h1, { opacity: 1 });
 
     // Tombol hanya fade. Transformnya dipakai transisi hover di CSS.
-    return gsap.timeline({ defaults: { ease: ease.out } })
+    const tl = gsap.timeline({ defaults: { ease: ease.out } })
       .to(chars, { opacity: 1, y: 0, duration: dur.slow, stagger: STAGGER })
       .fromTo(lead, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: dur.slow }, '-=0.15')
       .fromTo(btn, { opacity: 0 }, { opacity: 1, duration: dur.slow }, '-=0.15');
+    // Maskot turun dan muncul bersama huruf pertama.
+    if (mascot) tl.fromTo(mascot, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: dur.slow }, 0);
+    return tl;
   }
 
+  // Maskot: satu loop utama (cincin holo naik turun per piksel, segmen cincin menyala
+  // searah jarum jam, kedip), plus lompat kecil saat disentuh. Ini satu-satunya loop di layar.
+  const mascot = document.querySelector('.hero .mascot');
+  const bot = mascot?.querySelector('svg');
+  const ring = mascot?.querySelector('.m-ring');
+  const segs = mascot ? [...mascot.querySelectorAll('.seg')] : [];
+  const eyes = mascot ? [...mascot.querySelectorAll('.eye')] : [];
+  let loop = null;
+  let hop = null;
+
+  function mascotLoop() {
+    if (!ring || !segs.length) return null;
+    gsap.set(segs, { opacity: 0.45 });
+    const tl = gsap.timeline({ repeat: -1 });
+    tl.set(ring, { y: 0 }, 0).set(ring, { y: -1 }, 1.6);
+    // Satu segmen menyala tiap 250ms. Dipasang lewat call: dua set di properti sama saling timpa.
+    segs.forEach((_, i) => {
+      tl.call(() => gsap.set(segs, { opacity: (j) => (j === i ? 1 : 0.45) }), null, i * 0.25);
+    });
+    tl.call(() => gsap.set(segs, { opacity: 0.45 }), null, segs.length * 0.25);
+    tl.set(eyes, { scaleY: 0.15, transformOrigin: '50% 50%' }, 2.6).set(eyes, { scaleY: 1 }, 2.75);
+    tl.set({}, {}, 3.2); // panjang loop 3.2 detik
+    return tl;
+  }
+
+  function mascotHop() {
+    if (!bot || (hop && hop.isActive())) return;
+    hop = gsap.timeline()
+      .to(bot, { y: -8, duration: dur.fast, ease: ease.out })
+      .to(bot, { y: 0, duration: dur.fast, ease: ease.in });
+  }
+  mascot?.addEventListener('pointerenter', mascotHop);
+  mascot?.addEventListener('click', mascotHop);
+
   intro = heroIntro();
+  loop = mascotLoop();
 
   // Bagian halaman di bawah hero muncul saat di-scroll.
   const SECTIONS = '.projects > .label, .controls, .about > *, .site-footer > *';
@@ -162,6 +200,10 @@
   reduce.addEventListener('change', () => {
     if (!reduce.matches) return;
     if (intro) intro.progress(1).kill();
+    loop?.kill();
+    hop?.kill();
+    gsap.killTweensOf([bot, ring, ...segs, ...eyes].filter(Boolean));
+    gsap.set([bot, ring, ...segs, ...eyes].filter(Boolean), { clearProps: 'all' });
     cardWatch?.disconnect();
     sectionWatch?.disconnect();
     sectionWatch2?.disconnect();

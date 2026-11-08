@@ -12,6 +12,13 @@
   --link-hover: #b5cdff;    /* hover link (10:1 di atas surface) */
   --sky: #7cc4ff;           /* dekorasi saja, bukan teks */
   --shadow-color: #0a2a8c;  /* bayangan solid offset, tanpa blur */
+
+  /* Maskot robot: biru cyber. Hanya fill rata, tanpa glow. Visor memakai warna latar. */
+  --bot: #2b7bff;
+  --bot-dark: #1849d6;
+  --bot-light: #5aa0ff;
+  --cyan: #38cfff;
+  --cyan-hi: #e0fcff;
   --font-display: "Pixelify Sans", system-ui, sans-serif;
   --shadow: 4px 4px 0 var(--shadow-color);
 
@@ -102,8 +109,26 @@ main {
   color: var(--ink);
 }
 
-/* Hero */
-.hero { padding: 64px 0 48px; }
+/* Hero: teks di kiri, maskot di kanan. Di layar sempit maskot pindah ke atas. */
+.hero {
+  padding: 64px 0 48px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 48px;
+}
+.mascot { width: 144px; }
+.mascot svg { display: block; width: 100%; height: auto; overflow: visible; }
+.mascot .bot { fill: var(--bot); }
+.mascot .dark { fill: var(--bot-dark); }
+.mascot .light { fill: var(--bot-light); }
+.mascot .cyan, .mascot .seg { fill: var(--cyan); }
+.mascot .hi { fill: var(--cyan-hi); }
+.mascot .visor { fill: var(--bg); }
+@media (max-width: 767.98px) {
+  .hero { grid-template-columns: 1fr; gap: 24px; padding-top: 32px; }
+  .mascot { order: -1; width: 96px; }
+}
 .hero h1 {
   font-family: var(--font-display);
   font-weight: var(--weight-bold);
@@ -368,7 +393,8 @@ main {
    Jaring pengaman: kalau JS atau GSAP gagal, teks muncul sendiri setelah 2 detik. */
 .motion .hero h1,
 .motion .hero .lead,
-.motion .hero .btn {
+.motion .hero .btn,
+.motion .hero .mascot {
   opacity: 0;
   animation: motion-failsafe 0s linear 2s forwards;
 }
