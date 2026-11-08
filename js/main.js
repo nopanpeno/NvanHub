@@ -43,7 +43,7 @@ function makeLink(href, label, text) {
   const a = document.createElement('a');
   a.href = href;
   a.textContent = text;
-  a.setAttribute('aria-label', label);
+  a.setAttribute('aria-label', `${label}, di tab baru`);
   a.target = '_blank';
   a.rel = 'noopener';
   return a;
