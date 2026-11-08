@@ -12,6 +12,7 @@
   --link-hover: #b3e0ff;      /* hover link (11:1 di atas surface) */
   --sky: #38a8f0;           /* dekorasi saja, bukan teks */
   --shadow-color: #0b5aa8;  /* bayangan solid offset, tanpa blur */
+  --grid: #0c2431;          /* garis grid latar, hiasan tipis */
 
   /* Maskot robot: biru cyber. Hanya fill rata, tanpa glow. Visor memakai warna latar. */
   --bot: #2b7bff;
@@ -52,6 +53,38 @@ body {
   font-size: var(--text-body);
   font-weight: var(--weight-regular);
   line-height: 1.5;
+  /* Kartu masuk dari samping: geseran tidak boleh memunculkan scroll horizontal. */
+  overflow-x: clip;
+}
+
+/* Grid latar tetap di layar. js/motion.js menggesernya pelan saat scroll (parallax).
+   Tinggi lebih 32px (satu kotak) supaya geseran tidak membuka tepi kosong. */
+.bg-grid {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: calc(100% + 32px);
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Garis kemajuan scroll di tepi atas. Dibuat oleh js/motion.js. */
+.progress {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--sky);
+  transform: scaleX(0);
+  transform-origin: left;
+  z-index: 20;
+  pointer-events: none;
 }
 
 /* Cuma main yang dibatasi lebarnya. Header dan footer penuh lebar. */
