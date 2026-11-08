@@ -19,11 +19,12 @@
 
   // Muncul: fade + geser kecil, stagger 30ms. Setelah selesai, style GSAP dibersihkan
   // supaya hover CSS jalan normal lagi.
+  // Stagger 30ms per item, tapi total dibatasi 200ms supaya daftar panjang tidak jadi teatrikal.
   const show = (els) => gsap.to(els, {
     opacity: 1,
     y: 0,
     duration: dur.slow,
-    stagger: STAGGER,
+    stagger: Math.min(STAGGER, 0.2 / Math.max(els.length - 1, 1)),
     ease: ease.out,
     onComplete: () => clear(els),
   });

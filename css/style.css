@@ -14,6 +14,20 @@
   --shadow-color: #0a2a8c;  /* bayangan solid offset, tanpa blur */
   --font-display: "Pixelify Sans", system-ui, sans-serif;
   --shadow: 4px 4px 0 var(--shadow-color);
+
+  /* Tipe: bodi 16, sekunder 14, meta 12. Judul naik Minor Third (x1.2). Hanya dua bobot: 400 dan 700. */
+  --text-meta: 0.75rem;
+  --text-secondary: 0.875rem;
+  --text-body: 1rem;
+  --text-h3: 1.2rem;
+  --text-h2: 1.44rem;
+  --text-h1: clamp(2.074rem, 6vw, 3.583rem);
+  --weight-regular: 400;
+  --weight-bold: 700;
+
+  /* Lebar kolom halaman. Dipakai main; header dan footer penuh lebar tapi sejajar kolom ini. */
+  --page-max: 960px;
+  --gutter: max(24px, calc((100% - var(--page-max)) / 2 + 24px));
 }
 
 * { box-sizing: border-box; }
@@ -28,13 +42,16 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family: system-ui, sans-serif;
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
   line-height: 1.5;
 }
 
-.site-header, main, .site-footer {
-  max-width: 960px;
+/* Cuma main yang dibatasi lebarnya. Header dan footer penuh lebar. */
+main {
+  max-width: var(--page-max);
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
 /* Skip link: pertama di Tab. Tersembunyi sampai difokus. */
@@ -48,12 +65,12 @@ body {
   color: var(--ink);
   border: 2px solid var(--ink);
   border-radius: 6px;
-  padding: 10px 16px;
+  padding: 8px 16px;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
   text-decoration: none;
-  font-weight: 600;
+  font-weight: var(--weight-bold);
 }
 .skip-link:focus { transform: none; }
 
@@ -62,9 +79,9 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 28px;
+  padding: 32px var(--gutter) 0;
 }
-.brand { font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; }
+.brand { font-family: var(--font-display); font-weight: var(--weight-bold); font-size: var(--text-h2); }
 .site-header nav { display: flex; gap: 16px; }
 .site-header nav a {
   display: inline-flex;
@@ -75,12 +92,13 @@ body {
 }
 .site-header nav a:hover { color: var(--link-hover); text-decoration: underline; }
 
-/* Label bagian: judul pixel kecil */
+/* Judul bagian (h2): pixel, lebih besar dari judul kartu (h3) */
 .label {
   margin: 0 0 16px;
   font-family: var(--font-display);
-  font-size: 1.1rem;
-  font-weight: 500;
+  font-size: var(--text-h2);
+  font-weight: var(--weight-bold);
+  line-height: 1.2;
   color: var(--ink);
 }
 
@@ -88,13 +106,13 @@ body {
 .hero { padding: 64px 0 48px; }
 .hero h1 {
   font-family: var(--font-display);
-  font-weight: 700;
-  font-size: clamp(2.2rem, 6vw, 3.6rem);
+  font-weight: var(--weight-bold);
+  font-size: var(--text-h1);
   margin: 0 0 12px;
   line-height: 1.1;
 }
 .accent { color: var(--link); }
-.lead { color: var(--muted); font-size: 1.1rem; max-width: 560px; margin: 0 0 24px; }
+.lead { color: var(--muted); font-size: var(--text-h3); max-width: 65ch; margin: 0 0 24px; }
 
 /* Tombol utama: pill, border tebal, bayangan solid */
 .btn {
@@ -105,8 +123,8 @@ body {
   background: var(--blue);
   color: #fff;
   text-decoration: none;
-  font-weight: 600;
-  padding: 10px 18px;
+  font-weight: var(--weight-bold);
+  padding: 8px 16px;
   border: 2px solid var(--ink);
   border-radius: 999px;
   box-shadow: 3px 3px 0 var(--shadow-color);
@@ -128,7 +146,7 @@ body {
 
 .grid {
   display: grid;
-  gap: 20px;
+  gap: 24px;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
 }
 
@@ -137,7 +155,7 @@ body {
   border: 2px solid var(--ink);
   border-radius: 6px;
   box-shadow: var(--shadow);
-  padding: 20px;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -145,9 +163,9 @@ body {
 }
 .card:hover { transform: translate(-2px, -2px); }
 
-.card h3 { margin: 0; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; }
+.card h3 { margin: 0; font-family: var(--font-display); font-size: var(--text-h3); font-weight: var(--weight-bold); line-height: 1.2; }
 .tagline { margin: 0; }
-.desc { margin: 0; color: var(--muted); font-size: 0.95rem; }
+.desc { margin: 0; color: var(--muted); font-size: var(--text-secondary); }
 
 .tags {
   list-style: none;
@@ -155,26 +173,27 @@ body {
   margin: 4px 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
+  gap: 8px;
 }
 
 .tags li {
-  font-size: 0.8rem;
+  font-size: var(--text-meta);
+  line-height: 1.4;
   border: 1.5px solid var(--ink);
   border-radius: 2px;
-  padding: 1px 8px;
+  padding: 4px 8px;
   color: var(--ink);
 }
 
-.links { display: flex; gap: 14px; margin-top: auto; }
+.links { display: flex; gap: 16px; margin-top: auto; }
 .links a {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-height: 44px;
   color: var(--link);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: var(--weight-bold);
 }
 .links a::after {
   content: "";
@@ -198,8 +217,9 @@ body {
 }
 
 /* Pencarian dan filter tag */
-.controls { display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px; }
-.controls > label { margin: 0; }
+.controls { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+/* Label form: font bodi, bukan pixel. Font pixel di 16px sulit dibaca (C terbaca O). */
+.controls > label { margin: 0; font-family: system-ui, sans-serif; font-size: var(--text-body); }
 
 .search-field { position: relative; }
 
@@ -207,7 +227,7 @@ body {
 .search-field::before {
   content: "";
   position: absolute;
-  left: 14px;
+  left: 16px;
   top: 50%;
   transform: translateY(-50%);
   width: 16px;
@@ -225,7 +245,7 @@ body {
   color: var(--ink);
   border: 2px solid var(--ink);
   border-radius: 6px;
-  padding: 10px 48px 10px 40px;
+  padding: 8px 48px 8px 40px;
   font: inherit;
   box-shadow: 3px 3px 0 var(--shadow-color);
 }
@@ -259,12 +279,32 @@ body {
 }
 .clear[hidden] { display: none; }
 
+/* Tooltip tombol ikon: muncul saat hover dan fokus keyboard. Teksnya sama dengan aria-label. */
+.tip {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + 8px);
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: var(--text-meta);
+  line-height: 1.4;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease-out;
+}
+.clear:hover + .tip,
+.clear:focus-visible + .tip { opacity: 1; }
+
 .filters { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .filter {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   min-height: 44px;
   background: var(--surface);
   color: var(--ink);
@@ -272,7 +312,7 @@ body {
   border-radius: 999px;
   padding: 0 16px;
   font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--text-secondary);
   cursor: pointer;
   transition: transform 120ms ease-out;
 }
@@ -296,16 +336,16 @@ body {
 .empty p { margin: 0; }
 
 /* Tentang */
-.about { padding-bottom: 48px; max-width: 640px; }
+.about { padding-bottom: 48px; max-width: 70ch; }
 .about p { color: var(--muted); }
 
 /* Footer */
 .site-footer {
-  padding-top: 40px;
-  padding-bottom: 28px;
+  padding: 40px var(--gutter) 32px;
   color: var(--muted);
-  font-size: 0.9rem;
+  font-size: var(--text-secondary);
 }
+.site-footer p { margin: 0; }
 .links-list {
   list-style: none;
   padding: 0;
@@ -316,10 +356,11 @@ body {
 .links-list a {
   display: inline-flex;
   align-items: center;
+  gap: 8px;
   min-height: 44px;
   color: var(--link);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: var(--weight-bold);
 }
 .links-list a:hover { color: var(--link-hover); text-decoration: underline; }
 
