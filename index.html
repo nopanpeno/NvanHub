@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="NvanHub: kumpulan tool kecil yang jalan langsung di browser. Gratis, tanpa server.">
   <title>NvanHub</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%231f5eff%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2216%22 font-family=%22sans-serif%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22white%22%3EN%3C/text%3E%3C/svg%3E">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -15,6 +16,7 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">Lewati ke konten</a>
   <header class="site-header">
     <span class="brand">NvanHub</span>
     <nav>
@@ -23,7 +25,7 @@
     </nav>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1">
     <section class="hero">
       <h1>Halo, aku <span class="accent">nopanpeno</span>.</h1>
       <p class="lead">Aku bikin tool kecil yang jalan langsung di browser. Gratis, tanpa server, tanpa ribet.</p>
@@ -31,7 +33,7 @@
     </section>
 
     <section id="proyek" class="projects">
-      <h2 class="label">// proyek</h2>
+      <h2 class="label">Proyek</h2>
       <div class="controls">
         <label for="search" class="label">Cari proyek</label>
         <div class="search-field">
@@ -44,16 +46,16 @@
     </section>
 
     <section id="tentang" class="about">
-      <h2 class="label">// tentang</h2>
+      <h2 class="label">Tentang</h2>
       <p>Aku suka eksperimen. Ide yang kepikiran langsung dicoba. Kalau jalan, aku bagikan lewat repo.</p>
       <p>Semua proyek di sini bisa dibuka, dipelajari, dan dipakai.</p>
     </section>
   </main>
 
   <footer class="site-footer">
-    <h2 class="label">// tautan</h2>
+    <h2 class="label">Tautan</h2>
     <ul class="links-list">
-      <li><a href="https://github.com/nopanpeno" target="_blank" rel="noopener">GitHub</a></li>
+      <li><a href="https://github.com/nopanpeno" target="_blank" rel="noopener" aria-label="GitHub, di tab baru">GitHub</a></li>
     </ul>
     <p>NvanHub · nopanpeno</p>
   </footer>
