@@ -76,13 +76,20 @@
     <section id="proyek" class="projects">
       <h2 class="label">Proyek</h2>
       <div class="controls">
-        <label for="search" class="label">Cari proyek</label>
-        <div class="search-field">
-          <input id="search" type="search" autocomplete="off">
-          <button id="clear" type="button" class="clear" aria-label="Hapus pencarian" aria-describedby="tip-clear" hidden></button>
-          <span id="tip-clear" role="tooltip" class="tip">Hapus pencarian</span>
+        <div class="field">
+          <label for="search" class="label">Cari proyek</label>
+          <div class="search-field">
+            <input id="search" type="search" autocomplete="off">
+            <button id="clear" type="button" class="clear" aria-label="Hapus pencarian" aria-describedby="tip-clear" hidden></button>
+            <span id="tip-clear" role="tooltip" class="tip">Hapus pencarian</span>
+          </div>
         </div>
-        <div id="tags" class="filters" role="group" aria-label="Filter tag"></div>
+        <div class="field">
+          <label for="tag" class="label">Topik</label>
+          <div class="select-field">
+            <select id="tag"><option value="">Semua topik</option></select>
+          </div>
+        </div>
       </div>
       <div id="grid" class="grid"></div>
     </section>

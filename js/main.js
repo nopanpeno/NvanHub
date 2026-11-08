@@ -94,40 +94,33 @@ function render(animate = true) {
     document.getElementById('grid').replaceChildren(...cards);
     window.NvanMotion?.revealCards(cards, animate);
   }
-  updateTagButtons();
+  document.getElementById('tag').value = activeTag ?? ''; // dropdown selalu ikut keadaan filter
 }
 
-function renderTags() {
-  const box = document.getElementById('tags');
-  const all = [...new Set(allProjects.flatMap((p) => p.tags))].sort();
+// Isi dropdown topik. Tiap pilihan menunjukkan jumlah proyeknya, jadi tidak ada topik kosong.
+function renderTopics() {
+  const select = document.getElementById('tag');
+  const count = new Map();
+  for (const t of allProjects.flatMap((p) => p.tags)) count.set(t, (count.get(t) ?? 0) + 1);
 
-  const makeTag = (label, tag) => {
-    const b = document.createElement('button');
-    b.type = 'button';
-    b.className = 'filter';
-    b.dataset.tag = tag ?? '';
-    b.textContent = label;
-    b.addEventListener('click', () => {
-      activeTag = tag === null || activeTag === tag ? null : tag;
-      render();
-    });
-    return b;
-  };
-
-  box.replaceChildren(makeTag('Semua', null), ...all.map((t) => makeTag(t, t)));
+  const options = [...count.keys()].sort().map((t) => {
+    const o = document.createElement('option');
+    o.value = t;
+    o.textContent = `${t} (${count.get(t)})`;
+    return o;
+  });
+  const all = select.options[0]; // "Semua topik" sudah ada di HTML
+  select.replaceChildren(all, ...options);
 }
 
-function updateTagButtons() {
-  for (const b of document.querySelectorAll('#tags .filter')) {
-    const on = (activeTag ?? '') === b.dataset.tag;
-    b.classList.toggle('active', on);
-    b.setAttribute('aria-pressed', String(on));
-  }
-}
+document.getElementById('tag').addEventListener('change', (e) => {
+  activeTag = e.target.value || null;
+  render();
+});
 
 document.getElementById('search').addEventListener('input', () => render(false));
 
-// Hapus teks pencarian saja. Filter tag tetap.
+// Hapus teks pencarian saja. Topik tetap.
 document.getElementById('clear').addEventListener('click', () => {
   const search = document.getElementById('search');
   search.value = '';
@@ -138,7 +131,7 @@ document.getElementById('clear').addEventListener('click', () => {
 loadProjects()
   .then((list) => {
     allProjects = list;
-    renderTags();
+    renderTopics();
     render();
   })
   .catch(() => {
