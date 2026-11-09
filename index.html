@@ -98,6 +98,17 @@
       <h2 class="label">Tentang</h2>
       <p>Aku suka eksperimen. Ide yang kepikiran langsung dicoba. Kalau jalan, aku bagikan lewat repo.</p>
       <p>Semua proyek di sini bisa dibuka, dipelajari, dan dipakai.</p>
+      <div id="fact" class="fact">
+        <h3>Fun fact</h3>
+        <div id="fact-stack" class="fact-stack">
+          <!-- Fakta bawaan, sama dengan data/facts.json baris pertama. Tetap terbaca kalau JS gagal. -->
+          <p id="fact-text" aria-live="polite">Aku bikin website buat belajar. Tiap proyek di sini cara aku nyobain hal baru.</p>
+        </div>
+        <div class="fact-row">
+          <button id="fact-next" type="button" class="filter" hidden>Ganti fakta</button>
+          <span id="fact-count" class="fact-count" hidden></span>
+        </div>
+      </div>
     </section>
   </main>
 
@@ -112,5 +123,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="js/motion.js" defer></script>
   <script src="js/main.js" defer></script>
+  <script src="js/fact.js" defer></script>
 </body>
 </html>

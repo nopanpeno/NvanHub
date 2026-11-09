@@ -404,7 +404,7 @@ main {
 }
 #tag option { background: var(--surface); color: var(--ink); }
 
-/* Tombol kecil bentuk pill. Dipakai pesan kosong dan gagal. */
+/* Tombol kecil bentuk pill. Dipakai pesan kosong, gagal, dan tombol fun fact. */
 .filter {
   display: inline-flex;
   align-items: center;
@@ -421,6 +421,7 @@ main {
   transition: transform 120ms ease-out;
 }
 .filter:hover { transform: translate(-1px, -1px); }
+.filter[hidden] { display: none; }
 
 /* Kosong dan gagal */
 .empty { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; color: var(--muted); }
@@ -429,6 +430,32 @@ main {
 /* Tentang */
 .about { padding-bottom: 48px; max-width: 70ch; }
 .about p { color: var(--muted); }
+
+/* Fun fact: kartu kecil di Tentang. Semua fakta ditumpuk di satu sel grid dan yang tidak aktif
+   tak terlihat, jadi tinggi kartu tetap dan tombol tidak melompat saat fakta berganti. */
+.fact {
+  margin-top: 24px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.fact h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: calc(var(--text-h3) * var(--display-scale));
+  font-weight: var(--weight-display);
+  line-height: 1.2;
+}
+.fact-stack { display: grid; }
+.fact .fact-stack p { grid-area: 1 / 1; margin: 0; color: var(--ink); }
+.fact .fact-stack .sizer { visibility: hidden; }
+.fact-row { display: flex; align-items: center; gap: 16px; }
+.fact-count { font-size: var(--text-meta); color: var(--muted); }
 
 /* Footer */
 .site-footer {
