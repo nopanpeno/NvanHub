@@ -41,13 +41,13 @@ Tambah kolom `story` kalau mau cerita "kenapa aku bikin ini":
 
 Kartu yang punya `story` dapat tombol "Baca ceritanya" yang membuka teks di tempat. Kartu tanpa `story` tampil seperti biasa. Teks cerita ikut dicari di kolom cari. Jaga tetap pendek (sekitar 200 karakter), supaya kartu tidak terlalu panjang di HP.
 
-## Tambah fun fact
+## Ubah ucapan robot
 
-Buka `data/facts.json`, lalu tambah satu kalimat di akhir daftar. Tombol "Ganti fakta" di bagian Tentang memilih fakta secara acak dan tidak pernah mengulang fakta yang sama dua kali berturut-turut.
+Buka `data/mascot.json`, lalu tambah satu kalimat di akhir daftar. Klik robot di bagian atas halaman, dia mengucapkan satu sapaan acak dan tidak pernah mengulang sapaan yang sama dua kali berturut-turut. Jaga tiap kalimat tetap pendek (sekitar 90 karakter), supaya balon muat di layar HP.
 
-Daftar yang sama dipakai balon ucapan robot di bagian atas halaman: klik robotnya, dia bicara satu fakta. Jaga tiap fakta tetap pendek (sekitar 90 karakter), supaya balon muat di layar HP.
+Satu sapaan juga tertulis di `js/mascot.js` sebagai cadangan kalau JSON gagal dimuat.
 
-Fakta pertama juga tertulis di `index.html` sebagai cadangan kalau JS gagal. Kalau kamu ubah fakta pertama di JSON, ubah juga yang di HTML.
+Fun fact di bagian Tentang berupa paragraf biasa di `index.html`. Ubah langsung di sana.
 
 ## Struktur
 
@@ -55,8 +55,8 @@ Fakta pertama juga tertulis di `index.html` sebagai cadangan kalau JS gagal. Kal
 - `css/style.css`: gaya dan palet
 - `js/main.js`: render kartu, cari, dan filter topik
 - `js/motion.js`: animasi (hormati `prefers-reduced-motion`)
-- `js/fact.js`: fun fact acak di bagian Tentang
+- `js/mascot.js`: balon ucapan robot
 - `data/projects.json`: daftar proyek
-- `data/facts.json`: daftar fun fact
+- `data/mascot.json`: daftar sapaan robot
 - `assets/icons/`: ikon pixel 8×8
 - `.ux-profile.md`: aturan tampilan dan gaya proyek

@@ -21,7 +21,6 @@
   <header class="site-header">
     <span class="brand">NvanHub</span>
     <nav>
-      <a href="#proyek">Proyek</a>
       <a href="#tentang">Tentang</a>
     </nav>
   </header>
@@ -34,9 +33,9 @@
         <a class="btn" href="#proyek">Lihat proyek</a>
       </div>
       <!-- Maskot robot pixel, gambar asli buatan sendiri, grid 24x29. Bisa diklik: balon ucapan
-           memuat fakta dari data/facts.json (js/fact.js). -->
+           memuat sapaan dari data/mascot.json (js/mascot.js). -->
       <div class="mascot-wrap">
-      <button type="button" class="mascot" id="mascot" aria-label="Minta fakta dari robot">
+      <button type="button" class="mascot" id="mascot" aria-label="Sapa robot">
         <svg viewBox="0 0 24 29" shape-rendering="crispEdges" focusable="false">
           <g class="m-ring">
             <rect class="seg" x="7" y="0" width="5" height="1"/>
@@ -73,7 +72,7 @@
           </g>
         </svg>
       </button>
-        <!-- Balon cuma tampilan. Pembaca layar mendengar fakta lewat wilayah live di bawahnya. -->
+        <!-- Balon cuma tampilan. Pembaca layar mendengar ucapan lewat wilayah live di bawahnya. -->
         <p id="bubble" class="bubble" aria-hidden="true" hidden></p>
         <p id="bubble-live" class="sr-only" aria-live="polite"></p>
       </div>
@@ -102,19 +101,10 @@
 
     <section id="tentang" class="about">
       <h2 class="label">Tentang</h2>
-      <p>Aku suka eksperimen. Ide yang kepikiran langsung dicoba. Kalau jalan, aku bagikan lewat repo.</p>
-      <p>Semua proyek di sini bisa dibuka, dipelajari, dan dipakai.</p>
-      <div id="fact" class="fact">
-        <h3>Fun fact</h3>
-        <div id="fact-stack" class="fact-stack">
-          <!-- Fakta bawaan, sama dengan data/facts.json baris pertama. Tetap terbaca kalau JS gagal. -->
-          <p id="fact-text" aria-live="polite">Aku bikin website buat belajar. Tiap proyek di sini cara aku nyobain hal baru.</p>
-        </div>
-        <div class="fact-row">
-          <button id="fact-next" type="button" class="filter" hidden>Ganti fakta</button>
-          <span id="fact-count" class="fact-count" hidden></span>
-        </div>
-      </div>
+      <p>NvanHub aku bikin sebagai pintu utama buat semua website yang aku buat. Tiap proyek punya alamat sendiri-sendiri, jadi aku butuh satu tempat yang menghubungkan semuanya. Di sini semuanya aku kumpulin jadi satu: tinggal cari, pilih topik, lalu klik.</p>
+      <p>Aku suka eksperimen. Ide yang kepikiran langsung dicoba, dan website ini juga jadi tempat aku belajar. Tiap proyek di sini cara aku nyobain hal baru. Kalau jalan, aku bagikan lewat repo, jadi semuanya bisa dibuka, dipelajari, dan dipakai siapa saja.</p>
+      <p>Harapanku sederhana: kamu mampir, nemu sesuatu yang berguna atau seru, lalu pulang bawa ide buat dicoba sendiri.</p>
+      <p>Fun fact: web ini dibuat tanpa framework, cuma HTML, CSS, dan JS biasa, jadi semua proyek di sini jalan tanpa server sendiri. Robot pixel di atas aku gambar sendiri, kotak demi kotak, dan skor game di NvanPlay disimpan di perangkatmu, bukan di server.</p>
     </section>
   </main>
 
@@ -129,6 +119,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
   <script src="js/motion.js" defer></script>
   <script src="js/main.js" defer></script>
-  <script src="js/fact.js" defer></script>
+  <script src="js/mascot.js" defer></script>
 </body>
 </html>
