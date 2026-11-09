@@ -552,7 +552,6 @@ main {
    Jaring pengaman: kalau JS atau GSAP gagal, teks muncul sendiri setelah 2 detik. */
 .motion .hero h1,
 .motion .hero .lead,
-.motion .hero .btn,
 .motion .hero .mascot {
   opacity: 0;
   animation: motion-failsafe 0s linear 2s forwards;
