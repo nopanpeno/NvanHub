@@ -23,7 +23,8 @@
     "desc": "Gambar jadi SVG, lalu jadi XML. Semua jalan di browser.",
     "tags": ["JavaScript", "SVG", "Alight Motion"],
     "repo": "https://github.com/nopanpeno/NvanVector",
-    "live": "https://nopanpeno.github.io/NvanVector/"
+    "live": "https://nopanpeno.github.io/NvanVector/",
+    "preview": "assets/previews/nvanvector.jpg"
   },
   {
     "name": "NvanQR",
@@ -31,7 +32,8 @@
     "desc": "QR untuk tautan, teks, dan Wi-Fi. Dibuat dan dipindai di perangkat, tidak dikirim ke server.",
     "tags": ["JavaScript", "QR Code", "Vite"],
     "repo": "https://github.com/nopanpeno/NvanQR",
-    "live": "https://nopanpeno.github.io/NvanQR/"
+    "live": "https://nopanpeno.github.io/NvanQR/",
+    "preview": "assets/previews/nvanqr.jpg"
   },
   {
     "name": "NvanCut",
@@ -39,7 +41,8 @@
     "desc": "Tanpa backend. Alias disimpan di links.json, situs diterbitkan ulang lewat GitHub Actions.",
     "tags": ["Shortlink", "HTML", "GitHub Actions"],
     "repo": "https://github.com/nopanpeno/NvanCut",
-    "live": "https://nopanpeno.github.io/NvanCut/"
+    "live": "https://nopanpeno.github.io/NvanCut/",
+    "preview": "assets/previews/nvancut.jpg"
   },
   {
     "name": "NvanExif",
@@ -47,6 +50,7 @@
     "desc": "Pilih metadata yang mau dibuang, lalu simpan foto yang sudah bersih. Foto tidak dikirim ke server.",
     "tags": ["JavaScript", "EXIF", "Vite"],
     "repo": "https://github.com/nopanpeno/NvanExif",
-    "live": "https://nopanpeno.github.io/NvanExif/"
+    "live": "https://nopanpeno.github.io/NvanExif/",
+    "preview": "assets/previews/nvanexif.jpg"
   }
 ]
