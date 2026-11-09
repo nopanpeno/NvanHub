@@ -154,22 +154,19 @@
     return chars;
   }
 
-  // Hero masuk: huruf judul satu per satu, lalu teks dan tombol.
+  // Hero masuk: huruf judul satu per satu, lalu teks. Tombol tampil langsung, tanpa animasi masuk.
   function heroIntro() {
     const h1 = document.querySelector('.hero h1');
     const lead = document.querySelector('.hero .lead');
-    const btn = document.querySelector('.hero .btn');
-    if (!h1 || !lead || !btn) return null;
+    if (!h1 || !lead) return null;
 
     const chars = splitChars(h1);
     gsap.set(chars, { opacity: 0, y: 12 });
     gsap.set(h1, { opacity: 1 });
 
-    // Tombol hanya fade. Transformnya dipakai transisi hover di CSS.
     const tl = gsap.timeline({ defaults: { ease: ease.out } })
       .to(chars, { opacity: 1, y: 0, duration: dur.slow, stagger: STAGGER })
-      .fromTo(lead, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: dur.slow }, '-=0.15')
-      .fromTo(btn, { opacity: 0 }, { opacity: 1, duration: dur.slow }, '-=0.15');
+      .fromTo(lead, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: dur.slow }, '-=0.15');
     // Maskot turun dan muncul bersama huruf pertama.
     if (mascot) tl.fromTo(mascot, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: dur.slow }, 0);
     return tl;
