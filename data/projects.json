@@ -5,8 +5,7 @@
     "desc": "Pakai WebRTC dan QR. Tanpa server, file tidak disimpan di mana pun.",
     "tags": ["WebRTC", "JavaScript", "GitHub Pages"],
     "repo": "https://github.com/nopanpeno/NvanPass",
-    "live": "https://nopanpeno.github.io/NvanPass/",
-    "preview": "assets/previews/nvanpass.jpg"
+    "live": "https://nopanpeno.github.io/NvanPass/"
   },
   {
     "name": "NvanPlay",
@@ -14,8 +13,7 @@
     "desc": "Tanpa akun, tanpa database. Skor disimpan di perangkat masing-masing.",
     "tags": ["HTML", "JavaScript", "Game"],
     "repo": "https://github.com/nopanpeno/NvanPlay",
-    "live": "https://nopanpeno.github.io/NvanPlay/",
-    "preview": "assets/previews/nvanplay.jpg"
+    "live": "https://nopanpeno.github.io/NvanPlay/"
   },
   {
     "name": "NvanVector",
@@ -23,8 +21,7 @@
     "desc": "Gambar jadi SVG, lalu jadi XML. Semua jalan di browser.",
     "tags": ["JavaScript", "SVG", "Alight Motion"],
     "repo": "https://github.com/nopanpeno/NvanVector",
-    "live": "https://nopanpeno.github.io/NvanVector/",
-    "preview": "assets/previews/nvanvector.jpg"
+    "live": "https://nopanpeno.github.io/NvanVector/"
   },
   {
     "name": "NvanQR",
@@ -32,8 +29,7 @@
     "desc": "QR untuk tautan, teks, dan Wi-Fi. Dibuat dan dipindai di perangkat, tidak dikirim ke server.",
     "tags": ["JavaScript", "QR Code", "Vite"],
     "repo": "https://github.com/nopanpeno/NvanQR",
-    "live": "https://nopanpeno.github.io/NvanQR/",
-    "preview": "assets/previews/nvanqr.jpg"
+    "live": "https://nopanpeno.github.io/NvanQR/"
   },
   {
     "name": "NvanCut",
@@ -41,8 +37,7 @@
     "desc": "Tanpa backend. Alias disimpan di links.json, situs diterbitkan ulang lewat GitHub Actions.",
     "tags": ["Shortlink", "HTML", "GitHub Actions"],
     "repo": "https://github.com/nopanpeno/NvanCut",
-    "live": "https://nopanpeno.github.io/NvanCut/",
-    "preview": "assets/previews/nvancut.jpg"
+    "live": "https://nopanpeno.github.io/NvanCut/"
   },
   {
     "name": "NvanExif",
@@ -50,7 +45,6 @@
     "desc": "Pilih metadata yang mau dibuang, lalu simpan foto yang sudah bersih. Foto tidak dikirim ke server.",
     "tags": ["JavaScript", "EXIF", "Vite"],
     "repo": "https://github.com/nopanpeno/NvanExif",
-    "live": "https://nopanpeno.github.io/NvanExif/",
-    "preview": "assets/previews/nvanexif.jpg"
+    "live": "https://nopanpeno.github.io/NvanExif/"
   }
 ]
