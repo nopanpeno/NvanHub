@@ -35,42 +35,10 @@ function makeCard(p) {
   links.className = 'links';
   links.append(makeLink(p.live, `Buka demo ${p.name}`, 'Buka demo'), makeLink(p.repo, `Lihat kode ${p.name}`, 'Lihat kode'));
 
-  card.append(makePreview(p), title, tagline, desc, tags);
+  card.append(title, tagline, desc, tags);
   if (p.story) card.append(makeStory(p));
   card.append(links);
   return card;
-}
-
-// Pratinjau di atas kartu. Kolom preview (opsional) menunjuk ke gambar 16:9, mis. assets/previews/nvanqr.png.
-// Tanpa gambar, atau gambarnya gagal dimuat, tampil kotak dengan huruf awal nama proyek.
-// Hiasan saja, jadi disembunyikan dari pembaca layar: nama proyek sudah ada di judul kartu.
-function makePreview(p) {
-  const box = document.createElement('div');
-  box.className = 'preview';
-  box.setAttribute('aria-hidden', 'true');
-
-  const letter = () => {
-    const s = document.createElement('span');
-    s.className = 'preview-letter';
-    // Dua huruf pertama setelah "Nvan" (Pa, Pl, QR), supaya proyek berawalan sama tidak kembar.
-    const rest = p.name.replace(/^nvan/i, '') || p.name;
-    s.textContent = rest.charAt(0).toUpperCase() + rest.charAt(1);
-    return s;
-  };
-
-  if (p.preview) {
-    const img = document.createElement('img');
-    img.src = p.preview;
-    img.alt = '';
-    img.width = 640;
-    img.height = 360;
-    img.loading = 'lazy';
-    img.addEventListener('error', () => box.replaceChildren(letter()), { once: true });
-    box.append(img);
-  } else {
-    box.append(letter());
-  }
-  return box;
 }
 
 // Cerita opsional ("kenapa aku bikin ini"). Pakai <details> asli: Enter dan Space jalan sendiri,
