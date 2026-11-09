@@ -154,7 +154,19 @@ main {
   align-items: center;
   gap: 48px;
 }
-.mascot { width: 144px; }
+.mascot-wrap { position: relative; width: 144px; }
+/* Maskot adalah button asli: Enter dan Space jalan sendiri, fokus pakai ring global. */
+.mascot {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
 .mascot svg { display: block; width: 100%; height: auto; overflow: visible; }
 .mascot .bot { fill: var(--bot); }
 .mascot .dark { fill: var(--bot-dark); }
@@ -162,9 +174,69 @@ main {
 .mascot .cyan, .mascot .seg { fill: var(--cyan); }
 .mascot .hi { fill: var(--cyan-hi); }
 .mascot .visor { fill: var(--bg); }
+
+/* Balon ucapan maskot. Posisinya absolut, jadi muncul tanpa menggeser tata letak. Di layar lebar
+   duduk di bawah maskot dan selebar kolom maskot + celah (144 + 48), supaya tidak menimpa teks hero. */
+.bubble {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 12px);
+  right: 0;
+  width: 192px;
+  margin: 0;
+  padding: 12px 16px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  font-size: var(--text-secondary);
+  line-height: 1.5;
+}
+/* Ekor balon: takik kotak kecil yang menghadap maskot. */
+.bubble::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  right: 60px;
+  width: 12px;
+  height: 8px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-bottom: 0;
+}
+/* Teks khusus pembaca layar. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
 @media (max-width: 767.98px) {
   .hero { grid-template-columns: 1fr; gap: 24px; padding-top: 32px; }
-  .mascot { order: -1; width: 96px; }
+  .mascot-wrap { order: -1; width: 96px; }
+  /* Maskot di kiri atas: balon pindah ke kanannya, ruang kosong di samping maskot. */
+  .bubble {
+    top: 0;
+    right: auto;
+    left: calc(100% + 16px);
+    width: max-content;
+    max-width: min(220px, calc(100vw - 48px - 96px - 16px));
+  }
+  .bubble::before {
+    top: 16px;
+    right: auto;
+    left: -8px;
+    width: 8px;
+    height: 12px;
+    border: 2px solid var(--ink);
+    border-right: 0;
+  }
 }
 .hero h1 {
   font-family: var(--font-display);
