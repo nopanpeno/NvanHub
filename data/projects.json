@@ -5,7 +5,8 @@
     "desc": "Pakai WebRTC dan QR. Tanpa server, file tidak disimpan di mana pun.",
     "tags": ["WebRTC", "JavaScript", "GitHub Pages"],
     "repo": "https://github.com/nopanpeno/NvanPass",
-    "live": "https://nopanpeno.github.io/NvanPass/"
+    "live": "https://nopanpeno.github.io/NvanPass/",
+    "preview": "assets/previews/nvanpass.jpg"
   },
   {
     "name": "NvanPlay",
@@ -13,7 +14,8 @@
     "desc": "Tanpa akun, tanpa database. Skor disimpan di perangkat masing-masing.",
     "tags": ["HTML", "JavaScript", "Game"],
     "repo": "https://github.com/nopanpeno/NvanPlay",
-    "live": "https://nopanpeno.github.io/NvanPlay/"
+    "live": "https://nopanpeno.github.io/NvanPlay/",
+    "preview": "assets/previews/nvanplay.jpg"
   },
   {
     "name": "NvanVector",
