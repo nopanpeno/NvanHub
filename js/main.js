@@ -35,8 +35,38 @@ function makeCard(p) {
   links.className = 'links';
   links.append(makeLink(p.live, `Buka demo ${p.name}`, 'Buka demo'), makeLink(p.repo, `Lihat kode ${p.name}`, 'Lihat kode'));
 
-  card.append(title, tagline, desc, tags, links);
+  card.append(title, tagline, desc, tags);
+  if (p.story) card.append(makeStory(p));
+  card.append(links);
   return card;
+}
+
+// Cerita opsional ("kenapa aku bikin ini"). Pakai <details> asli: Enter dan Space jalan sendiri,
+// tanpa JS tambahan. Proyek tanpa kolom story tidak punya tombol.
+function makeStory(p) {
+  const box = document.createElement('details');
+  box.className = 'story';
+
+  const sum = document.createElement('summary');
+  // Nama accessible = teks yang terlihat + nama proyek (tersembunyi). Tanpa aria-label, jadi cocok
+  // dengan kontrol suara, dan label ikut berganti saat terbuka.
+  const label = (cls, text) => {
+    const s = document.createElement('span');
+    s.className = cls;
+    s.append(text);
+    const who = document.createElement('span');
+    who.className = 'sr-only';
+    who.textContent = ` ${p.name}`;
+    s.append(who);
+    return s;
+  };
+  sum.append(label('story-open', 'Baca ceritanya'), label('story-close', 'Tutup cerita'));
+
+  const text = document.createElement('p');
+  text.textContent = p.story;
+
+  box.append(sum, text);
+  return box;
 }
 
 function makeLink(href, label, text) {
@@ -81,7 +111,7 @@ function render(animate = true) {
   document.getElementById('clear').hidden = raw === '';
   const q = raw.trim().toLowerCase();
   const shown = allProjects.filter((p) => {
-    const hay = [p.name, p.tagline, p.desc, ...p.tags].join(' ').toLowerCase();
+    const hay = [p.name, p.tagline, p.desc, p.story ?? '', ...p.tags].join(' ').toLowerCase();
     const matchText = !q || hay.includes(q);
     const matchTag = !activeTag || p.tags.includes(activeTag);
     return matchText && matchTag;

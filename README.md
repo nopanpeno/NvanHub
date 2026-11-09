@@ -29,7 +29,17 @@ Buka `data/projects.json`, lalu tambah satu objek di akhir daftar:
 }
 ```
 
-Semua kolom wajib diisi. Kartu, dropdown topik, dan jumlah proyek per topik dibuat otomatis dari file ini. Tidak ada kode lain yang perlu diubah.
+Semua kolom di atas wajib diisi. Kartu, dropdown topik, dan jumlah proyek per topik dibuat otomatis dari file ini. Tidak ada kode lain yang perlu diubah.
+
+### Cerita di kartu (opsional)
+
+Tambah kolom `story` kalau mau cerita "kenapa aku bikin ini":
+
+```json
+"story": "Dua tiga kalimat. Kenapa dibuat, apa yang dipelajari."
+```
+
+Kartu yang punya `story` dapat tombol "Baca ceritanya" yang membuka teks di tempat. Kartu tanpa `story` tampil seperti biasa. Teks cerita ikut dicari di kolom cari. Jaga tetap pendek (sekitar 200 karakter), supaya kartu tidak terlalu panjang di HP.
 
 ## Tambah fun fact
 
