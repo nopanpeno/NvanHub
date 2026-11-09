@@ -319,6 +319,26 @@ main {
   color: var(--ink);
 }
 
+/* Cerita kartu: disclosure bawaan. Tombolnya pill kecil setinggi 44px, teks berganti sesuai keadaan. */
+.story summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1.5px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
+  font-size: var(--text-secondary);
+  font-weight: var(--weight-bold);
+  cursor: pointer;
+  list-style: none;
+}
+.story summary::-webkit-details-marker { display: none; }
+.story summary:hover { text-decoration: underline; }
+.story .story-close, .story[open] .story-open { display: none; }
+.story[open] .story-close { display: inline; }
+.story p { margin: 8px 0 0; color: var(--muted); font-size: var(--text-secondary); line-height: 1.5; }
+
 .links { display: flex; gap: 16px; margin-top: auto; }
 .links a {
   display: inline-flex;
