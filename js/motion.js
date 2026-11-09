@@ -255,6 +255,7 @@
   // Latar dan penanda scroll: grid bergeser 25% kecepatan scroll (kotak 32px, jadi mulus),
   // garis di atas layar memanjang sesuai posisi. Bukan loop: bergerak hanya saat user scroll.
   const gridBg = document.querySelector('.bg-grid');
+  const heroEl = document.querySelector('.hero');
   const bar = document.createElement('div');
   bar.className = 'progress';
   bar.setAttribute('aria-hidden', 'true');
@@ -265,6 +266,12 @@
     const max = document.documentElement.scrollHeight - window.innerHeight;
     gsap.set(bar, { scaleX: max > 0 ? Math.min(1, window.scrollY / max) : 0 });
     if (gridBg) gsap.set(gridBg, { y: -((window.scrollY * 0.25) % 32) });
+    // Teks hero menuju putih: penuh saat 60% tinggi hero sudah terlewat.
+    if (heroEl) {
+      const span = Math.max(heroEl.offsetHeight * 0.6, 1);
+      const t = Math.min(1, Math.max(0, window.scrollY / span));
+      heroEl.style.setProperty('--hero-white', t.toFixed(3));
+    }
   };
   const onScrollPaint = () => {
     if (scrollQueued) return;
@@ -304,6 +311,7 @@
     window.removeEventListener('resize', onScrollPaint);
     bar.remove();
     if (gridBg) gsap.set(gridBg, { clearProps: 'all' });
+    heroEl?.style.removeProperty('--hero-white');
     gsap.killTweensOf([bot, ring, ...segs, ...eyes].filter(Boolean));
     gsap.set([bot, ring, ...segs, ...eyes].filter(Boolean), { clearProps: 'all' });
     cardWatch?.disconnect();
