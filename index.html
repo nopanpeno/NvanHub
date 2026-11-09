@@ -33,8 +33,10 @@
         <p class="lead">Aku bikin tool kecil yang jalan langsung di browser. Gratis, tanpa server, tanpa ribet.</p>
         <a class="btn" href="#proyek">Lihat proyek</a>
       </div>
-      <!-- Maskot robot pixel, gambar asli buatan sendiri. Hiasan saja, grid 24x29. -->
-      <div class="mascot" aria-hidden="true">
+      <!-- Maskot robot pixel, gambar asli buatan sendiri, grid 24x29. Bisa diklik: balon ucapan
+           memuat fakta dari data/facts.json (js/fact.js). -->
+      <div class="mascot-wrap">
+      <button type="button" class="mascot" id="mascot" aria-label="Minta fakta dari robot">
         <svg viewBox="0 0 24 29" shape-rendering="crispEdges" focusable="false">
           <g class="m-ring">
             <rect class="seg" x="7" y="0" width="5" height="1"/>
@@ -70,6 +72,10 @@
             <rect class="dark" x="13" y="28" width="4" height="1"/>
           </g>
         </svg>
+      </button>
+        <!-- Balon cuma tampilan. Pembaca layar mendengar fakta lewat wilayah live di bawahnya. -->
+        <p id="bubble" class="bubble" aria-hidden="true" hidden></p>
+        <p id="bubble-live" class="sr-only" aria-live="polite"></p>
       </div>
     </section>
 

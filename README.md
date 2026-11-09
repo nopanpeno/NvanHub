@@ -35,6 +35,8 @@ Semua kolom wajib diisi. Kartu, dropdown topik, dan jumlah proyek per topik dibu
 
 Buka `data/facts.json`, lalu tambah satu kalimat di akhir daftar. Tombol "Ganti fakta" di bagian Tentang memilih fakta secara acak dan tidak pernah mengulang fakta yang sama dua kali berturut-turut.
 
+Daftar yang sama dipakai balon ucapan robot di bagian atas halaman: klik robotnya, dia bicara satu fakta. Jaga tiap fakta tetap pendek (sekitar 90 karakter), supaya balon muat di layar HP.
+
 Fakta pertama juga tertulis di `index.html` sebagai cadangan kalau JS gagal. Kalau kamu ubah fakta pertama di JSON, ubah juga yang di HTML.
 
 ## Struktur
