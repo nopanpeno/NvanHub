@@ -41,6 +41,16 @@ Tambah kolom `story` kalau mau cerita "kenapa aku bikin ini":
 
 Kartu yang punya `story` dapat tombol "Baca ceritanya" yang membuka teks di tempat. Kartu tanpa `story` tampil seperti biasa. Teks cerita ikut dicari di kolom cari. Jaga tetap pendek (sekitar 200 karakter), supaya kartu tidak terlalu panjang di HP.
 
+## Pratinjau kartu
+
+Tiap kartu punya kotak pratinjau 16:9 di atasnya. Tanpa gambar, kotak berisi dua huruf pertama nama proyek (tanpa "Nvan"). Untuk pasang gambar, taruh file di `assets/previews/` (disarankan 640×360) lalu tambah kolom `preview`:
+
+```json
+"preview": "assets/previews/nvanqr.png"
+```
+
+Kalau gambar gagal dimuat, kartu kembali ke dua huruf itu.
+
 ## Ubah ucapan robot
 
 Buka `data/mascot.json`, lalu tambah satu kalimat di akhir daftar. Klik robot di bagian atas halaman, dia mengucapkan satu sapaan acak dan tidak pernah mengulang sapaan yang sama dua kali berturut-turut. Jaga tiap kalimat tetap pendek (sekitar 90 karakter), supaya balon muat di layar HP.
