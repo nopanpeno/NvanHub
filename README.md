@@ -43,7 +43,18 @@ Kartu yang punya `story` dapat tombol "Baca ceritanya" yang membuka teks di temp
 
 ## Pratinjau kartu
 
-Tiap kartu punya kotak pratinjau 16:9 di atasnya. Tanpa gambar, kotak berisi dua huruf pertama nama proyek (tanpa "Nvan"). Untuk pasang gambar, taruh file di `assets/previews/` (disarankan 640×360) lalu tambah kolom `preview`:
+Tiap kartu punya kotak pratinjau 16:9 di atasnya. Tanpa gambar, kotak berisi dua huruf pertama nama proyek (tanpa "Nvan").
+
+Cara cepat: jalankan skrip tangkap layar di komputermu. Skrip membuka tiap situs live (desktop 1280×720), menyimpan gambar ke `assets/previews/`, dan mengisi kolom `preview`.
+
+```bash
+npm install --no-save playwright
+npx playwright install chromium
+node scripts/screenshots.mjs          # semua proyek
+node scripts/screenshots.mjs nvanqr   # satu proyek saja
+```
+
+Cara manual: taruh gambar 16:9 di `assets/previews/` lalu tambah kolom `preview`:
 
 ```json
 "preview": "assets/previews/nvanqr.png"
@@ -66,6 +77,7 @@ Fun fact di bagian Tentang berupa paragraf biasa di `index.html`. Ubah langsung 
 - `js/main.js`: render kartu, cari, dan filter topik
 - `js/motion.js`: animasi (hormati `prefers-reduced-motion`)
 - `js/mascot.js`: balon ucapan robot
+- `scripts/screenshots.mjs`: ambil gambar pratinjau kartu
 - `data/projects.json`: daftar proyek
 - `data/mascot.json`: daftar sapaan robot
 - `assets/icons/`: ikon pixel 8×8
