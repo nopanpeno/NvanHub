@@ -33,7 +33,7 @@ function makeCard(p) {
 
   const links = document.createElement('div');
   links.className = 'links';
-  links.append(makeLink(p.live, `Buka demo ${p.name}`, 'Buka demo'), makeLink(p.repo, `Lihat kode ${p.name}`, 'Lihat kode'));
+  links.append(makeLink(p.live, `Buka website ${p.name}`, 'Buka website'), makeLink(p.repo, `Lihat kode ${p.name}`, 'Lihat kode'));
 
   card.append(title, tagline, desc, tags);
   if (p.story) card.append(makeStory(p));
