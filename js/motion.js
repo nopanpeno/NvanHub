@@ -11,6 +11,7 @@
   let intro = null;
   let cardWatch = null;
   let sectionWatch = null;
+  let bottomWatch = null; // pemantau bagian bawah (tentang, footer)
 
   const clear = (els) => {
     gsap.set(els, { clearProps: 'opacity,transform' });
@@ -98,17 +99,16 @@
   let bottomEls = [];
   function startBottom() {
     if (!bottomEls.length) return;
-    sectionWatch2 = watch(bottomEls);
+    bottomWatch = watch(bottomEls);
     bottomEls = [];
   }
-  let sectionWatch2 = null;
 
   // Dipakai main.js. animate=false (mengetik di kolom cari): kartu ganti tanpa gerak.
   function revealCards(cards, animate = true) {
     cardWatch?.disconnect();
     cardWatch = animate ? enter(cards, cardFrom) : null;
     startBottom();
-    sectionWatch2?.check(); // tinggi halaman berubah, bagian bawah mungkin kini terlihat
+    bottomWatch?.check(); // tinggi halaman berubah, bagian bawah mungkin kini terlihat
   }
 
   function fadeIn(el) {
@@ -378,7 +378,7 @@
     gsap.set([bot, ring, ...segs, ...eyes].filter(Boolean), { clearProps: 'all' });
     cardWatch?.disconnect();
     sectionWatch?.disconnect();
-    sectionWatch2?.disconnect();
+    bottomWatch?.disconnect();
     bottomEls = [];
     const all = [...document.querySelectorAll(`.card, ${SECTIONS}`)];
     gsap.killTweensOf(all);

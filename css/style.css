@@ -407,8 +407,9 @@ main {
   margin-bottom: 24px;
 }
 .field { display: flex; flex-direction: column; gap: 12px; }
-/* Label form: font bodi, bukan pixel. Font pixel di 16px sulit dibaca (C terbaca O). */
-.field > label { margin: 0; font-family: system-ui, sans-serif; font-size: var(--text-body); font-weight: var(--weight-bold); }
+/* Label form: font bodi, bukan pixel. Font pixel di 16px sulit dibaca (C terbaca O).
+   Berdiri sendiri, tidak memakai .label (itu untuk judul bagian h2). */
+.field > label { margin: 0; font-family: system-ui, sans-serif; font-size: var(--text-body); font-weight: var(--weight-bold); line-height: 1.2; color: var(--ink); }
 @media (max-width: 767.98px) {
   .controls { grid-template-columns: minmax(0, 1fr); }
 }
@@ -565,6 +566,11 @@ main {
   display: flex;
   gap: 16px;
 }
+/* Pesan saat JavaScript mati (index.html, <noscript>). */
+.no-js { margin: 0; color: var(--muted); max-width: 65ch; }
+.no-js a { color: var(--link); font-weight: var(--weight-bold); }
+.no-js a:hover { color: var(--link-hover); text-decoration: underline; }
+
 .links-list a {
   display: inline-flex;
   align-items: center;
