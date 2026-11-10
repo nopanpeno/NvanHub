@@ -279,8 +279,9 @@
   const starsNear = document.querySelector('.bg-stars-near');
   const heroEl = document.querySelector('.hero');
   // Kata hero menuju putih satu per satu, urut baca: judul dulu, lalu lead.
+  // Kata di .accent (nama) dilewati: tetap biru.
   const heroWords = heroEl
-    ? [...heroEl.querySelectorAll('h1 .word'), ...splitWords(heroEl.querySelector('.lead') || document.createElement('p'))]
+    ? [...heroEl.querySelectorAll('h1 .word')].filter((w) => !w.closest('.accent')).concat(splitWords(heroEl.querySelector('.lead') || document.createElement('p')))
     : [];
   const lastW = new Array(heroWords.length).fill(-1);
   // Kata di Tentang: tiap paragraf punya progres sendiri, dari posisinya di layar.
