@@ -275,6 +275,8 @@
   // Latar dan penanda scroll: grid bergeser 25% kecepatan scroll (kotak 32px, jadi mulus),
   // garis di atas layar memanjang sesuai posisi. Bukan loop: bergerak hanya saat user scroll.
   const gridBg = document.querySelector('.bg-grid');
+  const starsFar = document.querySelector('.bg-stars-far');
+  const starsNear = document.querySelector('.bg-stars-near');
   const heroEl = document.querySelector('.hero');
   // Kata hero menuju putih satu per satu, urut baca: judul dulu, lalu lead.
   const heroWords = heroEl
@@ -291,6 +293,9 @@
     const max = document.documentElement.scrollHeight - window.innerHeight;
     gsap.set(bar, { scaleX: max > 0 ? Math.min(1, window.scrollY / max) : 0 });
     if (gridBg) gsap.set(gridBg, { y: -((window.scrollY * 0.25) % 32) });
+    // Dua lapis bintang: jauh pelan (10%), dekat lebih cepat (40%). Modulo = ukuran ubin.
+    if (starsFar) gsap.set(starsFar, { y: -((window.scrollY * 0.1) % 288) });
+    if (starsNear) gsap.set(starsNear, { y: -((window.scrollY * 0.4) % 400) });
     // Kata hero menuju putih satu per satu. Semua kata putih saat 60% tinggi hero terlewat.
     // Tiap kata punya jendela 30% dari total, mulai berurutan (kata pertama duluan).
     if (heroEl && heroWords.length) {
@@ -341,7 +346,7 @@
     window.removeEventListener('scroll', onScrollPaint);
     window.removeEventListener('resize', onScrollPaint);
     bar.remove();
-    if (gridBg) gsap.set(gridBg, { clearProps: 'all' });
+    gsap.set([gridBg, starsFar, starsNear].filter(Boolean), { clearProps: 'all' });
     heroWords.forEach((w) => w.style.removeProperty('--w'));
     gsap.killTweensOf([bot, ring, ...segs, ...eyes].filter(Boolean));
     gsap.set([bot, ring, ...segs, ...eyes].filter(Boolean), { clearProps: 'all' });
