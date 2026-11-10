@@ -584,7 +584,8 @@ main {
   padding: 0;
   margin: 8px 0 16px;
   display: flex;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 0 16px;
 }
 /* Pesan saat JavaScript mati (index.html, <noscript>). */
 .no-js { margin: 0; color: var(--muted); max-width: 65ch; }
@@ -601,6 +602,33 @@ main {
   font-weight: var(--weight-bold);
 }
 .links-list a:hover { color: var(--link-hover); text-decoration: underline; }
+
+/* Baris bawah footer: hak cipta di kiri, "Kembali ke atas" di kanan. Ditumpuk kalau tidak muat. */
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+}
+.to-top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  color: var(--link);
+  text-decoration: none;
+  font-weight: var(--weight-bold);
+}
+.to-top::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  -webkit-mask: url("../assets/icons/arrow-up.svg") center / contain no-repeat;
+  mask: url("../assets/icons/arrow-up.svg") center / contain no-repeat;
+}
+.to-top:hover { color: var(--link-hover); text-decoration: underline; }
 
 /* Hero masuk (js/motion.js). Disembunyikan hanya saat html.motion menyala.
    Jaring pengaman: kalau JS atau GSAP gagal, teks muncul sendiri setelah 2 detik. */
