@@ -105,6 +105,17 @@ function showMessage(text, buttonText, onClick) {
   window.NvanMotion?.fadeIn(box);
 }
 
+// Ganti isi grid. Saat animate, isi lama pudar dulu (kartu atau pesan), baru build() jalan.
+// swapId menjaga urutan: kalau filter berganti cepat, hanya yang terakhir yang dijalankan.
+let swapId = 0;
+function swapGrid(build, animate) {
+  const id = ++swapId;
+  const old = [...document.getElementById('grid').children];
+  const run = () => { if (id === swapId) build(); };
+  if (animate && old.length && window.NvanMotion?.fadeOut) window.NvanMotion.fadeOut(old, run);
+  else run();
+}
+
 // animate=false: dipakai saat mengetik di kolom cari, kartu ganti tanpa gerak.
 function render(animate = true) {
   const raw = document.getElementById('search').value;
@@ -117,13 +128,15 @@ function render(animate = true) {
     return matchText && matchTag;
   });
 
-  if (shown.length === 0) {
-    showMessage('Tidak ada proyek yang cocok. Coba kata kunci lain atau hapus filter.', 'Hapus filter', clearFilters);
-  } else {
-    const cards = shown.map(makeCard);
-    document.getElementById('grid').replaceChildren(...cards);
-    window.NvanMotion?.revealCards(cards, animate);
-  }
+  swapGrid(() => {
+    if (shown.length === 0) {
+      showMessage('Tidak ada proyek yang cocok. Coba kata kunci lain atau hapus filter.', 'Hapus filter', clearFilters);
+    } else {
+      const cards = shown.map(makeCard);
+      document.getElementById('grid').replaceChildren(...cards);
+      window.NvanMotion?.revealCards(cards, animate);
+    }
+  }, animate);
   document.getElementById('tag').value = activeTag ?? ''; // dropdown selalu ikut keadaan filter
 }
 
