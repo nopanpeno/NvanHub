@@ -154,6 +154,26 @@
     return chars;
   }
 
+  // Pecah teks jadi kata saja (tanpa huruf). Teks tetap terbaca pembaca layar apa adanya.
+  function splitWords(el) {
+    const words = [];
+    for (const node of [...el.childNodes]) {
+      if (node.nodeType !== Node.TEXT_NODE) continue;
+      const frag = document.createDocumentFragment();
+      for (const part of node.textContent.split(/(\s+)/)) {
+        if (!part) continue;
+        if (/^\s+$/.test(part)) { frag.append(' '); continue; }
+        const w = document.createElement('span');
+        w.className = 'word';
+        w.textContent = part;
+        frag.append(w);
+        words.push(w);
+      }
+      node.replaceWith(frag);
+    }
+    return words;
+  }
+
   // Hero masuk: huruf judul satu per satu, lalu teks. Tombol tampil langsung, tanpa animasi masuk.
   function heroIntro() {
     const h1 = document.querySelector('.hero h1');
@@ -256,6 +276,11 @@
   // garis di atas layar memanjang sesuai posisi. Bukan loop: bergerak hanya saat user scroll.
   const gridBg = document.querySelector('.bg-grid');
   const heroEl = document.querySelector('.hero');
+  // Kata hero menuju putih satu per satu, urut baca: judul dulu, lalu lead.
+  const heroWords = heroEl
+    ? [...heroEl.querySelectorAll('h1 .word'), ...splitWords(heroEl.querySelector('.lead') || document.createElement('p'))]
+    : [];
+  const lastW = new Array(heroWords.length).fill(-1);
   const bar = document.createElement('div');
   bar.className = 'progress';
   bar.setAttribute('aria-hidden', 'true');
@@ -266,11 +291,17 @@
     const max = document.documentElement.scrollHeight - window.innerHeight;
     gsap.set(bar, { scaleX: max > 0 ? Math.min(1, window.scrollY / max) : 0 });
     if (gridBg) gsap.set(gridBg, { y: -((window.scrollY * 0.25) % 32) });
-    // Teks hero menuju putih: penuh saat 60% tinggi hero sudah terlewat.
-    if (heroEl) {
-      const span = Math.max(heroEl.offsetHeight * 0.6, 1);
-      const t = Math.min(1, Math.max(0, window.scrollY / span));
-      heroEl.style.setProperty('--hero-white', t.toFixed(3));
+    // Kata hero menuju putih satu per satu. Semua kata putih saat 60% tinggi hero terlewat.
+    // Tiap kata punya jendela 30% dari total, mulai berurutan (kata pertama duluan).
+    if (heroEl && heroWords.length) {
+      const t = Math.min(1, Math.max(0, window.scrollY / Math.max(heroEl.offsetHeight * 0.6, 1)));
+      const n = heroWords.length;
+      heroWords.forEach((w, i) => {
+        const v = Math.round(Math.min(1, Math.max(0, (t - (i / n) * 0.7) / 0.3)) * 100) / 100;
+        if (v === lastW[i]) return;
+        lastW[i] = v;
+        w.style.setProperty('--w', v);
+      });
     }
   };
   const onScrollPaint = () => {
@@ -311,7 +342,7 @@
     window.removeEventListener('resize', onScrollPaint);
     bar.remove();
     if (gridBg) gsap.set(gridBg, { clearProps: 'all' });
-    heroEl?.style.removeProperty('--hero-white');
+    heroWords.forEach((w) => w.style.removeProperty('--w'));
     gsap.killTweensOf([bot, ring, ...segs, ...eyes].filter(Boolean));
     gsap.set([bot, ring, ...segs, ...eyes].filter(Boolean), { clearProps: 'all' });
     cardWatch?.disconnect();

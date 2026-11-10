@@ -245,17 +245,10 @@ main {
   margin: 0 0 12px;
   line-height: 1.1;
   color: var(--ink);
-  color: color-mix(in srgb, #fff calc(var(--hero-white, 0) * 100%), var(--ink));
 }
-.accent {
-  color: var(--link);
-  color: color-mix(in srgb, #fff calc(var(--hero-white, 0) * 100%), var(--link));
-}
-/* Warna teks hero menuju putih saat user scroll (js/motion.js mengisi --hero-white, 0 sampai 1).
-   Tanpa JS atau reduced-motion, variabel tidak terisi dan warna tetap seperti biasa. */
+.accent { color: var(--link); }
 .lead {
   color: var(--muted);
-  color: color-mix(in srgb, #fff calc(var(--hero-white, 0) * 100%), var(--muted));
   font-size: var(--text-h3);
   max-width: 65ch;
   margin: 0 0 24px;
@@ -576,6 +569,9 @@ main {
 
 /* Hasil pecah teks. Kata tidak boleh putus di tengah. */
 .word { display: inline-block; white-space: nowrap; }
+/* Kata di hero menuju putih satu per satu saat user scroll. js/motion.js mengisi --w (0 sampai 1)
+   per kata. currentcolor = warna asli kata (ink, link, atau muted). Tanpa JS, --w kosong, warna tetap. */
+.hero .word { color: color-mix(in srgb, #fff calc(var(--w, 0) * 100%), currentcolor); }
 .char { display: inline-block; }
 
 /* Hormati pengaturan sistem: tanpa transisi, hero tampil langsung */
