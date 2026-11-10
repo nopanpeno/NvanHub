@@ -355,17 +355,30 @@ main {
   margin: 4px 0;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 16px 8px;
 }
 
-.tags li {
+/* Tag = tombol filter. Tampilan tetap kecil, area sentuh dilebarkan ke 44px lewat ::after.
+   Aktif (aria-pressed): isi biru, teks putih (5.1:1). */
+.tags button {
+  position: relative;
+  font: inherit;
   font-size: var(--text-meta);
   line-height: 1.4;
+  background: none;
   border: 1.5px solid var(--ink);
   border-radius: 2px;
   padding: 4px 8px;
   color: var(--ink);
+  cursor: pointer;
 }
+.tags button::after {
+  content: "";
+  position: absolute;
+  inset: -9px -4px;
+}
+.tags button:hover { text-decoration: underline; }
+.tags button[aria-pressed="true"] { background: var(--blue); color: #fff; }
 
 /* Cerita kartu: disclosure bawaan. Tombolnya pill kecil setinggi 44px, teks berganti sesuai keadaan. */
 .story summary {
