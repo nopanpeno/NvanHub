@@ -283,6 +283,23 @@
     ? [...heroEl.querySelectorAll('h1 .word'), ...splitWords(heroEl.querySelector('.lead') || document.createElement('p'))]
     : [];
   const lastW = new Array(heroWords.length).fill(-1);
+  // Kata di Tentang: tiap paragraf punya progres sendiri, dari posisinya di layar.
+  const aboutGroups = [...document.querySelectorAll('.about p')].map((p) => {
+    const words = splitWords(p);
+    return { p, words, last: new Array(words.length).fill(-1) };
+  });
+  const clamp01 = (v) => Math.min(1, Math.max(0, v));
+  // t (0 sampai 1) dibagi ke semua kata: tiap kata punya jendela 30%, mulai berurutan.
+  // Nilai dibulatkan 2 desimal dan hanya ditulis kalau berubah.
+  const paintWords = (words, last, t) => {
+    const n = words.length;
+    words.forEach((w, i) => {
+      const v = Math.round(clamp01((t - (i / n) * 0.7) / 0.3) * 100) / 100;
+      if (v === last[i]) return;
+      last[i] = v;
+      w.style.setProperty('--w', v);
+    });
+  };
   const bar = document.createElement('div');
   bar.className = 'progress';
   bar.setAttribute('aria-hidden', 'true');
@@ -299,14 +316,18 @@
     // Kata hero menuju putih satu per satu. Semua kata putih saat 60% tinggi hero terlewat.
     // Tiap kata punya jendela 30% dari total, mulai berurutan (kata pertama duluan).
     if (heroEl && heroWords.length) {
-      const t = Math.min(1, Math.max(0, window.scrollY / Math.max(heroEl.offsetHeight * 0.6, 1)));
-      const n = heroWords.length;
-      heroWords.forEach((w, i) => {
-        const v = Math.round(Math.min(1, Math.max(0, (t - (i / n) * 0.7) / 0.3)) * 100) / 100;
-        if (v === lastW[i]) return;
-        lastW[i] = v;
-        w.style.setProperty('--w', v);
-      });
+      paintWords(heroWords, lastW, clamp01(window.scrollY / Math.max(heroEl.offsetHeight * 0.6, 1)));
+    }
+    // Kata di Tentang: paragraf mulai menyala saat ujung atasnya naik dari 92% tinggi layar,
+    // penuh putih di 37%. Di dasar halaman semua putih, supaya paragraf terakhir tidak
+    // tertahan kalau halaman tidak bisa digulung lebih jauh.
+    if (aboutGroups.length) {
+      const vh = window.innerHeight;
+      const atEnd = max > 0 && window.scrollY >= max - 2;
+      for (const g of aboutGroups) {
+        const top = g.p.getBoundingClientRect().top;
+        paintWords(g.words, g.last, atEnd ? 1 : clamp01((vh * 0.92 - top) / (vh * 0.55)));
+      }
     }
   };
   const onScrollPaint = () => {
@@ -316,6 +337,9 @@
   };
   window.addEventListener('scroll', onScrollPaint, { passive: true });
   window.addEventListener('resize', onScrollPaint);
+  // Tinggi halaman berubah tanpa scroll (kartu selesai dimuat, filter): hitung ulang posisi.
+  const pageSize = 'ResizeObserver' in window ? new ResizeObserver(onScrollPaint) : null;
+  pageSize?.observe(document.body);
   paintScroll();
 
   // Mata maskot menoleh ke kursor, selangkah piksel. Hanya untuk mouse. Bukan loop.
@@ -347,7 +371,8 @@
     window.removeEventListener('resize', onScrollPaint);
     bar.remove();
     gsap.set([gridBg, starsFar, starsNear].filter(Boolean), { clearProps: 'all' });
-    heroWords.forEach((w) => w.style.removeProperty('--w'));
+    pageSize?.disconnect();
+    [...heroWords, ...aboutGroups.flatMap((g) => g.words)].forEach((w) => w.style.removeProperty('--w'));
     gsap.killTweensOf([bot, ring, ...segs, ...eyes].filter(Boolean));
     gsap.set([bot, ring, ...segs, ...eyes].filter(Boolean), { clearProps: 'all' });
     cardWatch?.disconnect();
