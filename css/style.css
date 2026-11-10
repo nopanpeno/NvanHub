@@ -84,6 +84,18 @@ body {
   background-size: 32px 32px, 32px 32px, 32px 32px;
   background-position: 0 0, 1px 1px, 1px 1px;
 }
+/* Kotak grid menyala dekat kursor (js/motion.js). Anak .bg-grid, jadi ikut bergeser bersama grid.
+   Fill rata warna sky (dekorasi saja), tanpa glow. Hanya opacity yang dianimasi. */
+.grid-glow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 31px;
+  height: 31px;
+  background: var(--sky);
+  opacity: 0;
+  pointer-events: none;
+}
 /* Bintang pixel: kotak kecil tersebar, warna sky (dekorasi saja), dibuat redup lewat opacity
    supaya tidak mengganggu teks. */
 .bg-stars-far {
