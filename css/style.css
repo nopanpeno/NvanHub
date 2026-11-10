@@ -300,8 +300,16 @@ main {
   -webkit-mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
   mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
 }
-.btn:hover { background: var(--blue-hover); transform: translate(-1px, -1px); }
+/* Hover: tombol naik 2px dan bayangan ikut memanjang (bayangan berubah langsung, gerak tombol 120ms).
+   Ditekan: tombol turun menutup bayangan. Panah menggeser 3px saat hover, hanya kalau gerak boleh. */
+.btn:hover { background: var(--blue-hover); transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--shadow-color); }
 .btn:active { background: var(--blue-pressed); transform: translate(3px, 3px); box-shadow: 0 0 0 var(--shadow-color); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn::after { transition: transform 120ms ease-out; }
+  .btn:hover::after { transform: translateX(3px); }
+  .btn:active::after { transform: none; }
+}
 
 /* Proyek */
 .projects { padding-bottom: 48px; }

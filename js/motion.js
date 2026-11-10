@@ -116,7 +116,17 @@
     gsap.fromTo(el, { opacity: 0 }, { opacity: 1, duration: dur.fast, ease: ease.out, clearProps: 'opacity' });
   }
 
-  window.NvanMotion = { canMotion, ease, dur, revealCards, fadeIn };
+  // Dipakai main.js saat topik ganti: kartu lama pudar dulu (opacity saja, 150ms, ease-in), baru
+  // diganti. done selalu dipanggil, juga saat gerak mati atau tidak ada kartu.
+  function fadeOut(els, done) {
+    cardWatch?.disconnect(); // kartu lama tidak boleh dimunculkan lagi oleh pemantau scroll
+    cardWatch = null;
+    if (!canMotion() || els.length === 0) { done(); return; }
+    gsap.killTweensOf(els);
+    gsap.to(els, { opacity: 0, duration: dur.fast, ease: ease.in, onComplete: done });
+  }
+
+  window.NvanMotion = { canMotion, ease, dur, revealCards, fadeIn, fadeOut };
 
   if (!canMotion()) {
     root.classList.remove('motion'); // GSAP gagal dimuat: jangan sembunyikan apa pun
@@ -358,6 +368,15 @@
     gsap.set(eyes, { x, y });
   };
   if (bot) window.addEventListener('pointermove', lookAt, { passive: true });
+
+  // Cerita kartu terbuka: isi naik 8px sambil muncul (transform dan opacity saja, 200ms).
+  // Tinggi kartu tetap berubah langsung (bawaan <details>), tidak dianimasi.
+  document.addEventListener('toggle', (ev) => {
+    const box = ev.target;
+    if (!(box instanceof HTMLDetailsElement) || !box.open || !box.classList.contains('story') || reduce.matches) return;
+    const text = box.querySelector('p');
+    if (text) gsap.fromTo(text, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: dur.base, ease: ease.out, clearProps: 'opacity,transform' });
+  }, true);
 
   // User nyalakan reduced-motion saat animasi jalan: hentikan semua, tampilkan langsung.
   reduce.addEventListener('change', () => {
