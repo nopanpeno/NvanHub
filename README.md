@@ -39,7 +39,7 @@ Tambah kolom `story` kalau mau cerita "kenapa aku bikin ini":
 "story": "Dua tiga kalimat. Kenapa dibuat, apa yang dipelajari."
 ```
 
-Kartu yang punya `story` dapat tombol "Baca ceritanya" yang membuka teks di tempat. Kartu tanpa `story` tampil seperti biasa. Teks cerita ikut dicari di kolom cari. Jaga tetap pendek (sekitar 200 karakter), supaya kartu tidak terlalu panjang di HP.
+Kartu yang punya `story` dapat tombol "Baca ceritanya" yang membuka teks di tempat. Kartu tanpa `story` tampil seperti biasa. Jaga tetap pendek (sekitar 200 karakter), supaya kartu tidak terlalu panjang di HP.
 
 ## Ubah ucapan robot
 
@@ -53,7 +53,7 @@ Fun fact di bagian Tentang berupa paragraf biasa di `index.html`. Ubah langsung 
 
 - `index.html`: kerangka halaman
 - `css/style.css`: gaya dan palet
-- `js/main.js`: render kartu, cari, dan filter topik
+- `js/main.js`: render kartu dan filter topik
 - `js/motion.js`: animasi (hormati `prefers-reduced-motion`)
 - `js/mascot.js`: balon ucapan robot
 - `data/projects.json`: daftar proyek

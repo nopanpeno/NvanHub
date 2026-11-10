@@ -103,7 +103,7 @@
     bottomEls = [];
   }
 
-  // Dipakai main.js. animate=false (mengetik di kolom cari): kartu ganti tanpa gerak.
+  // Dipakai main.js. animate=false: kartu ganti tanpa gerak.
   function revealCards(cards, animate = true) {
     cardWatch?.disconnect();
     cardWatch = animate ? enter(cards, cardFrom) : null;

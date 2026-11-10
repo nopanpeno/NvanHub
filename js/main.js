@@ -1,4 +1,4 @@
-// Baca data/projects.json, lalu gambar kartu. Bisa dicari dan difilter per tag.
+// Baca data/projects.json, lalu gambar kartu. Bisa difilter per topik.
 let allProjects = [];
 let activeTag = null;
 
@@ -80,7 +80,6 @@ function makeLink(href, label, text) {
 }
 
 function clearFilters() {
-  document.getElementById('search').value = '';
   activeTag = null;
   render();
 }
@@ -116,21 +115,12 @@ function swapGrid(build, animate) {
   else run();
 }
 
-// animate=false: dipakai saat mengetik di kolom cari, kartu ganti tanpa gerak.
 function render(animate = true) {
-  const raw = document.getElementById('search').value;
-  document.getElementById('clear').hidden = raw === '';
-  const q = raw.trim().toLowerCase();
-  const shown = allProjects.filter((p) => {
-    const hay = [p.name, p.tagline, p.desc, p.story ?? '', ...p.tags].join(' ').toLowerCase();
-    const matchText = !q || hay.includes(q);
-    const matchTag = !activeTag || p.tags.includes(activeTag);
-    return matchText && matchTag;
-  });
+  const shown = allProjects.filter((p) => !activeTag || p.tags.includes(activeTag));
 
   swapGrid(() => {
     if (shown.length === 0) {
-      showMessage('Tidak ada proyek yang cocok. Coba kata kunci lain atau hapus filter.', 'Hapus filter', clearFilters);
+      showMessage('Tidak ada proyek di topik ini. Pilih topik lain atau hapus filter.', 'Hapus filter', clearFilters);
     } else {
       const cards = shown.map(makeCard);
       document.getElementById('grid').replaceChildren(...cards);
@@ -159,16 +149,6 @@ function renderTopics() {
 document.getElementById('tag').addEventListener('change', (e) => {
   activeTag = e.target.value || null;
   render();
-});
-
-document.getElementById('search').addEventListener('input', () => render(false));
-
-// Hapus teks pencarian saja. Topik tetap.
-document.getElementById('clear').addEventListener('click', () => {
-  const search = document.getElementById('search');
-  search.value = '';
-  render(false);
-  search.focus();
 });
 
 loadProjects()
