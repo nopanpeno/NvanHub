@@ -26,8 +26,15 @@ function makeCard(p) {
   const tags = document.createElement('ul');
   tags.className = 'tags';
   for (const t of p.tags) {
+    // Tag = tombol filter. Klik lagi di tag yang aktif untuk melepas filter.
     const li = document.createElement('li');
-    li.textContent = t;
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = t;
+    btn.dataset.tag = t;
+    btn.setAttribute('aria-pressed', String(t === activeTag));
+    btn.addEventListener('click', () => pickTag(t, p.name));
+    li.append(btn);
     tags.append(li);
   }
 
@@ -84,6 +91,15 @@ function clearFilters() {
   render();
 }
 
+// Tag di kartu diklik. Kartu dibangun ulang, jadi fokus dikembalikan ke tag yang sama
+// (di kartu yang sama) setelah grid selesai diganti.
+let focusAfter = null;
+function pickTag(tag, name) {
+  activeTag = activeTag === tag ? null : tag;
+  focusAfter = { tag, name };
+  render();
+}
+
 // Tampilkan satu pesan dengan satu tombol aksi di area grid.
 function showMessage(text, buttonText, onClick) {
   const box = document.createElement('div');
@@ -115,8 +131,17 @@ function swapGrid(build, animate) {
   else run();
 }
 
+// Kabar untuk pembaca layar tiap filter berganti. Render pertama tidak diumumkan.
+let rendered = false;
+function announce(n) {
+  const status = document.getElementById('status');
+  if (rendered && status) status.textContent = `${n} proyek${activeTag ? `, topik ${activeTag}` : ''}`;
+  rendered = true;
+}
+
 function render(animate = true) {
   const shown = allProjects.filter((p) => !activeTag || p.tags.includes(activeTag));
+  announce(shown.length);
 
   swapGrid(() => {
     if (shown.length === 0) {
@@ -125,6 +150,11 @@ function render(animate = true) {
       const cards = shown.map(makeCard);
       document.getElementById('grid').replaceChildren(...cards);
       window.NvanMotion?.revealCards(cards, animate);
+      if (focusAfter) {
+        const card = cards.find((c) => c.querySelector('h3')?.textContent === focusAfter.name);
+        card?.querySelector(`[data-tag="${CSS.escape(focusAfter.tag)}"]`)?.focus({ preventScroll: true });
+        focusAfter = null;
+      }
     }
   }, animate);
   document.getElementById('tag').value = activeTag ?? ''; // dropdown selalu ikut keadaan filter

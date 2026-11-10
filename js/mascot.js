@@ -27,6 +27,7 @@
     const text = list[said];
     bubble.textContent = text;
     bubble.hidden = false;
+    hinting = false;
     window.NvanMotion?.fadeIn(bubble);
     // Balon disembunyikan dari pembaca layar. Ucapan dikabarkan lewat wilayah live yang selalu ada.
     // Dikosongkan dulu supaya sapaan yang sama tetap terbaca ulang.
@@ -36,6 +37,25 @@
 
   function hide() {
     bubble.hidden = true;
+    hinting = false;
+  }
+
+  // Petunjuk tombol: kursor atau fokus keyboard di tombol hero, robot memberi tahu fungsinya.
+  // Hilang saat kursor atau fokus pergi. Hanya tampilan: tombolnya sendiri sudah punya nama untuk pembaca layar.
+  const HINT = 'Klik ini, nanti aku antar ke daftar proyek.';
+  let hinting = false;
+  function hint() {
+    bubble.textContent = HINT;
+    bubble.hidden = false;
+    hinting = true;
+    window.NvanMotion?.fadeIn(bubble);
+  }
+  const cta = document.querySelector('.hero .btn');
+  if (cta) {
+    cta.addEventListener('pointerenter', (ev) => { if (ev.pointerType === 'mouse') hint(); });
+    cta.addEventListener('pointerleave', () => { if (hinting) hide(); });
+    cta.addEventListener('focus', () => { if (cta.matches(':focus-visible')) hint(); });
+    cta.addEventListener('blur', () => { if (hinting) hide(); });
   }
 
   // Sekali klik, sapaan awal tidak muncul lagi.
