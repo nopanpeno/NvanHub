@@ -38,7 +38,12 @@
     bubble.hidden = true;
   }
 
-  mascot.addEventListener('click', say);
+  // Sekali klik, sapaan awal tidak muncul lagi.
+  let touched = false;
+  mascot.addEventListener('click', () => {
+    touched = true;
+    say();
+  });
   // Balon menutup saat klik di luar maskot, atau tekan Escape. Tidak ada timer yang menutupnya sendiri.
   document.addEventListener('click', (ev) => {
     if (!bubble.hidden && !ev.target.closest('.mascot-wrap')) hide();
@@ -57,5 +62,10 @@
     })
     .catch(() => {
       // Gagal: sapaan bawaan di atas tetap dipakai.
+    })
+    .finally(() => {
+      // Sapaan pertama: balon muncul sendiri sekali saat halaman siap. Tidak menutup sendiri,
+      // dan dilewati kalau user sudah klik maskot lebih dulu.
+      if (!touched && bubble.hidden) say();
     });
 })();
