@@ -13,6 +13,7 @@
   --sky: #38a8f0;           /* dekorasi saja, bukan teks */
   --shadow-color: #0b5aa8;  /* bayangan solid offset, tanpa blur */
   --grid: #0c2431;          /* garis grid latar, hiasan tipis */
+  --grid-dot: #1a4a63;      /* titik di persimpangan grid (sama dengan assets/bg/grid-dot.svg) */
 
   /* Maskot robot: biru cyber. Hanya fill rata, tanpa glow. Visor memakai warna latar. */
   --bot: #2b7bff;
@@ -61,20 +62,41 @@ body {
   overflow-x: clip;
 }
 
-/* Grid latar tetap di layar. js/motion.js menggesernya pelan saat scroll (parallax).
-   Tinggi lebih 32px (satu kotak) supaya geseran tidak membuka tepi kosong. */
-.bg-grid {
+/* Latar tetap di layar, tiga lapis. js/motion.js menggeser tiap lapis dengan kecepatan beda saat
+   scroll (parallax): bintang jauh 10%, grid 25%, bintang dekat 40%. Tidak ada loop.
+   Tiap lapis lebih tinggi satu ubin supaya geseran tidak membuka tepi kosong.
+   Garis grid digeser 1px supaya titik 3x3 di persimpangan tepat di tengah garis. */
+.bg-grid,
+.bg-stars {
   position: fixed;
   left: 0;
   top: 0;
   width: 100%;
-  height: calc(100% + 32px);
   z-index: -1;
   pointer-events: none;
+}
+.bg-grid {
+  height: calc(100% + 32px);
   background-image:
+    url("../assets/bg/grid-dot.svg"),
     linear-gradient(var(--grid) 1px, transparent 1px),
     linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 32px 32px;
+  background-size: 32px 32px, 32px 32px, 32px 32px;
+  background-position: 0 0, 1px 1px, 1px 1px;
+}
+/* Bintang pixel: kotak kecil tersebar, warna sky (dekorasi saja), dibuat redup lewat opacity
+   supaya tidak mengganggu teks. */
+.bg-stars-far {
+  height: calc(100% + 288px);
+  background-image: url("../assets/bg/stars-far.svg");
+  background-size: 288px 288px;
+  opacity: 0.3;
+}
+.bg-stars-near {
+  height: calc(100% + 400px);
+  background-image: url("../assets/bg/stars-near.svg");
+  background-size: 400px 400px;
+  opacity: 0.45;
 }
 
 /* Garis kemajuan scroll di tepi atas. Dibuat oleh js/motion.js. */
