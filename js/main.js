@@ -12,6 +12,12 @@ function makeCard(p) {
   const card = document.createElement('article');
   card.className = 'card';
 
+  // Nomor urut di daftar asli, jadi tetap sama saat kartu difilter. Hiasan saja.
+  const no = document.createElement('span');
+  no.className = 'card-no';
+  no.setAttribute('aria-hidden', 'true');
+  no.textContent = String(allProjects.indexOf(p) + 1).padStart(2, '0');
+
   const title = document.createElement('h3');
   title.textContent = p.name;
 
@@ -42,7 +48,7 @@ function makeCard(p) {
   links.className = 'links';
   links.append(makeLink(p.live, `Buka website ${p.name}`, 'Buka website'), makeLink(p.repo, `Lihat kode ${p.name}`, 'Lihat kode'));
 
-  card.append(title, tagline, desc, tags);
+  card.append(no, title, tagline, desc, tags);
   if (p.story) card.append(makeStory(p));
   card.append(links);
   return card;

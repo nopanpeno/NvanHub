@@ -372,12 +372,31 @@ main {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  position: relative;
   transition: transform 120ms ease-out;
 }
 /* Hover: kartu naik 2px, bayangan memanjang jadi 6px (bayangan berubah langsung, sama seperti .btn). */
 .card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--shadow-color); }
+/* Miring 1 derajat saat hover, arah bergantian ganjil-genap supaya deretan kartu tidak seragam.
+   Hanya kalau gerak boleh. Rotasi = transform, jadi tidak menggeser tata letak. */
+@media (prefers-reduced-motion: no-preference) {
+  .card:nth-child(odd):hover { transform: translate(-2px, -2px) rotate(-1deg); }
+  .card:nth-child(even):hover { transform: translate(-2px, -2px) rotate(1deg); }
+}
 
-.card h3 { margin: 0; font-family: var(--font-display); font-size: calc(var(--text-h3) * var(--display-scale)); font-weight: var(--weight-display); line-height: 1.2; }
+/* Nomor urut proyek di pojok kanan atas. Hiasan, aria-hidden. Pakai warna link (8.2:1 di atas surface). */
+.card-no {
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  font-family: var(--font-display);
+  font-size: calc(var(--text-body) * var(--display-scale));
+  font-weight: var(--weight-display);
+  line-height: 1;
+  color: var(--link);
+  pointer-events: none;
+}
+.card h3 { margin: 0; padding-right: 40px; font-family: var(--font-display); font-size: calc(var(--text-h3) * var(--display-scale)); font-weight: var(--weight-display); line-height: 1.2; }
 .tagline { margin: 0; }
 .desc { margin: 0; color: var(--muted); font-size: var(--text-secondary); }
 
