@@ -159,7 +159,7 @@ main {
   justify-content: space-between;
   padding: 32px var(--gutter) 0;
 }
-.brand { font-family: var(--font-display); font-weight: var(--weight-display); font-size: calc(var(--text-h2) * var(--display-scale)); }
+.brand { font-family: var(--font-display); font-weight: var(--weight-display); font-size: calc(var(--text-h2) * var(--display-scale)); line-height: 1; }
 .site-header nav { display: flex; gap: 16px; }
 .site-header nav a {
   display: inline-flex;
@@ -374,7 +374,8 @@ main {
   gap: 8px;
   transition: transform 120ms ease-out;
 }
-.card:hover { transform: translate(-2px, -2px); }
+/* Hover: kartu naik 2px, bayangan memanjang jadi 6px (bayangan berubah langsung, sama seperti .btn). */
+.card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--shadow-color); }
 
 .card h3 { margin: 0; font-family: var(--font-display); font-size: calc(var(--text-h3) * var(--display-scale)); font-weight: var(--weight-display); line-height: 1.2; }
 .tagline { margin: 0; }
@@ -432,7 +433,15 @@ main {
 .story p { margin: 8px 0 0; color: var(--muted); font-size: var(--text-secondary); line-height: 1.5; }
 
 /* Label tombol tidak dipotong. Kalau dua tombol tidak muat sebaris (kartu 3 kolom), yang kedua turun. */
-.links { display: flex; flex-wrap: wrap; gap: 0 16px; margin-top: auto; }
+/* Garis putus-putus memisahkan isi kartu dari tombolnya, jadi aksi selalu sejajar di dasar kartu. */
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 16px;
+  margin-top: auto;
+  padding-top: 8px;
+  border-top: 2px dashed var(--shadow-color);
+}
 .links a {
   display: inline-flex;
   align-items: center;
@@ -535,9 +544,20 @@ main {
 /* Tentang */
 .about { padding-bottom: 48px; max-width: 70ch; }
 .about p { color: var(--muted); }
+/* Fun fact: kotak kecil sebagai penutup bagian. Kartu rata dengan bayangan solid, bukan gaya baru. */
+.about .fun-fact {
+  margin: 32px 0 0;
+  padding: 16px 24px;
+  background: var(--surface);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+}
 
 /* Footer */
 .site-footer {
+  margin-top: 16px;
+  border-top: 2px dashed var(--shadow-color);
   padding: 40px var(--gutter) 32px;
   color: var(--muted);
   font-size: var(--text-secondary);
