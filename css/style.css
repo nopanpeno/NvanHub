@@ -544,15 +544,6 @@ main {
 /* Tentang */
 .about { padding-bottom: 48px; max-width: 70ch; }
 .about p { color: var(--muted); }
-/* Fun fact: kotak kecil sebagai penutup bagian. Kartu rata dengan bayangan solid, bukan gaya baru. */
-.about .fun-fact {
-  margin: 32px 0 0;
-  padding: 16px 24px;
-  background: var(--surface);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: var(--shadow);
-}
 
 /* Footer */
 .site-footer {
