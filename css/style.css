@@ -272,6 +272,37 @@ main {
     border-right: 0;
   }
 }
+/* Robot pojok: muncul hanya saat petunjuk "Buka website" (js/mascot.js). Tetap di layar, tidak
+   menerima klik, jadi tidak menutupi tombol di bawahnya. Setengah ukuran hero: sel 3px, tetap tajam. */
+.dock {
+  position: fixed;
+  z-index: 5;
+  right: 16px;
+  bottom: 16px;
+  width: 72px;
+  pointer-events: none;
+}
+.dock[hidden] { display: none; }
+.dock .mascot { cursor: default; }
+.dock .bubble {
+  top: auto;
+  bottom: calc(100% + 12px);
+  left: auto;
+  right: 0;
+  width: max-content;
+  max-width: min(220px, calc(100vw - 32px));
+}
+/* Ekor balon menghadap ke bawah, ke robot. */
+.dock .bubble::before {
+  top: auto;
+  bottom: -8px;
+  left: auto;
+  right: 28px;
+  width: 12px;
+  height: 8px;
+  border: 2px solid var(--ink);
+  border-top: 0;
+}
 .hero h1 {
   font-family: var(--font-display);
   font-weight: var(--weight-display);
@@ -400,12 +431,14 @@ main {
 .story[open] .story-close { display: inline; }
 .story p { margin: 8px 0 0; color: var(--muted); font-size: var(--text-secondary); line-height: 1.5; }
 
-.links { display: flex; gap: 16px; margin-top: auto; }
+/* Label tombol tidak dipotong. Kalau dua tombol tidak muat sebaris (kartu 3 kolom), yang kedua turun. */
+.links { display: flex; flex-wrap: wrap; gap: 0 16px; margin-top: auto; }
 .links a {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   min-height: 44px;
+  white-space: nowrap;
   color: var(--link);
   text-decoration: none;
   font-weight: var(--weight-bold);
