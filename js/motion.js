@@ -1,4 +1,7 @@
-// Fondasi animasi. Butuh GSAP dari CDN.
+// Inti animasi: token gerak, elemen muncul saat scroll, scroll mulus, dan pembersihan.
+// Butuh GSAP (assets/vendor/gsap.min.js). Bagian lain dimuat setelah file ini dan memakai
+// window.NvanMotion: motion-hero.js (judul dan maskot), motion-scroll.js (efek saat scroll),
+// motion-glow.js (kotak grid menyala).
 // Tanpa GSAP, atau saat user minta gerak dikurangi, halaman tampil biasa tanpa gerak.
 (() => {
   const root = document.documentElement;
@@ -7,8 +10,13 @@
   const ease = { out: 'power2.out', in: 'power2.in' }; // tanpa bounce atau elastic
   const dur = { fast: 0.15, base: 0.2, slow: 0.3 };
   const STAGGER = 0.03; // batas 30ms per item
+  const clamp01 = (v) => Math.min(1, Math.max(0, v));
 
-  let intro = null;
+  // Bagian lain (hero, scroll, glow) mendaftarkan pembersihan di sini. Dijalankan saat user
+  // menyalakan reduced-motion ketika animasi sedang jalan.
+  const cleanups = [];
+  const onReduce = (fn) => cleanups.push(fn);
+
   let cardWatch = null;
   let sectionWatch = null;
   let bottomWatch = null; // pemantau bagian bawah (tentang, footer)
@@ -126,118 +134,12 @@
     gsap.to(els, { opacity: 0, duration: dur.fast, ease: ease.in, onComplete: done });
   }
 
-  window.NvanMotion = { canMotion, ease, dur, revealCards, fadeIn, fadeOut };
+  window.NvanMotion = { canMotion, ease, dur, stagger: STAGGER, clamp01, onReduce, revealCards, fadeIn, fadeOut };
 
   if (!canMotion()) {
     root.classList.remove('motion'); // GSAP gagal dimuat: jangan sembunyikan apa pun
     return;
   }
-
-  // Pecah teks jadi kata lalu huruf. Teks asli tetap terbaca lewat aria-label.
-  function splitChars(el) {
-    el.setAttribute('aria-label', el.textContent.replace(/\s+/g, ' ').trim());
-    const chars = [];
-    const walk = (node) => {
-      for (const child of [...node.childNodes]) {
-        if (child.nodeType === Node.ELEMENT_NODE) { walk(child); continue; }
-        if (child.nodeType !== Node.TEXT_NODE) continue;
-        const frag = document.createDocumentFragment();
-        for (const part of child.textContent.split(/(\s+)/)) {
-          if (!part) continue;
-          if (/^\s+$/.test(part)) { frag.append(' '); continue; }
-          const word = document.createElement('span');
-          word.className = 'word';
-          word.setAttribute('aria-hidden', 'true');
-          for (const ch of part) {
-            const c = document.createElement('span');
-            c.className = 'char';
-            c.textContent = ch;
-            word.append(c);
-            chars.push(c);
-          }
-          frag.append(word);
-        }
-        child.replaceWith(frag);
-      }
-    };
-    walk(el);
-    return chars;
-  }
-
-  // Pecah teks jadi kata saja (tanpa huruf). Teks tetap terbaca pembaca layar apa adanya.
-  function splitWords(el) {
-    const words = [];
-    for (const node of [...el.childNodes]) {
-      if (node.nodeType !== Node.TEXT_NODE) continue;
-      const frag = document.createDocumentFragment();
-      for (const part of node.textContent.split(/(\s+)/)) {
-        if (!part) continue;
-        if (/^\s+$/.test(part)) { frag.append(' '); continue; }
-        const w = document.createElement('span');
-        w.className = 'word';
-        w.textContent = part;
-        frag.append(w);
-        words.push(w);
-      }
-      node.replaceWith(frag);
-    }
-    return words;
-  }
-
-  // Hero masuk: huruf judul satu per satu, lalu teks. Tombol tampil langsung, tanpa animasi masuk.
-  function heroIntro() {
-    const h1 = document.querySelector('.hero h1');
-    const lead = document.querySelector('.hero .lead');
-    if (!h1 || !lead) return null;
-
-    const chars = splitChars(h1);
-    gsap.set(chars, { opacity: 0, y: 12 });
-    gsap.set(h1, { opacity: 1 });
-
-    const tl = gsap.timeline({ defaults: { ease: ease.out } })
-      .to(chars, { opacity: 1, y: 0, duration: dur.slow, stagger: STAGGER })
-      .fromTo(lead, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: dur.slow }, '-=0.15');
-    // Maskot turun dan muncul bersama huruf pertama.
-    if (mascot) tl.fromTo(mascot, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: dur.slow }, 0);
-    return tl;
-  }
-
-  // Maskot: satu loop utama (cincin holo naik turun per piksel, segmen cincin menyala
-  // searah jarum jam, kedip), plus lompat kecil saat disentuh. Ini satu-satunya loop di layar.
-  const mascot = document.querySelector('.hero .mascot');
-  const bot = mascot?.querySelector('svg');
-  const ring = mascot?.querySelector('.m-ring');
-  const segs = mascot ? [...mascot.querySelectorAll('.seg')] : [];
-  const eyes = mascot ? [...mascot.querySelectorAll('.eye')] : [];
-  let loop = null;
-  let hop = null;
-
-  function mascotLoop() {
-    if (!ring || !segs.length) return null;
-    gsap.set(segs, { opacity: 0.45 });
-    const tl = gsap.timeline({ repeat: -1 });
-    tl.set(ring, { y: 0 }, 0).set(ring, { y: -1 }, 1.6);
-    // Satu segmen menyala tiap 250ms. Dipasang lewat call: dua set di properti sama saling timpa.
-    segs.forEach((_, i) => {
-      tl.call(() => gsap.set(segs, { opacity: (j) => (j === i ? 1 : 0.45) }), null, i * 0.25);
-    });
-    tl.call(() => gsap.set(segs, { opacity: 0.45 }), null, segs.length * 0.25);
-    tl.set(eyes, { scaleY: 0.15, transformOrigin: '50% 50%' }, 2.6).set(eyes, { scaleY: 1 }, 2.75);
-    tl.set({}, {}, 3.2); // panjang loop 3.2 detik
-    return tl;
-  }
-
-  function mascotHop() {
-    if (!bot || (hop && hop.isActive())) return;
-    hop = gsap.timeline()
-      .to(bot, { y: -8, duration: dur.fast, ease: ease.out })
-      .to(bot, { y: 0, duration: dur.fast, ease: ease.in });
-  }
-  mascot?.addEventListener('pointerenter', mascotHop);
-  mascot?.addEventListener('click', mascotHop);
-
-  intro = heroIntro();
-  loop = mascotLoop();
 
   // Bagian halaman di bawah hero muncul saat di-scroll.
   const SECTIONS = '.projects > .label, .controls, .about > *, .site-footer > *';
@@ -282,166 +184,6 @@
     target.focus({ preventScroll: true });
   });
 
-  // Latar dan penanda scroll: grid bergeser 25% kecepatan scroll (kotak 32px, jadi mulus),
-  // garis di atas layar memanjang sesuai posisi. Bukan loop: bergerak hanya saat user scroll.
-  const gridBg = document.querySelector('.bg-grid');
-  const starsFar = document.querySelector('.bg-stars-far');
-  const starsNear = document.querySelector('.bg-stars-near');
-  const heroEl = document.querySelector('.hero');
-  // Kata hero menuju putih satu per satu, urut baca: judul dulu, lalu lead.
-  // Kata di .accent (nama) dilewati: tetap biru.
-  const heroWords = heroEl
-    ? [...heroEl.querySelectorAll('h1 .word')].filter((w) => !w.closest('.accent')).concat(splitWords(heroEl.querySelector('.lead') || document.createElement('p')))
-    : [];
-  const lastW = new Array(heroWords.length).fill(-1);
-  // Kata di Tentang: tiap paragraf punya progres sendiri, dari posisinya di layar.
-  const aboutGroups = [...document.querySelectorAll('.about p')].map((p) => {
-    const words = splitWords(p);
-    return { p, words, last: new Array(words.length).fill(-1) };
-  });
-  const clamp01 = (v) => Math.min(1, Math.max(0, v));
-  // t (0 sampai 1) dibagi ke semua kata: tiap kata punya jendela 30%, mulai berurutan.
-  // Nilai dibulatkan 2 desimal dan hanya ditulis kalau berubah.
-  const paintWords = (words, last, t) => {
-    const n = words.length;
-    words.forEach((w, i) => {
-      const v = Math.round(clamp01((t - (i / n) * 0.7) / 0.3) * 100) / 100;
-      if (v === last[i]) return;
-      last[i] = v;
-      w.style.setProperty('--w', v);
-    });
-  };
-  // Nama di hero: kotak putih di belakang teks. Saat scroll, biru menyapu dari kiri ke kanan
-  // (scaleX), dan tiap huruf berganti putih tepat di tepi sapuan lewat variabel --c (0 sampai 1).
-  // Hanya jalan kalau gerak boleh. Tanpa ini nama tampil biru muda seperti biasa.
-  const accent = heroEl?.querySelector('h1 .accent');
-  const accentChars = accent ? [...accent.querySelectorAll('.char')] : [];
-  const lastC = new Array(accentChars.length).fill(-1);
-  let plate = null;
-  let fill = null;
-  let lastP = -1;
-  if (accent && accentChars.length) {
-    plate = document.createElement('span');
-    plate.className = 'plate';
-    plate.setAttribute('aria-hidden', 'true');
-    fill = document.createElement('span');
-    fill.className = 'plate-fill';
-    plate.append(fill);
-    accent.prepend(plate);
-    accent.classList.add('accent-plate');
-    // Kotak muncul bersama huruf pertama.
-    intro?.fromTo(plate, { opacity: 0 }, { opacity: 1, duration: dur.slow, ease: ease.out }, 0);
-  }
-  const paintAccent = (t) => {
-    if (!plate) return;
-    const p = Math.round(clamp01(t) * 1000) / 1000;
-    const edge = p * accent.offsetWidth; // tepi sapuan, dari sisi kiri kotak
-    // Baca semua ukuran dulu, baru tulis.
-    const cs = accentChars.map((ch) => Math.round(clamp01((edge - ch.offsetLeft) / Math.max(ch.offsetWidth, 1)) * 100) / 100);
-    if (p !== lastP) {
-      lastP = p;
-      gsap.set(fill, { scaleX: p });
-    }
-    cs.forEach((c, i) => {
-      if (c === lastC[i]) return;
-      lastC[i] = c;
-      accentChars[i].style.setProperty('--c', c);
-    });
-  };
-  const bar = document.createElement('div');
-  bar.className = 'progress';
-  bar.setAttribute('aria-hidden', 'true');
-  document.body.append(bar);
-  let scrollQueued = false;
-  const paintScroll = () => {
-    scrollQueued = false;
-    const max = document.documentElement.scrollHeight - window.innerHeight;
-    gsap.set(bar, { scaleX: max > 0 ? Math.min(1, window.scrollY / max) : 0 });
-    if (gridBg) gsap.set(gridBg, { y: -((window.scrollY * 0.25) % 32) });
-    // Dua lapis bintang: jauh pelan (10%), dekat lebih cepat (40%). Modulo = ukuran ubin.
-    if (starsFar) gsap.set(starsFar, { y: -((window.scrollY * 0.1) % 288) });
-    if (starsNear) gsap.set(starsNear, { y: -((window.scrollY * 0.4) % 400) });
-    // Kata hero menuju putih satu per satu. Semua kata putih saat 60% tinggi hero terlewat.
-    // Tiap kata punya jendela 30% dari total, mulai berurutan (kata pertama duluan).
-    if (heroEl && heroWords.length) {
-      paintWords(heroWords, lastW, clamp01(window.scrollY / Math.max(heroEl.offsetHeight * 0.6, 1)));
-    }
-    // Sapuan biru di nama: selesai di titik yang sama dengan kata hero (60% tinggi hero).
-    if (heroEl) paintAccent(window.scrollY / Math.max(heroEl.offsetHeight * 0.6, 1));
-    // Kata di Tentang: paragraf mulai menyala saat ujung atasnya naik dari 92% tinggi layar,
-    // penuh putih di 37%. Di dasar halaman semua putih, supaya paragraf terakhir tidak
-    // tertahan kalau halaman tidak bisa digulung lebih jauh.
-    if (aboutGroups.length) {
-      const vh = window.innerHeight;
-      const atEnd = max > 0 && window.scrollY >= max - 2;
-      for (const g of aboutGroups) {
-        const top = g.p.getBoundingClientRect().top;
-        paintWords(g.words, g.last, atEnd ? 1 : clamp01((vh * 0.92 - top) / (vh * 0.55)));
-      }
-    }
-  };
-  const onScrollPaint = () => {
-    if (scrollQueued) return;
-    scrollQueued = true;
-    requestAnimationFrame(paintScroll);
-  };
-  window.addEventListener('scroll', onScrollPaint, { passive: true });
-  window.addEventListener('resize', onScrollPaint);
-  // Tinggi halaman berubah tanpa scroll (kartu selesai dimuat, filter): hitung ulang posisi.
-  const pageSize = 'ResizeObserver' in window ? new ResizeObserver(onScrollPaint) : null;
-  pageSize?.observe(document.body);
-  paintScroll();
-
-  // Kotak grid di bawah mouse menyala sebentar lalu pudar (opacity 0.22 ke 0, 600ms). Sepuluh kotak
-  // dipakai bergantian. Hanya mouse. Bukan loop: tidak ada gerak kalau mouse diam.
-  // Kotak anak .bg-grid, jadi koordinatnya ruang grid: x = 32k + 2 dan y = 32j + 2 (garis grid ada di
-  // 32k + 1, digeser 1px), dan y layar + geseran grid (scrollY * 0.25 mod 32) = y grid.
-  const GLOW_MAX = 0.22;
-  const glowCells = [];
-  if (gridBg) {
-    for (let i = 0; i < 10; i++) {
-      const c = document.createElement('div');
-      c.className = 'grid-glow';
-      gridBg.append(c);
-      glowCells.push(c);
-    }
-  }
-  let glowNext = 0;
-  let glowCol = -1;
-  let glowRow = -1;
-  const glowAt = (ev) => {
-    if (ev.pointerType !== 'mouse' || reduce.matches || !glowCells.length) return;
-    const shift = (window.scrollY * 0.25) % 32;
-    const col = Math.floor((ev.clientX - 1) / 32);
-    const row = Math.floor((ev.clientY + shift - 1) / 32);
-    if (col === glowCol && row === glowRow) return; // masih di kotak yang sama
-    glowCol = col;
-    glowRow = row;
-    const cell = glowCells[glowNext];
-    glowNext = (glowNext + 1) % glowCells.length;
-    gsap.killTweensOf(cell);
-    gsap.set(cell, { x: col * 32 + 2, y: row * 32 + 2, opacity: GLOW_MAX });
-    gsap.to(cell, { opacity: 0, duration: 0.6, ease: ease.in });
-  };
-  window.addEventListener('pointermove', glowAt, { passive: true });
-
-  // Mata maskot menoleh ke kursor, selangkah piksel. Hanya untuk mouse. Bukan loop.
-  let lookX = 0;
-  let lookY = 0;
-  const lookAt = (ev) => {
-    if (!bot || ev.pointerType === 'touch') return;
-    const r = bot.getBoundingClientRect();
-    const dx = ev.clientX - (r.left + r.width / 2);
-    const dy = ev.clientY - (r.top + r.height / 2);
-    const x = Math.abs(dx) < 48 ? 0 : Math.sign(dx);
-    const y = Math.abs(dy) < 48 ? 0 : Math.sign(dy);
-    if (x === lookX && y === lookY) return;
-    lookX = x;
-    lookY = y;
-    gsap.set(eyes, { x, y });
-  };
-  if (bot) window.addEventListener('pointermove', lookAt, { passive: true });
-
   // Cerita kartu terbuka: isi naik 8px sambil muncul (transform dan opacity saja, 200ms).
   // Tinggi kartu tetap berubah langsung (bawaan <details>), tidak dianimasi.
   document.addEventListener('toggle', (ev) => {
@@ -454,28 +196,8 @@
   // User nyalakan reduced-motion saat animasi jalan: hentikan semua, tampilkan langsung.
   reduce.addEventListener('change', () => {
     if (!reduce.matches) return;
-    if (intro) intro.progress(1).kill();
-    loop?.kill();
-    hop?.kill();
+    cleanups.forEach((fn) => fn());
     stopScroll();
-    window.removeEventListener('pointermove', lookAt);
-    window.removeEventListener('pointermove', glowAt);
-    glowCells.forEach((c) => { gsap.killTweensOf(c); c.remove(); });
-    window.removeEventListener('scroll', onScrollPaint);
-    window.removeEventListener('resize', onScrollPaint);
-    bar.remove();
-    gsap.set([gridBg, starsFar, starsNear].filter(Boolean), { clearProps: 'all' });
-    pageSize?.disconnect();
-    [...heroWords, ...aboutGroups.flatMap((g) => g.words)].forEach((w) => w.style.removeProperty('--w'));
-    if (plate) {
-      gsap.killTweensOf([plate, fill]);
-      plate.remove();
-      plate = null;
-      accent.classList.remove('accent-plate');
-      accentChars.forEach((c) => c.style.removeProperty('--c'));
-    }
-    gsap.killTweensOf([bot, ring, ...segs, ...eyes].filter(Boolean));
-    gsap.set([bot, ring, ...segs, ...eyes].filter(Boolean), { clearProps: 'all' });
     cardWatch?.disconnect();
     sectionWatch?.disconnect();
     bottomWatch?.disconnect();

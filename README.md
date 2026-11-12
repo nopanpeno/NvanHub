@@ -2,7 +2,7 @@
 
 Web utama buat semua repo saya. Isinya kartu proyek, cerita singkat, dan tautan.
 
-Dibuat dengan HTML, CSS, dan JS biasa. Hosting di GitHub Pages. Animasi pakai GSAP dari CDN. Tanpa framework dan tanpa build.
+Dibuat dengan HTML, CSS, dan JS biasa. Hosting di GitHub Pages. Animasi pakai GSAP, font pakai Jersey 10. Keduanya disimpan di repo, tanpa CDN. Tanpa framework dan tanpa build.
 
 ## Jalankan di komputer sendiri
 
@@ -54,9 +54,37 @@ Fun fact di bagian Tentang berupa paragraf biasa di `index.html`. Ubah langsung 
 - `index.html`: kerangka halaman
 - `css/style.css`: gaya dan palet
 - `js/main.js`: render kartu dan filter topik
-- `js/motion.js`: animasi (hormati `prefers-reduced-motion`)
+- `js/motion.js`: inti animasi (token gerak, elemen muncul saat scroll, scroll mulus, pembersihan reduced-motion)
+- `js/motion-hero.js`: judul masuk dan maskot (loop, lompat, mata mengikuti kursor)
+- `js/motion-scroll.js`: efek saat scroll (parallax, garis kemajuan, kata jadi putih, kotak nama)
+- `js/motion-glow.js`: kotak grid menyala di bawah mouse
 - `js/mascot.js`: balon ucapan robot
 - `data/projects.json`: daftar proyek
 - `data/mascot.json`: daftar sapaan robot
 - `assets/icons/`: ikon pixel 8×8
+- `assets/fonts/`: font Jersey 10 dan lisensinya (OFL)
+- `assets/vendor/`: GSAP 3.12.5
+- `scripts/`: cek otomatis (`check.mjs`, `smoke.cjs`)
+- `.github/workflows/check.yml`: menjalankan cek tiap PR
 - `.ux-profile.md`: aturan tampilan dan gaya proyek
+
+## Tambah file JS atau animasi baru
+
+Semua file di `js/` harus dimuat di `index.html` (dicek otomatis). Animasi baru ikut aturan reduced-motion: pakai `window.NvanMotion` dari `js/motion.js`, mulai file dengan cek `M.canMotion()`, dan daftarkan pembersihan lewat `M.onReduce(() => { ... })`.
+
+## Cek otomatis
+
+Dua cek jalan di GitHub Actions tiap PR dan push ke `main`. Bisa dijalankan sendiri di komputer:
+
+```
+node scripts/check.mjs
+```
+
+Memeriksa `projects.json` dan `mascot.json` (kolom wajib, tautan https, panjang), syntax semua file JS, file yang dirujuk `index.html` dan CSS harus ada, dan tidak ada yang dimuat dari CDN.
+
+```
+npm install --no-save playwright
+node scripts/smoke.cjs
+```
+
+Membuka halaman di browser pada 1280px, 375px, dan reduced-motion. Memeriksa tidak ada error JS atau request gagal, jumlah kartu sama dengan jumlah proyek, tidak ada scroll horizontal, dan font termuat.
