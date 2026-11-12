@@ -1,5 +1,6 @@
 // Efek saat scroll: grid dan bintang bergeser (parallax), garis kemajuan di atas layar,
-// kata hero dan Tentang menuju putih, kotak nama di hero. Semuanya hanya cat ulang saat scroll, bukan loop.
+// kata hero dan Tentang menuju putih, kotak nama di hero, garis footer. Semuanya hanya bergerak saat
+// user scroll, bukan loop.
 (() => {
   const M = window.NvanMotion;
   if (!M || !M.canMotion()) return; // tanpa GSAP atau gerak dikurangi: tidak ada animasi
@@ -70,6 +71,21 @@
       accentChars[i].style.setProperty('--c', c);
     });
   };
+  // Garis di atas footer: titik-titik pixel meluncur masuk dari kiri sambil footer naik ke layar
+  // (translateX saja), lalu kotak kepala berhenti di ujung kanan. Di dasar halaman selalu penuh.
+  // Tanpa ini (tanpa JS atau gerak dikurangi) garis tampil penuh dan diam.
+  const footer = document.querySelector('.site-footer');
+  const footerFill = footer?.querySelector('.footer-line-fill');
+  let lastF = -1;
+  const paintFooter = (atEnd) => {
+    if (!footerFill) return;
+    const r = footer.getBoundingClientRect();
+    const t = atEnd ? 1 : clamp01((window.innerHeight - r.top) / Math.max(r.height * 0.8, 1));
+    const p = Math.round(t * 1000) / 1000;
+    if (p === lastF) return;
+    lastF = p;
+    gsap.set(footerFill, { xPercent: -(1 - p) * 100 });
+  };
   const bar = document.createElement('div');
   bar.className = 'progress';
   bar.setAttribute('aria-hidden', 'true');
@@ -78,6 +94,7 @@
   const paintScroll = () => {
     scrollQueued = false;
     const max = document.documentElement.scrollHeight - window.innerHeight;
+    const atEnd = max > 0 && window.scrollY >= max - 2;
     gsap.set(bar, { scaleX: max > 0 ? Math.min(1, window.scrollY / max) : 0 });
     if (gridBg) gsap.set(gridBg, { y: -((window.scrollY * 0.25) % 32) });
     // Dua lapis bintang: jauh pelan (10%), dekat lebih cepat (40%). Modulo = ukuran ubin.
@@ -95,12 +112,12 @@
     // tertahan kalau halaman tidak bisa digulung lebih jauh.
     if (aboutGroups.length) {
       const vh = window.innerHeight;
-      const atEnd = max > 0 && window.scrollY >= max - 2;
       for (const g of aboutGroups) {
         const top = g.p.getBoundingClientRect().top;
         paintWords(g.words, g.last, atEnd ? 1 : clamp01((vh * 0.92 - top) / (vh * 0.55)));
       }
     }
+    paintFooter(atEnd);
   };
   const onScrollPaint = () => {
     if (scrollQueued) return;
@@ -120,6 +137,7 @@
     bar.remove();
     gsap.set([gridBg, starsFar, starsNear].filter(Boolean), { clearProps: 'all' });
     pageSize?.disconnect();
+    if (footerFill) gsap.set(footerFill, { clearProps: 'all' });
     [...heroWords, ...aboutGroups.flatMap((g) => g.words)].forEach((w) => w.style.removeProperty('--w'));
     if (plate) {
       gsap.killTweensOf([plate, fill]);

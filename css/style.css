@@ -334,15 +334,16 @@ main {
   position: relative;
   display: inline-block;
   isolation: isolate;
-  padding: 0 8px;
-  margin: 0 8px 0 -8px; /* teks tetap sejajar kolom, titik di belakang nama tidak tertimpa kotak */
+  line-height: 0.95; /* kotak rapat ke huruf, lebih pendek dari baris judul (1.1) */
+  padding: 0 6px;
+  margin: 0 0 0 -6px; /* teks tetap sejajar kolom. Titik di akhir nama ikut di dalam kotak. */
 }
 .accent-plate .plate {
   position: absolute;
   inset: 0;
   z-index: -1;
   background: #fff;
-  box-shadow: 4px 4px 0 var(--shadow-color);
+  box-shadow: 3px 3px 0 var(--shadow-color);
 }
 .accent-plate .plate-fill {
   position: absolute;
@@ -611,14 +612,48 @@ main {
 /* Tentang */
 .about { padding-bottom: 48px; max-width: 70ch; }
 .about p { color: var(--muted); }
+/* Sub-bab Fun fact (h3) di dalam Tentang: tampil seperti judul Tentang (kelas .label, ukuran sama),
+   hanya diberi jarak atas. Tingkat judulnya h3 supaya urutan di pembaca layar benar. Judul pixel di
+   ukuran kartu (24px) terlihat lebih kecil dari teks isinya, jadi ukurannya tidak diturunkan.
+   Teks isinya sedikit lebih besar dari paragraf Tentang (ukuran lead, 19px) supaya terasa sebagai
+   sorotan. Tetap ikut animasi kata dan muncul saat scroll. */
+.label-sub { margin-top: 40px; }
+.about .fun-fact { font-size: var(--text-h3); }
 
 /* Footer */
 .site-footer {
+  position: relative;
   margin-top: 16px;
-  border-top: 2px dashed var(--shadow-color);
-  padding: 40px var(--gutter) 32px;
+  padding: 48px var(--gutter) 32px;
   color: var(--muted);
   font-size: var(--text-secondary);
+}
+/* Garis pemisah di tepi atas footer, selebar layar: titik-titik pixel biru (8x4px, jeda 8px) dengan
+   kotak kepala 8px berwarna link di ujung kanan. Kotak penampung memotong isinya, jadi titik tidak
+   pernah keluar. js/motion-scroll.js menggeser .footer-line-fill (translateX) dari kiri saat footer
+   naik ke layar, jadi garis seperti meluncur masuk. Tanpa JS atau gerak dikurangi: tampil penuh, diam. */
+.footer-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 8px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.footer-line-fill {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(90deg, var(--shadow-color) 0 8px, transparent 8px 16px) center / 100% 4px no-repeat;
+}
+.footer-line-fill::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--link);
 }
 .site-footer p { margin: 0; }
 .links-list {
