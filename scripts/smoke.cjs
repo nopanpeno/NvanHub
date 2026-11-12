@@ -44,6 +44,24 @@ async function visit(browser, base, { width, reduced }) {
     expect((await page.locator('.plate').count()) === 1, `[${label}] kotak nama tidak ada`);
   }
   expect((await page.evaluate(() => getComputedStyle(document.querySelector('.hero h1')).opacity)) === '1', `[${label}] judul hero tidak terlihat`);
+  // Titik di akhir nama ada di dalam kotak nama (bukan di luar).
+  expect((await page.textContent('.accent')).trim().endsWith('.'), `[${label}] titik di akhir nama keluar dari .accent`);
+  // Sub-bab Fun fact ada di dalam Tentang, tingkat h3.
+  expect((await page.locator('.about h3.label-sub').count()) === 1, `[${label}] sub-bab Fun fact tidak ada di Tentang`);
+  // Garis footer: penuh di dasar halaman (translateX 0 atau tanpa transform), baik animasi nyala maupun mati.
+  await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.waitForTimeout(500);
+  const lineX = await page.evaluate(() => {
+    const t = getComputedStyle(document.querySelector('.footer-line-fill')).transform;
+    return t === 'none' ? 0 : new DOMMatrixReadOnly(t).m41;
+  });
+  expect(Math.abs(lineX) < 1, `[${label}] garis footer belum penuh di dasar halaman (geser ${lineX}px)`);
+  if (!reduced) {
+    await page.evaluate(() => window.scrollTo(0, 0));
+    await page.waitForTimeout(400);
+    const hidden = await page.evaluate(() => new DOMMatrixReadOnly(getComputedStyle(document.querySelector('.footer-line-fill')).transform).m41);
+    expect(hidden < -100, `[${label}] garis footer harus tersembunyi saat footer di luar layar (geser ${hidden}px)`);
+  }
   await ctx.close();
 }
 
