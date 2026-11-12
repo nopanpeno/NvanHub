@@ -312,6 +312,42 @@ main {
   color: var(--ink);
 }
 .accent { color: var(--link); }
+
+/* Nama di hero saat gerak boleh (js/motion.js menambah kelas .accent-plate): kotak putih di belakang
+   teks. Saat scroll, biru menyapu dari kiri ke kanan (.plate-fill, scaleX). Tiap huruf memakai
+   gradien dengan tepi keras di --c (0 sampai 1, diisi JS): bagian di kiri tepi putih, di kanan biru,
+   jadi teks berganti warna tepat di tepi sapuan. Putih di atas biru dan biru di atas putih sama-sama 5.1:1.
+   Tanpa JS atau reduced-motion: kelas ini tidak ada, nama tetap biru muda seperti biasa. */
+.accent-plate {
+  position: relative;
+  display: inline-block;
+  isolation: isolate;
+  padding: 0 8px;
+  margin: 0 8px 0 -8px; /* teks tetap sejajar kolom, titik di belakang nama tidak tertimpa kotak */
+}
+.accent-plate .plate {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--shadow-color);
+}
+.accent-plate .plate-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--blue);
+  transform: scaleX(0);
+  transform-origin: left;
+}
+.accent-plate .char { --c: 0; color: var(--blue); }
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+  .accent-plate .char {
+    color: transparent;
+    background-image: linear-gradient(90deg, #fff calc(var(--c) * 100%), var(--blue) calc(var(--c) * 100%));
+    -webkit-background-clip: text;
+    background-clip: text;
+  }
+}
 .lead {
   color: var(--muted);
   font-size: var(--text-h3);
