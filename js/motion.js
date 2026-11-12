@@ -311,6 +311,43 @@
       w.style.setProperty('--w', v);
     });
   };
+  // Nama di hero: kotak putih di belakang teks. Saat scroll, biru menyapu dari kiri ke kanan
+  // (scaleX), dan tiap huruf berganti putih tepat di tepi sapuan lewat variabel --c (0 sampai 1).
+  // Hanya jalan kalau gerak boleh. Tanpa ini nama tampil biru muda seperti biasa.
+  const accent = heroEl?.querySelector('h1 .accent');
+  const accentChars = accent ? [...accent.querySelectorAll('.char')] : [];
+  const lastC = new Array(accentChars.length).fill(-1);
+  let plate = null;
+  let fill = null;
+  let lastP = -1;
+  if (accent && accentChars.length) {
+    plate = document.createElement('span');
+    plate.className = 'plate';
+    plate.setAttribute('aria-hidden', 'true');
+    fill = document.createElement('span');
+    fill.className = 'plate-fill';
+    plate.append(fill);
+    accent.prepend(plate);
+    accent.classList.add('accent-plate');
+    // Kotak muncul bersama huruf pertama.
+    intro?.fromTo(plate, { opacity: 0 }, { opacity: 1, duration: dur.slow, ease: ease.out }, 0);
+  }
+  const paintAccent = (t) => {
+    if (!plate) return;
+    const p = Math.round(clamp01(t) * 1000) / 1000;
+    const edge = p * accent.offsetWidth; // tepi sapuan, dari sisi kiri kotak
+    // Baca semua ukuran dulu, baru tulis.
+    const cs = accentChars.map((ch) => Math.round(clamp01((edge - ch.offsetLeft) / Math.max(ch.offsetWidth, 1)) * 100) / 100);
+    if (p !== lastP) {
+      lastP = p;
+      gsap.set(fill, { scaleX: p });
+    }
+    cs.forEach((c, i) => {
+      if (c === lastC[i]) return;
+      lastC[i] = c;
+      accentChars[i].style.setProperty('--c', c);
+    });
+  };
   const bar = document.createElement('div');
   bar.className = 'progress';
   bar.setAttribute('aria-hidden', 'true');
@@ -329,6 +366,8 @@
     if (heroEl && heroWords.length) {
       paintWords(heroWords, lastW, clamp01(window.scrollY / Math.max(heroEl.offsetHeight * 0.6, 1)));
     }
+    // Sapuan biru di nama: selesai di titik yang sama dengan kata hero (60% tinggi hero).
+    if (heroEl) paintAccent(window.scrollY / Math.max(heroEl.offsetHeight * 0.6, 1));
     // Kata di Tentang: paragraf mulai menyala saat ujung atasnya naik dari 92% tinggi layar,
     // penuh putih di 37%. Di dasar halaman semua putih, supaya paragraf terakhir tidak
     // tertahan kalau halaman tidak bisa digulung lebih jauh.
@@ -428,6 +467,13 @@
     gsap.set([gridBg, starsFar, starsNear].filter(Boolean), { clearProps: 'all' });
     pageSize?.disconnect();
     [...heroWords, ...aboutGroups.flatMap((g) => g.words)].forEach((w) => w.style.removeProperty('--w'));
+    if (plate) {
+      gsap.killTweensOf([plate, fill]);
+      plate.remove();
+      plate = null;
+      accent.classList.remove('accent-plate');
+      accentChars.forEach((c) => c.style.removeProperty('--c'));
+    }
     gsap.killTweensOf([bot, ring, ...segs, ...eyes].filter(Boolean));
     gsap.set([bot, ring, ...segs, ...eyes].filter(Boolean), { clearProps: 'all' });
     cardWatch?.disconnect();
