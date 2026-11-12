@@ -66,7 +66,6 @@
   const wrap = mascot.closest('.mascot-wrap');
   const dock = document.createElement('div');
   dock.className = 'dock';
-  dock.hidden = true;
   dock.setAttribute('aria-hidden', 'true');
   const dockBot = document.createElement('div');
   dockBot.className = 'mascot';
@@ -80,14 +79,14 @@
     const r = wrap.getBoundingClientRect();
     return r.bottom > 0 && r.top < window.innerHeight;
   }
+  // Muncul dan hilang lewat fade opacity di CSS (.dock.on), jadi robot tidak langsung muncul atau lenyap.
   function showSite() {
     if (heroInView()) return hint(SITE_HINT);
     dockBubble.textContent = SITE_HINT;
-    dock.hidden = false;
-    window.NvanMotion?.fadeIn(dock);
+    dock.classList.add('on');
   }
   function hideSite() {
-    dock.hidden = true;
+    dock.classList.remove('on');
     if (hinting) hide();
   }
   const siteLink = (el) => el.closest?.('.links a[aria-label^="Buka website"]');
@@ -111,7 +110,7 @@
   });
   document.addEventListener('keydown', (ev) => {
     if (ev.key !== 'Escape') return;
-    dock.hidden = true;
+    dock.classList.remove('on');
     if (!bubble.hidden) hide();
   });
 
