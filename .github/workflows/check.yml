@@ -1,0 +1,21 @@
+name: Cek
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Cek data, syntax JS, dan file yang dirujuk
+        run: node scripts/check.mjs
+      - name: Tes asap di browser
+        run: |
+          npm install --no-save playwright
+          node scripts/smoke.cjs
