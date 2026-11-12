@@ -638,7 +638,7 @@ main {
 /* Garis pemisah di tepi atas footer, selebar layar. Bentuknya sama dengan kotak di belakang nama di
    hero: pelat putih dengan bayangan solid (offset 4px ke bawah, tanpa blur). js/motion-scroll.js
    menyapukan biru (.footer-line-fill, scaleX) dari kiri ke kanan saat footer naik ke layar.
-   Pelat memotong sapuannya sendiri (overflow hidden), bayangannya tetap terlihat.
+   Pelat memotong isinya sendiri (overflow hidden), bayangannya tetap terlihat.
    Tanpa JS atau gerak dikurangi: biru penuh dan diam. */
 .footer-line {
   position: absolute;
@@ -661,32 +661,23 @@ main {
   background: var(--blue);
   transform-origin: left;
 }
-/* Garis putus-putus di bawah pelat: titik pixel biru (8x4px, jeda 8px) dengan kotak kepala 8px warna
-   link di ujung kanan. Kotak penampung memotong isinya. js/motion-scroll.js menggeser
-   .footer-dash-fill (translateX) dari kiri bersama sapuan biru pelat. Tanpa JS atau gerak
-   dikurangi: tampil penuh, diam. */
-.footer-dash {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 24px;
-  height: 8px;
-  overflow: hidden;
-  pointer-events: none;
-}
+/* Garis putus-putus di dalam pelat, di tengah sapuan biru, warna putih supaya terlihat di atas biru:
+   titik 8x4px, jeda 8px, kotak kepala 8px di ujung kanan. Pelat memotong isinya. js/motion-scroll.js
+   menggeser .footer-dash-fill (translateX) dari kiri bersama sapuan biru, jadi ujung garis selalu
+   sejajar tepi biru. Tanpa JS atau gerak dikurangi: tampil penuh, diam. */
 .footer-dash-fill {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(90deg, var(--shadow-color) 0 8px, transparent 8px 16px) center / 100% 4px no-repeat;
+  background: repeating-linear-gradient(90deg, #fff 0 8px, transparent 8px 16px) center / 100% 4px no-repeat;
 }
 .footer-dash-fill::after {
   content: "";
   position: absolute;
   right: 0;
-  top: 0;
+  top: 2px;
   width: 8px;
   height: 8px;
-  background: var(--link);
+  background: #fff;
 }
 .site-footer p { margin: 0; }
 .links-list {

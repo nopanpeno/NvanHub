@@ -72,7 +72,7 @@
     });
   };
   // Garis di atas footer: pelat putih seperti kotak nama di hero. Biru menyapu dari kiri ke kanan
-  // (scaleX) sambil footer naik ke layar, dan garis putus-putus di bawahnya meluncur masuk dari kiri
+  // (scaleX) sambil footer naik ke layar, dan garis putus-putus putih di tengahnya meluncur masuk dari kiri
   // (translateX). Di dasar halaman selalu penuh.
   // Tanpa ini (tanpa JS atau gerak dikurangi) keduanya tampil penuh dan diam.
   const footer = document.querySelector('.site-footer');
