@@ -72,10 +72,12 @@
     });
   };
   // Garis di atas footer: pelat putih seperti kotak nama di hero. Biru menyapu dari kiri ke kanan
-  // (scaleX saja) sambil footer naik ke layar. Di dasar halaman selalu penuh.
-  // Tanpa ini (tanpa JS atau gerak dikurangi) garis tampil biru penuh dan diam.
+  // (scaleX) sambil footer naik ke layar, dan garis putus-putus putih di tengahnya meluncur masuk dari kiri
+  // (translateX). Di dasar halaman selalu penuh.
+  // Tanpa ini (tanpa JS atau gerak dikurangi) keduanya tampil penuh dan diam.
   const footer = document.querySelector('.site-footer');
   const footerFill = footer?.querySelector('.footer-line-fill');
+  const footerDash = footer?.querySelector('.footer-dash-fill');
   let lastF = -1;
   const paintFooter = (atEnd) => {
     if (!footerFill) return;
@@ -85,6 +87,7 @@
     if (p === lastF) return;
     lastF = p;
     gsap.set(footerFill, { scaleX: p });
+    if (footerDash) gsap.set(footerDash, { xPercent: -(1 - p) * 100 });
   };
   const bar = document.createElement('div');
   bar.className = 'progress';
@@ -137,7 +140,7 @@
     bar.remove();
     gsap.set([gridBg, starsFar, starsNear].filter(Boolean), { clearProps: 'all' });
     pageSize?.disconnect();
-    if (footerFill) gsap.set(footerFill, { clearProps: 'all' });
+    if (footerFill) gsap.set([footerFill, footerDash].filter(Boolean), { clearProps: 'all' });
     [...heroWords, ...aboutGroups.flatMap((g) => g.words)].forEach((w) => w.style.removeProperty('--w'));
     if (plate) {
       gsap.killTweensOf([plate, fill]);
