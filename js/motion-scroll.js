@@ -71,9 +71,9 @@
       accentChars[i].style.setProperty('--c', c);
     });
   };
-  // Garis di atas footer: titik-titik pixel meluncur masuk dari kiri sambil footer naik ke layar
-  // (translateX saja), lalu kotak kepala berhenti di ujung kanan. Di dasar halaman selalu penuh.
-  // Tanpa ini (tanpa JS atau gerak dikurangi) garis tampil penuh dan diam.
+  // Garis di atas footer: pelat putih seperti kotak nama di hero. Biru menyapu dari kiri ke kanan
+  // (scaleX saja) sambil footer naik ke layar. Di dasar halaman selalu penuh.
+  // Tanpa ini (tanpa JS atau gerak dikurangi) garis tampil biru penuh dan diam.
   const footer = document.querySelector('.site-footer');
   const footerFill = footer?.querySelector('.footer-line-fill');
   let lastF = -1;
@@ -84,7 +84,7 @@
     const p = Math.round(t * 1000) / 1000;
     if (p === lastF) return;
     lastF = p;
-    gsap.set(footerFill, { xPercent: -(1 - p) * 100 });
+    gsap.set(footerFill, { scaleX: p });
   };
   const bar = document.createElement('div');
   bar.className = 'progress';

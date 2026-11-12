@@ -285,7 +285,9 @@ main {
   }
 }
 /* Robot pojok: muncul hanya saat petunjuk "Buka website" (js/mascot.js). Tetap di layar, tidak
-   menerima klik, jadi tidak menutupi tombol di bawahnya. Setengah ukuran hero: sel 3px, tetap tajam. */
+   menerima klik, jadi tidak menutupi tombol di bawahnya. Setengah ukuran hero: sel 3px, tetap tajam.
+   Muncul dan hilang lewat fade opacity (kelas .on). visibility menunggu fade keluar selesai, supaya
+   robot tidak lenyap mendadak. Reduced-motion: tanpa transisi, langsung muncul dan hilang. */
 .dock {
   position: fixed;
   z-index: 5;
@@ -293,8 +295,14 @@ main {
   bottom: 16px;
   width: 72px;
   pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
 }
-.dock[hidden] { display: none; }
+.dock.on { opacity: 1; visibility: visible; }
+@media (prefers-reduced-motion: no-preference) {
+  .dock { transition: opacity 150ms ease-in, visibility 0s linear 150ms; }
+  .dock.on { transition: opacity 200ms ease-out, visibility 0s; }
+}
 .dock .mascot { cursor: default; }
 .dock .bubble {
   top: auto;
@@ -615,10 +623,9 @@ main {
 /* Sub-bab Fun fact (h3) di dalam Tentang: tampil seperti judul Tentang (kelas .label, ukuran sama),
    hanya diberi jarak atas. Tingkat judulnya h3 supaya urutan di pembaca layar benar. Judul pixel di
    ukuran kartu (24px) terlihat lebih kecil dari teks isinya, jadi ukurannya tidak diturunkan.
-   Teks isinya sedikit lebih besar dari paragraf Tentang (ukuran lead, 19px) supaya terasa sebagai
-   sorotan. Tetap ikut animasi kata dan muncul saat scroll. */
+   Teks isinya memakai ukuran yang sama dengan paragraf Tentang di atasnya (16px). Tetap ikut animasi
+   kata dan muncul saat scroll. */
 .label-sub { margin-top: 40px; }
-.about .fun-fact { font-size: var(--text-h3); }
 
 /* Footer */
 .site-footer {
@@ -628,32 +635,31 @@ main {
   color: var(--muted);
   font-size: var(--text-secondary);
 }
-/* Garis pemisah di tepi atas footer, selebar layar: titik-titik pixel biru (8x4px, jeda 8px) dengan
-   kotak kepala 8px berwarna link di ujung kanan. Kotak penampung memotong isinya, jadi titik tidak
-   pernah keluar. js/motion-scroll.js menggeser .footer-line-fill (translateX) dari kiri saat footer
-   naik ke layar, jadi garis seperti meluncur masuk. Tanpa JS atau gerak dikurangi: tampil penuh, diam. */
+/* Garis pemisah di tepi atas footer, selebar layar. Bentuknya sama dengan kotak di belakang nama di
+   hero: pelat putih dengan bayangan solid (offset 4px ke bawah, tanpa blur). js/motion-scroll.js
+   menyapukan biru (.footer-line-fill, scaleX) dari kiri ke kanan saat footer naik ke layar.
+   Pelat memotong sapuannya sendiri (overflow hidden), bayangannya tetap terlihat.
+   Tanpa JS atau gerak dikurangi: biru penuh dan diam. */
 .footer-line {
   position: absolute;
   left: 0;
   right: 0;
   top: 0;
-  height: 8px;
-  overflow: hidden;
+  height: 12px;
   pointer-events: none;
+}
+.footer-line-plate {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 0 var(--shadow-color);
 }
 .footer-line-fill {
   position: absolute;
   inset: 0;
-  background: repeating-linear-gradient(90deg, var(--shadow-color) 0 8px, transparent 8px 16px) center / 100% 4px no-repeat;
-}
-.footer-line-fill::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 8px;
-  height: 8px;
-  background: var(--link);
+  background: var(--blue);
+  transform-origin: left;
 }
 .site-footer p { margin: 0; }
 .links-list {
