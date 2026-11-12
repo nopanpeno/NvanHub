@@ -57,11 +57,18 @@ async function visit(browser, base, { width, reduced }) {
   await page.waitForTimeout(500);
   const full = await lineScale();
   expect(full > 0.99, `[${label}] garis footer belum penuh di dasar halaman (scaleX ${full})`);
+  const dashFull = await page.evaluate(() => {
+    const t = getComputedStyle(document.querySelector('.footer-dash-fill')).transform;
+    return t === 'none' ? 0 : new DOMMatrixReadOnly(t).m41;
+  });
+  expect(Math.abs(dashFull) < 1, `[${label}] garis putus-putus footer belum penuh di dasar halaman (geser ${dashFull}px)`);
   if (!reduced) {
     await page.evaluate(() => window.scrollTo(0, 0));
     await page.waitForTimeout(400);
     const empty = await lineScale();
     expect(empty < 0.05, `[${label}] garis footer harus kosong saat footer di luar layar (scaleX ${empty})`);
+    const dashX = await page.evaluate(() => new DOMMatrixReadOnly(getComputedStyle(document.querySelector('.footer-dash-fill')).transform).m41);
+    expect(dashX < -100, `[${label}] garis putus-putus footer harus tersembunyi saat footer di luar layar (geser ${dashX}px)`);
   }
   await ctx.close();
 }
