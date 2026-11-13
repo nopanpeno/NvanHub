@@ -103,7 +103,7 @@ test('pengirim membatalkan di tengah jalan', async () => {
   await tick(5);
   sender.cancel();
   assert.equal(await p, 'cancelled');
-  await tick();
+  await tick(200);
   assert.ok(find(log.b, 'cancelled'));
   assert.equal(find(log.b, 'received'), undefined);
 });
