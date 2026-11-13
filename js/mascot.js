@@ -58,7 +58,7 @@
     cta.addEventListener('blur', () => { if (hinting) hide(); });
   }
 
-  // Petunjuk tombol "Buka website" di kartu. Robot hero sudah di luar layar saat user melihat kartu,
+  // Petunjuk tombol "Buka" di kartu (dicari lewat aria-label "Buka website ..."). Robot hero sudah di luar layar saat user melihat kartu,
   // jadi robot yang sama muncul di pojok kanan bawah (salinan gambar, hero sudah tidak terlihat).
   // Kalau robot hero masih terlihat, balon hero yang dipakai. Hanya tampilan: tombol sudah punya
   // nama untuk pembaca layar. Muncul saat mouse atau fokus keyboard, hilang saat pergi atau Escape.
