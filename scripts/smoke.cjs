@@ -54,6 +54,10 @@ async function visit(browser, base, { width, reduced }) {
   expect((await btn.getAttribute('aria-expanded')) === 'false', `[${label}] dropdown harus tertutup di awal`);
   await btn.click();
   expect((await btn.getAttribute('aria-expanded')) === 'true', `[${label}] dropdown tidak terbuka saat diklik`);
+  // Opsi masuk berurutan hanya kalau gerak boleh: opsi terakhir menunggu lebih lama dari yang pertama.
+  const anim = await list.evaluate((el) => [...el.querySelectorAll('[role=option]')].map((o) => { const c = getComputedStyle(o); return [c.animationName, parseFloat(c.animationDelay) || 0]; }));
+  if (reduced) expect(anim.every(([n]) => n === 'none'), `[${label}] opsi dropdown beranimasi padahal gerak dikurangi`);
+  else expect(anim[0][0] === 'dropdown-opt-in' && anim[anim.length - 1][1] > anim[0][1], `[${label}] opsi dropdown tidak masuk berurutan`);
   expect(await list.evaluate((el) => el === document.activeElement), `[${label}] fokus tidak pindah ke daftar topik`);
   const box = await list.boundingBox();
   expect(box && box.x >= 0 && box.x + box.width <= width, `[${label}] daftar topik keluar dari layar`);
