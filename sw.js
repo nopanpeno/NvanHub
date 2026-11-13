@@ -1,56 +1,105 @@
 // Service worker NvanHub: supaya web bisa dipasang di layar utama dan tetap terbuka saat offline.
-// Strategi: jaringan dulu, cache cadangan. Online selalu dapat versi terbaru (tidak perlu ganti
-// nomor versi tiap deploy). Offline, halaman diambil dari cache. Hanya file milik sendiri.
-const CACHE = 'nvanhub-v1';
-const ASSETS = [
-  './',
-  'index.html',
-  'manifest.json',
-  'css/style.css',
-  'js/main.js',
-  'js/mascot.js',
-  'js/motion.js',
-  'js/motion-glow.js',
-  'js/motion-hero.js',
-  'js/motion-scroll.js',
-  'data/projects.json',
-  'data/mascot.json',
-  'assets/vendor/gsap.min.js',
-  'assets/fonts/jersey-10-latin-400-normal.woff2',
-  'assets/bg/grid-dot.svg',
-  'assets/bg/stars-far.svg',
-  'assets/bg/stars-near.svg',
-  'assets/icons/arrow.svg',
-  'assets/icons/arrow-up.svg',
-  'assets/icons/external.svg',
-  'assets/icons/icon-192.png',
-];
+// Strategi: jaringan dulu, cache cadangan. Online selalu dapat versi terbaru.
+// Tiap tool (folder) punya cache sendiri. Kalau satu tool gagal di-cache, hub dan tool lain
+// tetap jalan. Ganti nomor versi tool hanya kalau daftar filenya berubah.
+const HUB = {
+  cache: 'nvanhub-v1',
+  assets: [
+    './',
+    'index.html',
+    'manifest.json',
+    'css/style.css',
+    'js/main.js',
+    'js/mascot.js',
+    'js/motion.js',
+    'js/motion-glow.js',
+    'js/motion-hero.js',
+    'js/motion-scroll.js',
+    'data/projects.json',
+    'data/mascot.json',
+    'assets/vendor/gsap.min.js',
+    'assets/fonts/jersey-10-latin-400-normal.woff2',
+    'assets/bg/grid-dot.svg',
+    'assets/bg/stars-far.svg',
+    'assets/bg/stars-near.svg',
+    'assets/icons/arrow.svg',
+    'assets/icons/arrow-up.svg',
+    'assets/icons/external.svg',
+    'assets/icons/icon-192.png',
+  ],
+};
+
+// Tool: kunci = nama folder. Tambah satu entri tiap tool baru.
+const TOOLS = {
+  pass: {
+    cache: 'nvanhub-pass-v1',
+    assets: [
+      'pass/',
+      'pass/index.html',
+      'pass/privacy.html',
+      'pass/icon.svg',
+      'pass/css/style.css',
+      'pass/js/app.js',
+      'pass/js/codec.js',
+      'pass/js/config.js',
+      'pass/js/i18n.js',
+      'pass/js/qr.js',
+      'pass/js/rtc.js',
+      'pass/js/transfer.js',
+      'pass/vendor/qrcode.js',
+      'pass/vendor/jsQR.js',
+    ],
+  },
+};
+
+const KEEP = [HUB.cache, ...Object.values(TOOLS).map((t) => t.cache)];
+
+// Folder tool dari alamat, atau null kalau milik hub.
+function toolOf(url) {
+  const rel = url.pathname.slice(new URL(self.registration.scope).pathname.length);
+  const dir = rel.split('/')[0];
+  return Object.prototype.hasOwnProperty.call(TOOLS, dir) ? dir : null;
+}
 
 self.addEventListener('install', (e) => {
-  e.waitUntil(caches.open(CACHE).then((c) => c.addAll(ASSETS)));
+  e.waitUntil(
+    (async () => {
+      // Hub wajib berhasil. Tool dicoba terpisah: gagal satu tidak menggagalkan yang lain.
+      await caches.open(HUB.cache).then((c) => c.addAll(HUB.assets));
+      await Promise.allSettled(
+        Object.values(TOOLS).map((t) => caches.open(t.cache).then((c) => c.addAll(t.assets)))
+      );
+    })()
+  );
   self.skipWaiting();
 });
 
 self.addEventListener('activate', (e) => {
   e.waitUntil(
     caches.keys()
-      .then((keys) => Promise.all(keys.filter((k) => k !== CACHE).map((k) => caches.delete(k))))
+      .then((keys) => Promise.all(keys.filter((k) => !KEEP.includes(k)).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', (e) => {
   const req = e.request;
-  if (req.method !== 'GET' || new URL(req.url).origin !== location.origin) return;
+  const url = new URL(req.url);
+  if (req.method !== 'GET' || url.origin !== location.origin) return;
+  const tool = toolOf(url);
+  const cacheName = tool ? TOOLS[tool].cache : HUB.cache;
+  const home = tool ? `${tool}/index.html` : 'index.html';
   e.respondWith(
     fetch(req)
       .then((res) => {
         if (res.ok) {
           const copy = res.clone();
-          caches.open(CACHE).then((c) => c.put(req, copy));
+          caches.open(cacheName).then((c) => c.put(req, copy));
         }
         return res;
       })
-      .catch(() => caches.match(req).then((hit) => hit || caches.match('index.html')))
+      .catch(() =>
+        caches.match(req).then((hit) => hit || (req.mode === 'navigate' ? caches.match(home) : undefined))
+      )
   );
 });

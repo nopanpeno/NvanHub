@@ -61,7 +61,8 @@ Fun fact di bagian Tentang berupa paragraf biasa di `index.html`. Ubah langsung 
 - `js/mascot.js`: balon ucapan robot
 - `data/projects.json`: daftar proyek
 - `data/mascot.json`: daftar sapaan robot
-- `manifest.json` dan `sw.js`: bikin web bisa dipasang sebagai app (PWA) dan terbuka offline
+- `manifest.json` dan `sw.js`: bikin web bisa dipasang sebagai app (PWA) dan terbuka offline. Tiap tool punya cache sendiri di `sw.js` (objek `TOOLS`)
+- `pass/`: NvanPass, kirim file lewat WebRTC. Berdiri sendiri, tidak import file hub. Tes sendiri: `cd pass && npm test`
 - `assets/icons/`: ikon pixel 8×8 (`icon-*.png` adalah ikon app, bukan ikon tampilan)
 - `assets/fonts/`: font Jersey 10 dan lisensinya (OFL)
 - `assets/vendor/`: GSAP 3.12.5
