@@ -46,6 +46,36 @@ async function visit(browser, base, { width, reduced }) {
   expect((await page.evaluate(() => getComputedStyle(document.querySelector('.hero h1')).opacity)) === '1', `[${label}] judul hero tidak terlihat`);
   // Titik di akhir nama ada di dalam kotak nama (bukan di luar).
   expect((await page.textContent('.accent')).trim().endsWith('.'), `[${label}] titik di akhir nama keluar dari .accent`);
+  // Dropdown topik: buka lewat klik, pilih lewat keyboard, filter jalan, Escape menutup dan fokus kembali.
+  const btn = page.locator('#tag');
+  const list = page.locator('#tag-list');
+  const opts = await list.locator('[role=option]').count();
+  expect(opts >= 2, `[${label}] dropdown topik kosong`);
+  expect((await btn.getAttribute('aria-expanded')) === 'false', `[${label}] dropdown harus tertutup di awal`);
+  await btn.click();
+  expect((await btn.getAttribute('aria-expanded')) === 'true', `[${label}] dropdown tidak terbuka saat diklik`);
+  expect(await list.evaluate((el) => el === document.activeElement), `[${label}] fokus tidak pindah ke daftar topik`);
+  const box = await list.boundingBox();
+  expect(box && box.x >= 0 && box.x + box.width <= width, `[${label}] daftar topik keluar dari layar`);
+  const tall = await list.locator('[role=option]').first().evaluate((el) => el.getBoundingClientRect().height);
+  expect(tall >= 44, `[${label}] opsi topik lebih pendek dari 44px (${tall}px)`);
+  await page.keyboard.press('ArrowDown');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(reduced ? 100 : 700);
+  expect((await btn.getAttribute('aria-expanded')) === 'false', `[${label}] dropdown tidak menutup setelah memilih`);
+  expect(await btn.evaluate((el) => el === document.activeElement), `[${label}] fokus tidak kembali ke tombol topik`);
+  expect((await page.locator('.card').count()) < total, `[${label}] filter topik tidak menyaring kartu`);
+  expect(!(await btn.textContent()).startsWith('Semua'), `[${label}] teks tombol topik tidak ikut pilihan`);
+  await btn.click();
+  await page.keyboard.press('Escape');
+  expect(await btn.evaluate((el) => el === document.activeElement), `[${label}] Escape tidak mengembalikan fokus ke tombol`);
+  await btn.click();
+  await page.keyboard.press('Home');
+  await page.keyboard.press('Enter');
+  await page.waitForTimeout(reduced ? 100 : 700);
+  expect((await page.locator('.card').count()) === total, `[${label}] "Semua topik" tidak mengembalikan semua kartu`);
+  const over2 = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(over2 <= 0, `[${label}] dropdown menimbulkan scroll horizontal (${over2}px)`);
   // Sub-bab Fun fact ada di dalam Tentang, tingkat h3.
   expect((await page.locator('.about h3.label-sub').count()) === 1, `[${label}] sub-bab Fun fact tidak ada di Tentang`);
   // Garis footer: biru penuh di dasar halaman (scaleX 1 atau tanpa transform), baik animasi nyala maupun mati.

@@ -163,28 +163,120 @@ function render(animate = true) {
       }
     }
   }, animate);
-  document.getElementById('tag').value = activeTag ?? ''; // dropdown selalu ikut keadaan filter
+  topicSync(); // dropdown selalu ikut keadaan filter
 }
 
-// Isi dropdown topik. Tiap pilihan menunjukkan jumlah proyeknya, jadi tidak ada topik kosong.
+// Dropdown topik buatan sendiri (pola ARIA listbox). Tiap pilihan menunjukkan jumlah proyeknya, jadi tidak
+// ada topik kosong. Tombol: Enter, Space, panah buka daftar. Di daftar: panah, Home, End, huruf (cari),
+// Enter atau Space pilih, Escape atau Tab tutup tanpa memilih. Fokus kembali ke tombol saat tutup.
+const topic = {
+  btn: document.getElementById('tag'),
+  list: document.getElementById('tag-list'),
+  value: document.getElementById('tag-value'),
+  items: [], // { value, label, el }
+  active: 0, // indeks opsi yang menyala
+  typed: '',
+  typedTimer: 0,
+};
+
 function renderTopics() {
-  const select = document.getElementById('tag');
   const count = new Map();
   for (const t of allProjects.flatMap((p) => p.tags)) count.set(t, (count.get(t) ?? 0) + 1);
 
-  const options = [...count.keys()].sort().map((t) => {
-    const o = document.createElement('option');
-    o.value = t;
-    o.textContent = `${t} (${count.get(t)})`;
-    return o;
+  topic.items = [{ value: '', label: 'Semua topik' }, ...[...count.keys()].sort().map((t) => ({ value: t, label: `${t} (${count.get(t)})` }))];
+  topic.items.forEach((it, i) => {
+    const el = document.createElement('li');
+    el.id = `tag-opt-${i}`;
+    el.className = 'dropdown-opt';
+    el.setAttribute('role', 'option');
+    el.textContent = it.label;
+    el.addEventListener('click', () => topicPick(i));
+    el.addEventListener('pointerover', (e) => { if (e.pointerType === 'mouse') topicHighlight(i); });
+    it.el = el;
   });
-  const all = select.options[0]; // "Semua topik" sudah ada di HTML
-  select.replaceChildren(all, ...options);
+  topic.list.replaceChildren(...topic.items.map((it) => it.el));
+  topicSync();
 }
 
-document.getElementById('tag').addEventListener('change', (e) => {
-  activeTag = e.target.value || null;
+// Samakan teks tombol dan pilihan terpilih dengan filter yang aktif.
+function topicSync() {
+  const sel = Math.max(0, topic.items.findIndex((it) => it.value === (activeTag ?? '')));
+  if (topic.items.length) topic.value.textContent = topic.items[sel].label;
+  topic.items.forEach((it, i) => it.el.setAttribute('aria-selected', String(i === sel)));
+}
+
+function topicHighlight(i, scroll = false) {
+  topic.active = i;
+  topic.items.forEach((it, j) => it.el.classList.toggle('is-active', j === i));
+  topic.list.setAttribute('aria-activedescendant', topic.items[i].el.id);
+  if (scroll) topic.items[i].el.scrollIntoView({ block: 'nearest' });
+}
+
+const topicIsOpen = () => topic.list.classList.contains('open');
+
+function topicOpen() {
+  if (!topic.items.length || topicIsOpen()) return;
+  topic.list.classList.add('open');
+  topic.btn.setAttribute('aria-expanded', 'true');
+  topicHighlight(Math.max(0, topic.items.findIndex((it) => it.value === (activeTag ?? ''))));
+  topic.list.focus({ preventScroll: true });
+  topic.items[topic.active].el.scrollIntoView({ block: 'nearest' });
+  topic.list.scrollIntoView({ block: 'nearest' }); // daftar tidak terpotong di tepi bawah layar
+}
+
+function topicClose(refocus = true) {
+  if (!topicIsOpen()) return;
+  topic.list.classList.remove('open');
+  topic.btn.setAttribute('aria-expanded', 'false');
+  topic.list.removeAttribute('aria-activedescendant');
+  if (refocus) topic.btn.focus({ preventScroll: true });
+}
+
+function topicPick(i) {
+  topicClose();
+  const next = topic.items[i].value || null;
+  if (next === activeTag) return;
+  activeTag = next;
   render();
+}
+
+topic.btn.addEventListener('click', () => (topicIsOpen() ? topicClose() : topicOpen()));
+topic.btn.addEventListener('keydown', (e) => {
+  if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) {
+    e.preventDefault();
+    topicOpen();
+  }
+});
+
+topic.list.addEventListener('keydown', (e) => {
+  const last = topic.items.length - 1;
+  const move = { ArrowDown: Math.min(topic.active + 1, last), ArrowUp: Math.max(topic.active - 1, 0), Home: 0, End: last }[e.key];
+  if (move !== undefined) {
+    e.preventDefault();
+    topicHighlight(move, true);
+  } else if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    topicPick(topic.active);
+  } else if (e.key === 'Escape') {
+    e.preventDefault();
+    topicClose();
+  } else if (e.key === 'Tab') {
+    topicClose(); // fokus pindah ke tombol, lalu Tab lanjut dari sana
+  } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
+    // Cari: ketik huruf awal opsi. Huruf yang sama berulang menggilir opsi yang cocok.
+    clearTimeout(topic.typedTimer);
+    topic.typed += e.key.toLowerCase();
+    topic.typedTimer = setTimeout(() => { topic.typed = ''; }, 600);
+    const order = topic.items.map((_, i) => (topic.active + 1 + i) % topic.items.length);
+    const same = [...topic.typed].every((c) => c === topic.typed[0]);
+    const hit = order.find((i) => topic.items[i].label.toLowerCase().startsWith(same ? topic.typed[0] : topic.typed));
+    if (hit !== undefined) topicHighlight(hit, true);
+  }
+});
+
+// Klik atau sentuh di luar dropdown menutup daftar, tanpa memindah fokus.
+document.addEventListener('pointerdown', (e) => {
+  if (topicIsOpen() && !e.target.closest('.dropdown')) topicClose(false);
 });
 
 loadProjects()

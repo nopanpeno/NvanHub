@@ -84,9 +84,10 @@
       <h2 class="label">Proyek</h2>
       <div class="controls">
         <div class="field">
-          <label for="tag">Topik</label>
-          <div class="select-field">
-            <select id="tag"><option value="">Semua topik</option></select>
+          <label id="tag-label" for="tag">Topik</label>
+          <div class="dropdown">
+            <button type="button" id="tag" class="dropdown-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="tag-list" aria-labelledby="tag-label tag-value"><span id="tag-value">Semua topik</span></button>
+            <ul id="tag-list" class="dropdown-list" role="listbox" tabindex="-1" aria-labelledby="tag-label"></ul>
           </div>
         </div>
       </div>

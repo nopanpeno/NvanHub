@@ -551,6 +551,8 @@ main {
 
 /* Filter topik: satu kolom, lebar tetap di layar lebar, penuh lebar di HP */
 .controls {
+  position: relative;
+  z-index: 20; /* daftar dropdown tampil di atas kartu di bawahnya */
   margin-bottom: 24px;
   max-width: 240px;
 }
@@ -562,9 +564,26 @@ main {
    Berdiri sendiri, tidak memakai .label (itu untuk judul bagian h2). */
 .field > label { margin: 0; font-family: system-ui, sans-serif; font-size: var(--text-body); font-weight: var(--weight-bold); line-height: 1.2; color: var(--ink); }
 
-/* Dropdown topik: select asli (keyboard, pembaca layar, dan picker HP gratis). Panah memakai ikon pixel yang diputar ke bawah. */
-.select-field { position: relative; }
-.select-field::after {
+/* Dropdown topik buatan sendiri (tombol + listbox), supaya daftarnya ikut gaya situs. Popup <select> asli
+   digambar oleh OS dan tidak bisa di-style. Pola ARIA listbox, keyboard di js/main.js. Daftar absolut di
+   bawah tombol, jadi tidak menggeser layout. Panah memakai ikon pixel yang sama: ke bawah saat tertutup,
+   ke atas saat terbuka. */
+.dropdown { position: relative; }
+.dropdown-btn {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  padding: 8px 48px 8px 16px;
+  font: inherit;
+  text-align: left;
+  box-shadow: 3px 3px 0 var(--shadow-color);
+  cursor: pointer;
+}
+.dropdown-btn::after {
   content: "";
   position: absolute;
   right: 16px;
@@ -577,22 +596,56 @@ main {
   -webkit-mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
   mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
 }
-#tag {
-  display: block;
-  width: 100%;
-  min-height: 44px;
-  appearance: none;
-  -webkit-appearance: none;
+.dropdown-btn[aria-expanded="true"]::after { transform: translateY(-50%) rotate(-90deg); }
+.dropdown-list {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  max-height: min(412px, 60vh); /* 9 opsi muat; lebih banyak dari itu, daftar bergulir di dalam */
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
   background: var(--surface);
-  color: var(--ink);
   border: 2px solid var(--ink);
   border-radius: 6px;
-  padding: 8px 48px 8px 16px;
-  font: inherit;
   box-shadow: 3px 3px 0 var(--shadow-color);
+  opacity: 0;
+  visibility: hidden;
+  outline: none; /* fokus ditandai opsi yang menyala (.is-active), bukan garis di sekeliling daftar */
+}
+.dropdown-list.open { opacity: 1; visibility: visible; }
+.dropdown-opt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 4px;
+  color: var(--ink);
   cursor: pointer;
 }
-#tag option { background: var(--surface); color: var(--ink); }
+.dropdown-opt[aria-selected="true"] { font-weight: var(--weight-bold); }
+.dropdown-opt[aria-selected="true"]::after {
+  content: "";
+  flex: none;
+  width: 12px;
+  height: 12px;
+  background: currentColor;
+  -webkit-mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
+  mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
+}
+.dropdown-opt.is-active { background: var(--blue); color: #fff; }
+/* Muncul fade opacity 200ms ease-out, hilang 150ms ease-in. visibility menunggu fade keluar selesai.
+   Reduced-motion: langsung tanpa transisi. */
+@media (prefers-reduced-motion: no-preference) {
+  .dropdown-list { transition: opacity 150ms ease-in, visibility 0s linear 150ms; }
+  .dropdown-list.open { transition: opacity 200ms ease-out, visibility 0s; }
+  .dropdown-btn::after { transition: transform 150ms ease-out; }
+}
 
 /* Tombol kecil bentuk pill. Dipakai pesan kosong dan gagal. */
 .filter {
