@@ -640,11 +640,22 @@ main {
 }
 .dropdown-opt.is-active { background: var(--blue); color: #fff; }
 /* Muncul fade opacity 200ms ease-out, hilang 150ms ease-in. visibility menunggu fade keluar selesai.
-   Reduced-motion: langsung tanpa transisi. */
+   Saat dibuka, opsi masuk berurutan dari atas: tiap opsi turun 8px sambil muncul (180ms), jeda 30ms
+   antar opsi (--i diisi js/main.js, dibatasi 8 langkah, jadi total di bawah 450ms). Animasi hanya ada
+   di kelas .open, jadi saat menutup opsi tetap terlihat selama daftar memudar.
+   Reduced-motion: langsung tanpa transisi dan tanpa urutan. */
 @media (prefers-reduced-motion: no-preference) {
   .dropdown-list { transition: opacity 150ms ease-in, visibility 0s linear 150ms; }
   .dropdown-list.open { transition: opacity 200ms ease-out, visibility 0s; }
   .dropdown-btn::after { transition: transform 150ms ease-out; }
+  .dropdown-list.open .dropdown-opt {
+    animation: dropdown-opt-in 180ms ease-out backwards;
+    animation-delay: calc(min(var(--i, 0), 8) * 30ms);
+  }
+}
+@keyframes dropdown-opt-in {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: none; }
 }
 
 /* Tombol kecil bentuk pill. Dipakai pesan kosong dan gagal. */

@@ -187,6 +187,7 @@ function renderTopics() {
   topic.items.forEach((it, i) => {
     const el = document.createElement('li');
     el.id = `tag-opt-${i}`;
+    el.style.setProperty('--i', i); // urutan masuk opsi (CSS)
     el.className = 'dropdown-opt';
     el.setAttribute('role', 'option');
     el.textContent = it.label;
