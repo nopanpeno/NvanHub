@@ -61,7 +61,8 @@ Fun fact di bagian Tentang berupa paragraf biasa di `index.html`. Ubah langsung 
 - `js/mascot.js`: balon ucapan robot
 - `data/projects.json`: daftar proyek
 - `data/mascot.json`: daftar sapaan robot
-- `assets/icons/`: ikon pixel 8×8
+- `manifest.json` dan `sw.js`: bikin web bisa dipasang sebagai app (PWA) dan terbuka offline
+- `assets/icons/`: ikon pixel 8×8 (`icon-*.png` adalah ikon app, bukan ikon tampilan)
 - `assets/fonts/`: font Jersey 10 dan lisensinya (OFL)
 - `assets/vendor/`: GSAP 3.12.5
 - `scripts/`: cek otomatis (`check.mjs`, `smoke.cjs`)
