@@ -5,7 +5,7 @@
     "desc": "Pakai WebRTC dan QR. Tanpa server, file tidak disimpan di mana pun.",
     "tags": ["JavaScript", "Transfer file"],
     "repo": "https://github.com/nopanpeno/NvanPass",
-    "live": "https://nopanpeno.github.io/NvanPass/"
+    "live": "https://nopanpeno.github.io/NvanHub/pass/"
   },
   {
     "name": "NvanPlay",
