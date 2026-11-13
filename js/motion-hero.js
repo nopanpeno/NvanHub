@@ -56,10 +56,11 @@
     return words;
   }
 
-  // Hero masuk: huruf judul satu per satu, lalu teks. Tombol tampil langsung, tanpa animasi masuk.
+  // Hero masuk: huruf judul satu per satu, lalu teks, lalu tombol Lihat proyek (naik sambil muncul).
   function heroIntro() {
     const h1 = document.querySelector('.hero h1');
     const lead = document.querySelector('.hero .lead');
+    const btn = document.querySelector('.hero .btn');
     if (!h1 || !lead) return null;
 
     const chars = splitChars(h1);
@@ -69,6 +70,19 @@
     const tl = gsap.timeline({ defaults: { ease: ease.out } })
       .to(chars, { opacity: 1, y: 0, duration: dur.slow, stagger: STAGGER })
       .fromTo(lead, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: dur.slow }, '-=0.15');
+    // Tombol masuk setelah lead. Selama masuk, transisi CSS tombol dimatikan (.revealing) supaya tidak
+    // saling tarik dengan GSAP. Selesai: transform dilepas, jadi hover dan pressed CSS jalan lagi.
+    // opacity 1 dibiarkan inline (sama seperti judul), supaya aturan sembunyi di CSS tidak menang.
+    if (btn) {
+      tl.fromTo(btn, { opacity: 0, y: 12 }, {
+        opacity: 1,
+        y: 0,
+        duration: dur.slow,
+        clearProps: 'transform',
+        onStart: () => btn.classList.add('revealing'),
+        onComplete: () => btn.classList.remove('revealing'),
+      }, '-=0.1');
+    }
     // Maskot turun dan muncul bersama huruf pertama.
     if (mascot) tl.fromTo(mascot, { opacity: 0, y: -12 }, { opacity: 1, y: 0, duration: dur.slow }, 0);
     return tl;

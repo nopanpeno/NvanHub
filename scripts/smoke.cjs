@@ -46,6 +46,12 @@ async function visit(browser, base, { width, reduced }) {
   expect((await page.evaluate(() => getComputedStyle(document.querySelector('.hero h1')).opacity)) === '1', `[${label}] judul hero tidak terlihat`);
   // Titik di akhir nama ada di dalam kotak nama (bukan di luar).
   expect((await page.textContent('.accent')).trim().endsWith('.'), `[${label}] titik di akhir nama keluar dari .accent`);
+  // Tombol Lihat proyek: setelah intro tampil penuh dan transform dilepas (hover CSS bisa jalan).
+  await page.waitForTimeout(reduced ? 0 : 800);
+  const cta = await page.evaluate(() => { const c = getComputedStyle(document.querySelector('.hero .btn')); return { op: c.opacity, tf: c.transform }; });
+  expect(cta.op === '1', `[${label}] tombol Lihat proyek tidak terlihat (opacity ${cta.op})`);
+  expect(cta.tf === 'none', `[${label}] tombol Lihat proyek masih membawa transform (${cta.tf})`);
+  expect((await page.locator('header nav a').count()) === 1, `[${label}] nav header harus hanya berisi Tentang`);
   // Dropdown topik: buka lewat klik, pilih lewat keyboard, filter jalan, Escape menutup dan fokus kembali.
   const btn = page.locator('#tag');
   const list = page.locator('#tag-list');
