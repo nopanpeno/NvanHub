@@ -102,6 +102,15 @@ a { color: var(--accent); }
   text-decoration: none;
 }
 .hub-back:hover { text-decoration: underline; }
+/* Tombol ke hub: tinggi 44px seperti target sentuh lain. Di bilah pemutar didorong ke kanan. */
+.hub-link { display: inline-flex; align-items: center; min-height: 44px; }
+.player-bar .back { display: inline-flex; align-items: center; min-height: 44px; }
+.player-bar .hub-link { margin-left: auto; }
+/* Layar sempit: judul game di baris sendiri, tombol di baris bawah. Judul jadi tidak terpotong. */
+@media (max-width: 479.98px) {
+  .player-bar { flex-wrap: wrap; }
+  .player-bar h1 { flex: 1 0 100%; order: -1; }
+}
 
 /* Header */
 .site-header { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; padding-bottom: 8px; }
@@ -281,7 +290,7 @@ a { color: var(--accent); }
 .player-page { display: flex; flex-direction: column; height: 100vh; height: 100dvh; }
 .player-bar { display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 2px solid var(--line); }
 .player-bar .theme-toggle { padding: 6px 10px; }
-.player-bar h1 { font-size: 1.05rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.player-bar h1 { font-size: 1.05rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--on-cta); }
 .back {
   flex: none;
   padding: 6px 10px;

@@ -63,6 +63,7 @@ Fun fact di bagian Tentang berupa paragraf biasa di `index.html`. Ubah langsung 
 - `data/mascot.json`: daftar sapaan robot
 - `manifest.json` dan `sw.js`: bikin web bisa dipasang sebagai app (PWA) dan terbuka offline. Tiap tool punya cache sendiri di `sw.js` (objek `TOOLS`)
 - `pass/`: NvanPass, kirim file lewat WebRTC. Berdiri sendiri, tidak import file hub. Tes sendiri: `cd pass && npm test`
+- `play/`: NvanPlay, katalog game kecil dan pemutarnya. Berdiri sendiri, tidak import file hub. Cek kontrak game: `cd play && node scripts/check-games.mjs`
 - `assets/icons/`: ikon pixel 8×8 (`icon-*.png` adalah ikon app, bukan ikon tampilan)
 - `assets/fonts/`: font Jersey 10 dan lisensinya (OFL)
 - `assets/vendor/`: GSAP 3.12.5
@@ -76,7 +77,7 @@ Semua file di `js/` harus dimuat di `index.html` (dicek otomatis). Animasi baru 
 
 ## Cek otomatis
 
-Dua cek jalan di GitHub Actions tiap PR dan push ke `main`. Bisa dijalankan sendiri di komputer:
+Cek jalan di GitHub Actions tiap PR dan push ke `main`: cek statis, cek kontrak game NvanPlay, tes codec NvanPass, dan tes asap di browser. Bisa dijalankan sendiri di komputer:
 
 ```
 node scripts/check.mjs
@@ -89,4 +90,4 @@ npm install --no-save playwright
 node scripts/smoke.cjs
 ```
 
-Membuka halaman di browser pada 1280px, 375px, dan reduced-motion. Memeriksa tidak ada error JS atau request gagal, jumlah kartu sama dengan jumlah proyek, tidak ada scroll horizontal, dan font termuat.
+Membuka halaman di browser pada 1280px, 375px, dan reduced-motion, lalu `/pass/` dan `/play/`. Memeriksa tidak ada error JS atau request gagal, jumlah kartu sama dengan jumlah proyek, tidak ada scroll horizontal, font termuat, dan tombol kembali ke hub ada. Juga memastikan hub, NvanPass, dan NvanPlay tetap tampil saat offline.
