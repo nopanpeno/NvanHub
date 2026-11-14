@@ -1,0 +1,44 @@
+name: Hapus shortlink NvanCut
+
+on:
+  workflow_dispatch:
+    inputs:
+      alias:
+        description: "Nama pendek yang mau dihapus"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cut-links
+  cancel-in-progress: false
+
+jobs:
+  remove:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Hapus dari links.json
+        env:
+          LINK_ALIAS: ${{ inputs.alias }}
+        run: node cut/scripts/links.mjs remove
+
+      - name: Cek dan buat halaman link
+        run: |
+          node cut/scripts/links.mjs check
+          node cut/scripts/links.mjs pages
+
+      - name: Commit
+        env:
+          LINK_ALIAS: ${{ inputs.alias }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A cut
+          git commit -m "Hapus shortlink /${LINK_ALIAS}"
+          git push

@@ -21,6 +21,11 @@ jobs:
       - name: Cek kontrak game NvanPlay
         run: node scripts/check-games.mjs
         working-directory: play
+      - name: Cek shortlink NvanCut (links.json, dan halaman alias sudah sesuai)
+        run: |
+          node cut/scripts/links.mjs check
+          node cut/scripts/links.mjs pages
+          git diff --exit-code -- cut
       - name: Tes NvanVector (codec dan trace di browser)
         run: |
           npm ci

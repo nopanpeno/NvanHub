@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#fff9ed">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <meta name="description" content="NvanCut membantu kamu membagikan tautan panjang dengan lebih ringkas.">
+  <title>NvanCut — Link panjang? Pangkas aja.</title>
+  <link rel="preload" href="./fonts/dm-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="./fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="./app.js" defer></script>
+</head>
+<body>
+  <nav class="hub-nav" aria-label="NvanHub"><a class="hub-back" href="../">&larr; Kembali ke NvanHub</a></nav>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="NvanCut beranda">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M24,232 V24 H84 L176,146 V24 H232 V232 H172 L80,110 V232 Z"/></svg>
+      </span>
+      <span class="brand-word">NvanCut</span>
+    </a>
+    <nav class="header-nav" aria-label="Navigasi utama">
+      <span class="availability"><span class="availability-dot"></span> LINK PENDEK, SIAP PAKAI</span>
+      <a class="header-link" href="#cara-kerja">Cara kerja</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="eyebrow">LINK PANJANG? PANGKAS AJA.</div>
+        <h1 id="hero-title">Link panjang?<br><span>Pangkas aja.</span></h1>
+        <p class="hero-description">Bikin tautan yang lebih ringkas, gampang diingat, dan enak dibagikan ke siapa saja.</p>
+        <div class="hero-benefits" aria-label="Keunggulan NvanCut">
+          <span>Simpel digunakan</span>
+          <span>Cocok untuk Docs &amp; Drive</span>
+          <span>Gratis, tanpa akun</span>
+        </div>
+        <a class="hero-scroll" href="#link-pilihan">LIHAT LINK YANG TERSEDIA</a>
+        <span class="hero-sticker" aria-hidden="true">POTONG<br>YANG<br>PANJANG!</span>
+      </div>
+
+      <section class="form-card" aria-labelledby="form-title">
+        <div class="card-heading">
+          <div><span class="card-kicker">01 / SIAPKAN LINK</span><h2 id="form-title">Siapkan shortlink</h2></div>
+        </div>
+        <form id="shortlink-form" novalidate>
+          <label for="destination">Link tujuan</label>
+          <div class="input-wrap">
+                        <input id="destination" name="destination" type="url" placeholder="https://docs.google.com/..." autocomplete="url" required>
+          </div>
+          <p class="field-hint">Tempel link dokumen atau halaman yang ingin kamu bagikan.</p>
+
+          <label for="alias">Pilih nama pendek</label>
+          <div class="alias-wrap">
+            <span class="alias-hash" aria-hidden="true">#</span>
+            <input id="alias" name="alias" type="text" placeholder="notulen-rapat" autocomplete="off" maxlength="48" required aria-describedby="alias-help">
+          </div>
+          <p class="field-hint" id="alias-help">Huruf, angka, tanda hubung, atau garis bawah.</p>
+
+          <div class="preview-box">
+            <span class="preview-label">PREVIEW SHORTLINK</span>
+            <code id="alias-preview" aria-live="polite"></code>
+          </div>
+          <button class="primary-button" type="submit">Cek &amp; siapkan</button>
+          <div id="form-message" class="form-message" role="status" aria-live="polite" hidden></div>
+        </form>
+        <div class="static-note"><span class="note-icon" aria-hidden="true">!</span><span>Link baru aktif setelah pemilik situs menjalankan workflow “Tambah shortlink” di GitHub, biasanya 1–2 menit.</span></div>
+      </section>
+    </section>
+
+    <section class="links-section" id="link-pilihan" aria-labelledby="links-title">
+      <div class="section-heading">
+        <div><span class="card-kicker">02 / SIAP DIBAGIKAN</span><h2 id="links-title">Link pendek pilihan</h2></div>
+        <span id="link-count" class="link-count"></span>
+      </div>
+      <div id="links-list" class="links-list" aria-live="polite"></div>
+      <div id="links-empty" class="empty-state" hidden>Belum ada shortlink. Pemilik situs bisa menambahkan link lewat workflow <code>Tambah shortlink</code> di GitHub.</div>
+    </section>
+
+    <section class="how-section" id="cara-kerja" aria-labelledby="how-title">
+      <div class="how-title">
+        <span class="card-kicker">NGGAK PAKE RIBET</span>
+        <h2 id="how-title">Dua langkah.<br><span>Satu link rapi.</span></h2>
+        <p>Semua link yang siap pakai bisa ditemukan di satu tempat.</p>
+      </div>
+      <div class="steps">
+        <article class="step">
+          <span class="step-number">01</span>
+          <div><h3>Tempel link tujuan</h3><p>Salin URL dokumen atau halaman yang ingin kamu bagikan.</p></div>
+        </article>
+        <article class="step">
+          <span class="step-number">02</span>
+          <div><h3>Pilih nama pendek</h3><p>Gunakan alias yang gampang diingat, lalu bagikan shortlink-nya.</p></div>
+        </article>
+      </div>
+      <p class="how-footnote">Link baru dikelola pemilik situs agar semua pengunjung mendapat tujuan yang sama.</p>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand footer-brand" href="./" aria-label="NvanCut beranda">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M24,232 V24 H84 L176,146 V24 H232 V232 H172 L80,110 V232 Z"/></svg>
+      </span>
+      <span class="brand-word">NvanCut</span>
+    </a>
+    <span class="footer-tagline">LINK RINGKAS. BERES.</span>
+    <span class="footer-copyright">© 2026 NVANCUT</span>
+  </footer>
+</body>
+</html>
