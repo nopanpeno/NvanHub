@@ -68,7 +68,8 @@ async function visit(browser, base, { width, reduced }) {
   expect(await list.evaluate((el) => el === document.activeElement), `[${label}] fokus tidak pindah ke daftar topik`);
   const box = await list.boundingBox();
   expect(box && box.x >= 0 && box.x + box.width <= width, `[${label}] daftar topik keluar dari layar`);
-  const tall = await list.locator('[role=option]').first().evaluate((el) => el.getBoundingClientRect().height);
+  // Tinggi dari gaya terhitung, bukan getBoundingClientRect: rect ikut transform animasi masuk dan bisa meleset sub-piksel.
+  const tall = await list.locator('[role=option]').first().evaluate((el) => parseFloat(getComputedStyle(el).height));
   expect(tall >= 44, `[${label}] opsi topik lebih pendek dari 44px (${tall}px)`);
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
