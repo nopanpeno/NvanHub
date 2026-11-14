@@ -82,6 +82,20 @@ const TOOLS = {
       'play/fonts/silkscreen-latin-700-normal.woff2',
     ],
   },
+  vector: {
+    cache: 'nvanhub-vector-v1',
+    assets: [
+      'vector/',
+      'vector/index.html',
+      'vector/css/style.css',
+      'vector/palette.js',
+      'vector/tumpang.js',
+      'vector/binarytrace.js',
+      'vector/converter.js',
+      'vector/vendor/imagetracer_v1.2.6.js',
+      'vector/vendor/esm-potrace-wasm/index.js',
+    ],
+  },
 };
 
 const KEEP = [HUB.cache, ...Object.values(TOOLS).map((t) => t.cache)];
