@@ -65,6 +65,7 @@ Fun fact di bagian Tentang berupa paragraf biasa di `index.html`. Ubah langsung 
 - `pass/`: NvanPass, kirim file lewat WebRTC. Berdiri sendiri, tidak import file hub. Tes sendiri: `cd pass && npm test`
 - `play/`: NvanPlay, katalog game kecil dan pemutarnya. Berdiri sendiri, tidak import file hub. Cek kontrak game: `cd play && node scripts/check-games.mjs`
 - `vector/`: NvanVector, gambar jadi SVG lalu XML Alight Motion. Berdiri sendiri, tidak import file hub. Library ada di `vector/vendor/` (Potrace GPL-2.0, lihat `vector/LICENSE`). Tes sendiri: `cd vector && npm test`
+- `qr/`: NvanQR, buat dan pindai QR code di browser. Berdiri sendiri, tidak import file hub. Tanpa build, pustaka ada di `qr/vendor/`. Lihat `qr/README.md`
 - `assets/icons/`: ikon pixel 8×8 (`icon-*.png` adalah ikon app, bukan ikon tampilan)
 - `assets/fonts/`: font Jersey 10 dan lisensinya (OFL)
 - `assets/vendor/`: GSAP 3.12.5
@@ -78,7 +79,7 @@ Semua file di `js/` harus dimuat di `index.html` (dicek otomatis). Animasi baru 
 
 ## Cek otomatis
 
-Cek jalan di GitHub Actions tiap PR dan push ke `main`: cek statis, cek kontrak game NvanPlay, tes codec NvanPass, tes NvanVector, dan tes asap di browser. Bisa dijalankan sendiri di komputer:
+Cek jalan di GitHub Actions tiap PR dan push ke `main`: cek statis, cek kontrak game NvanPlay, tes codec NvanPass, tes NvanVector, tes NvanQR, dan tes asap di browser. Bisa dijalankan sendiri di komputer:
 
 ```
 node scripts/check.mjs
@@ -91,4 +92,4 @@ npm install --no-save playwright
 node scripts/smoke.cjs
 ```
 
-Membuka halaman di browser pada 1280px, 375px, dan reduced-motion, lalu `/pass/`, `/play/`, dan `/vector/`. Memeriksa tidak ada error JS atau request gagal, jumlah kartu sama dengan jumlah proyek, tidak ada scroll horizontal, font termuat, dan tombol kembali ke hub ada. Juga memastikan hub, NvanPass, NvanPlay, dan NvanVector tetap tampil saat offline.
+Membuka halaman di browser pada 1280px, 375px, dan reduced-motion, lalu `/pass/`, `/play/`, `/vector/`, dan `/qr/` (termasuk pulang-pergi buat QR lalu pindai). Memeriksa tidak ada error JS atau request gagal, jumlah kartu sama dengan jumlah proyek, tidak ada scroll horizontal, font termuat, dan tombol kembali ke hub ada. Juga memastikan hub, NvanPass, NvanPlay, NvanVector, dan NvanQR tetap tampil saat offline.

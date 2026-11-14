@@ -2,7 +2,7 @@
 // Jalankan: node scripts/smoke.cjs   (server statis dijalankan sendiri di port acak)
 // Memeriksa: tidak ada error JS atau request gagal, kartu = jumlah proyek, tidak ada scroll
 // horizontal di 375px dan 1280px, font pixel termuat, dan mode reduced-motion tanpa animasi.
-// Juga: NvanPass, NvanPlay, dan NvanVector tampil dan punya tombol kembali ke hub, dan hub serta tool tetap bisa dibuka offline.
+// Juga: NvanPass, NvanPlay, NvanVector, dan NvanQR tampil dan punya tombol kembali ke hub, dan hub serta tool tetap bisa dibuka offline.
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -179,6 +179,39 @@ async function visitVector(browser, base, { width }) {
   await ctx.close();
 }
 
+// NvanQR di /qr/: buat QR dari tautan, tombol kembali ada, tidak melebar. Di 1280px juga pulang-pergi:
+// QR dibuat di halaman buat, lalu gambarnya dipindai di /qr/scan.html dan isinya harus sama.
+async function visitQr(browser, base, { width }) {
+  const label = `qr ${width}px`;
+  const ctx = await browser.newContext({ viewport: { width, height: 800 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => problems.push(`[${label}] error JS: ${e.message}`));
+  page.on('requestfailed', (r) => problems.push(`[${label}] request gagal: ${r.url()}`));
+  page.on('response', (r) => { if (r.status() >= 400) problems.push(`[${label}] HTTP ${r.status()}: ${r.url()}`); });
+  await page.goto(`${base}qr/`, { waitUntil: 'load' });
+  await page.waitForTimeout(500);
+  expect((await page.locator('a.hub-back').getAttribute('href')) === '../', `[${label}] tombol kembali ke NvanHub tidak ada`);
+  await page.fill('#link-input', 'contoh.com/halaman');
+  await page.waitForTimeout(300);
+  expect(await page.locator('#qr-canvas').isVisible(), `[${label}] QR tidak muncul setelah tautan diisi`);
+  const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(over <= 0, `[${label}] ada scroll horizontal (${over}px)`);
+  if (width === 1280) {
+    const dataUrl = await page.evaluate(() => QRCode.toDataURL('https://contoh.com/tes', { width: 300, margin: 4 }));
+    const scan = await ctx.newPage();
+    scan.on('pageerror', (e) => problems.push(`[${label}] pindai error JS: ${e.message}`));
+    await scan.goto(`${base}qr/scan.html`, { waitUntil: 'load' });
+    expect((await scan.locator('a.hub-back').getAttribute('href')) === '../', `[${label}] tombol kembali di halaman pindai tidak ada`);
+    await scan.click('#image-tab');
+    await scan.setInputFiles('#image-input', { name: 'qr.png', mimeType: 'image/png', buffer: Buffer.from(dataUrl.split(',')[1], 'base64') });
+    await scan.waitForFunction(() => /berhasil dibaca/.test(document.getElementById('scan-status').textContent), null, { timeout: 8000 }).catch(() => {});
+    const result = (await scan.textContent('#result-text')).trim();
+    expect(result === 'https://contoh.com/tes', `[${label}] hasil pindai tidak sama (${result || 'kosong'})`);
+    await scan.close();
+  }
+  await ctx.close();
+}
+
 // Offline: setelah sekali dibuka lewat service worker, hub dan NvanPass tetap bisa dibuka tanpa jaringan.
 async function visitOffline(browser, base) {
   const total = JSON.parse(fs.readFileSync(path.join(root, 'data/projects.json'), 'utf8')).length;
@@ -206,6 +239,14 @@ async function visitOffline(browser, base) {
   await page.waitForTimeout(800);
   expect((await page.locator('#file').count()) === 1, '[offline] NvanVector tidak tampil tanpa jaringan');
   expect(await page.evaluate(() => typeof ImageTracer !== 'undefined' && typeof NvanBinary !== 'undefined'), '[offline] library trace NvanVector tidak ada tanpa jaringan');
+  // NvanQR: halaman buat dan pindai, pustaka QR, dan font ada di cache
+  await page.goto(`${base}qr/`, { waitUntil: 'load' });
+  await page.waitForTimeout(800);
+  expect((await page.locator('#link-input').count()) === 1, '[offline] NvanQR tidak tampil tanpa jaringan');
+  expect(await page.evaluate(() => typeof QRCode !== 'undefined'), '[offline] pustaka QR NvanQR tidak ada tanpa jaringan');
+  await page.goto(`${base}qr/scan.html`, { waitUntil: 'load' });
+  await page.waitForTimeout(800);
+  expect((await page.locator('#camera-button').count()) === 1, '[offline] halaman pindai NvanQR tidak tampil tanpa jaringan');
   await ctx.close();
 }
 
@@ -221,6 +262,8 @@ async function visitOffline(browser, base) {
     await visitPlay(browser, base, { width: 1280 });
     await visitVector(browser, base, { width: 375 });
     await visitVector(browser, base, { width: 1280 });
+    await visitQr(browser, base, { width: 375 });
+    await visitQr(browser, base, { width: 1280 });
     await visitOffline(browser, base);
   } finally {
     await browser.close();
