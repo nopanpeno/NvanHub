@@ -1,0 +1,283 @@
+const ALIAS_PATTERN = /^[a-zA-Z0-9_-]+$/;
+const RESERVED_ALIASES = ["fonts", "logo", "scripts"];
+const WORKFLOW_URL = "https://github.com/nopanpeno/NvanHub/actions/workflows/cut-add-link.yml";
+const DELETE_WORKFLOW_URL = "https://github.com/nopanpeno/NvanHub/actions/workflows/cut-delete-link.yml";
+const form = document.querySelector("#shortlink-form");
+const aliasField = document.querySelector("#alias");
+const destinationField = document.querySelector("#destination");
+const message = document.querySelector("#form-message");
+const list = document.querySelector("#links-list");
+const count = document.querySelector("#link-count");
+const empty = document.querySelector("#links-empty");
+const aliasPreview = document.querySelector("#alias-preview");
+
+const siteBase = new URL("./", window.location.href);
+// Ikon salin: dua persegi, digambar SVG (bukan karakter).
+// Kartu link "dipotong": garis gunting melintas, lalu kartu muncul saat terlihat.
+const cardObserver =
+  "IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches
+    ? new IntersectionObserver(
+        (items, observer) => {
+          for (const item of items) {
+            if (item.isIntersecting) {
+              item.target.classList.add("is-in");
+              observer.unobserve(item.target);
+            }
+          }
+        },
+        { threshold: 0.2 },
+      )
+    : null;
+
+function revealCard(card) {
+  if (cardObserver) cardObserver.observe(card);
+  else card.classList.add("is-in");
+}
+
+const COPY_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
+
+function shortUrl(alias) {
+  return new URL(encodeURIComponent(alias), siteBase).href;
+}
+
+function updateAliasPreview() {
+  const alias = aliasField.value.trim();
+  aliasPreview.textContent = alias ? shortUrl(alias) : `${siteBase.host}${siteBase.pathname}nama-link`;
+}
+updateAliasPreview();
+aliasField.addEventListener("input", updateAliasPreview);
+
+function showMessage(text, type = "error") {
+  message.textContent = text;
+  message.className = `form-message ${type}`;
+  message.hidden = false;
+}
+
+function validDestination(value) {
+  try {
+    const url = new URL(value);
+    return ["http:", "https:"].includes(url.protocol) && Boolean(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
+function normalizeAlias(value) {
+  return value.trim();
+}
+
+async function copyText(value) {
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(value);
+    return;
+  }
+  const temporary = document.createElement("textarea");
+  temporary.value = value;
+  temporary.style.position = "fixed";
+  temporary.style.opacity = "0";
+  document.body.append(temporary);
+  temporary.select();
+  const copied = document.execCommand("copy");
+  temporary.remove();
+  if (!copied) throw new Error("copy_failed");
+}
+
+function copyInlineButton(label, value) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "copy-inline";
+  button.textContent = label;
+  button.addEventListener("click", async () => {
+    try {
+      await copyText(value);
+      button.textContent = "Tersalin";
+    } catch {
+      button.textContent = "Gagal menyalin";
+    }
+    window.setTimeout(() => {
+      button.textContent = label;
+    }, 1500);
+  });
+  return button;
+}
+
+function renderLinks(links) {
+  const entries = Object.entries(links);
+  count.textContent = `${entries.length} link tersedia`;
+  empty.hidden = entries.length > 0;
+  list.replaceChildren();
+
+  for (const [index, [alias, destination]] of entries.entries()) {
+    const card = document.createElement("article");
+    card.className = "link-card";
+    card.style.setProperty("--d", `${index * 90}ms`);
+    const info = document.createElement("div");
+    info.className = "link-info";
+    const link = document.createElement("a");
+    link.className = "link-alias";
+    link.href = shortUrl(alias);
+    link.textContent = `/${alias}`;
+    const target = document.createElement("span");
+    target.className = "link-url";
+    target.textContent = destination;
+    target.title = destination;
+    info.append(link, target);
+    const button = document.createElement("button");
+    button.className = "copy-button";
+    button.type = "button";
+    button.setAttribute("aria-label", `Salin shortlink ${alias}`);
+    button.title = "Salin shortlink";
+    button.innerHTML = COPY_ICON;
+    button.addEventListener("click", async () => {
+      try {
+        await copyText(link.href);
+        button.textContent = "OK";
+        button.setAttribute("aria-label", `Shortlink ${alias} disalin`);
+        window.setTimeout(() => {
+          button.innerHTML = COPY_ICON;
+          button.setAttribute("aria-label", `Salin shortlink ${alias}`);
+        }, 1500);
+      } catch {
+        showMessage("Gagal menyalin otomatis. Pilih dan salin alamat shortlink secara manual.");
+      }
+    });
+    const remove = document.createElement("button");
+    remove.className = "delete-button";
+    remove.type = "button";
+    remove.setAttribute("aria-label", `Hapus shortlink ${alias}`);
+    remove.title = "Hapus shortlink";
+    remove.textContent = "Hapus";
+    remove.addEventListener("click", () => showDeleteHelp(alias));
+    card.append(info, button, remove);
+    list.append(card);
+    revealCard(card);
+  }
+}
+
+function showDeleteHelp(alias) {
+  message.replaceChildren();
+  const title = document.createElement("strong");
+  title.textContent = `Siap dihapus: /${alias}`;
+  const steps = document.createElement("span");
+  steps.textContent = "Buka workflow “Hapus shortlink” di GitHub, tekan Run workflow, lalu tempel alias (tombol salin ada di bawah). Link mati sekitar 1–2 menit kemudian.";
+  const actions = document.createElement("div");
+  actions.className = "message-actions";
+  const workflow = document.createElement("a");
+  workflow.className = "copy-inline";
+  workflow.href = DELETE_WORKFLOW_URL;
+  workflow.target = "_blank";
+  workflow.rel = "noopener noreferrer";
+  workflow.textContent = "Buka workflow";
+  actions.append(copyInlineButton("Salin alias", alias), workflow);
+  message.append(title, document.createElement("br"), steps, actions);
+  message.className = "form-message success";
+  message.hidden = false;
+  message.scrollIntoView({ block: "nearest" });
+}
+
+async function loadLinks() {
+  try {
+    const response = await fetch(new URL("links.json", siteBase));
+    if (!response.ok) throw new Error("links_unavailable");
+    const links = await response.json();
+    if (!links || Array.isArray(links) || typeof links !== "object") throw new Error("invalid_config");
+    renderLinks(links);
+    return links;
+  } catch {
+    renderLinks({});
+    showMessage("Daftar link belum dapat dimuat. Coba muat ulang halaman atau hubungi pemilik situs.");
+    return null;
+  }
+}
+
+form.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  message.hidden = true;
+  const alias = normalizeAlias(aliasField.value);
+  const destination = destinationField.value.trim();
+
+  if (!destination) {
+    showMessage("Link tujuan wajib diisi.");
+    destinationField.focus();
+    return;
+  }
+  if (!validDestination(destination)) {
+    showMessage("Masukkan URL yang valid dengan protokol http:// atau https://.");
+    destinationField.focus();
+    return;
+  }
+  if (!alias) {
+    showMessage("Nama pendek wajib diisi.");
+    aliasField.focus();
+    return;
+  }
+  if (!ALIAS_PATTERN.test(alias)) {
+    showMessage("Nama pendek hanya boleh berisi huruf, angka, tanda hubung, dan garis bawah.");
+    aliasField.focus();
+    return;
+  }
+
+  if (RESERVED_ALIASES.includes(alias.toLowerCase())) {
+    showMessage("Nama pendek ini dipakai oleh situs. Coba alias lain.");
+    aliasField.focus();
+    return;
+  }
+
+  const links = await loadLinks();
+  if (!links) {
+    // Daftar tidak termuat, jadi cek alias ganda tidak bisa dipercaya. Pesan sudah tampil.
+    return;
+  }
+  if (Object.keys(links).some((registered) => registered.toLowerCase() === alias.toLowerCase())) {
+    showMessage("Nama pendek ini sudah dipakai. Coba alias lain.");
+    aliasField.focus();
+    return;
+  }
+
+  message.replaceChildren();
+  const title = document.createElement("strong");
+  title.textContent = `Siap ditambahkan: ${shortUrl(alias)}`;
+  const steps = document.createElement("span");
+  steps.textContent = "Buka workflow “Tambah shortlink” di GitHub, tekan Run workflow, lalu tempel alias dan link tujuan (tombol salin ada di bawah). Link aktif sekitar 1–2 menit kemudian.";
+  const actions = document.createElement("div");
+  actions.className = "message-actions";
+  const workflow = document.createElement("a");
+  workflow.className = "copy-inline";
+  workflow.href = WORKFLOW_URL;
+  workflow.target = "_blank";
+  workflow.rel = "noopener noreferrer";
+  workflow.textContent = "Buka workflow";
+  actions.append(copyInlineButton("Salin alias", alias), copyInlineButton("Salin link tujuan", destination), workflow);
+  message.append(title, document.createElement("br"), steps, actions);
+  message.className = "form-message success";
+  message.hidden = false;
+});
+
+// Titik latar bergeser sedikit mengikuti kursor (paralaks halus).
+// Hanya untuk mouse, dan dimatikan jika pengguna minta gerak minimal.
+if (matchMedia("(pointer: fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  const root = document.documentElement;
+  const RANGE = 6;
+  let targetX = 0;
+  let targetY = 0;
+  let currentX = 0;
+  let currentY = 0;
+  let frame = 0;
+
+  const tick = () => {
+    currentX += (targetX - currentX) * 0.12;
+    currentY += (targetY - currentY) * 0.12;
+    root.style.setProperty("--dx", `${currentX.toFixed(2)}px`);
+    root.style.setProperty("--dy", `${currentY.toFixed(2)}px`);
+    const settled = Math.abs(targetX - currentX) < 0.05 && Math.abs(targetY - currentY) < 0.05;
+    frame = settled ? 0 : requestAnimationFrame(tick);
+  };
+
+  window.addEventListener("pointermove", (event) => {
+    targetX = (0.5 - event.clientX / window.innerWidth) * 2 * RANGE;
+    targetY = (0.5 - event.clientY / window.innerHeight) * 2 * RANGE;
+    if (!frame) frame = requestAnimationFrame(tick);
+  }, { passive: true });
+}
+
+loadLinks();

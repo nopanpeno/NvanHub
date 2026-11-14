@@ -37,7 +37,7 @@
     "desc": "Tanpa backend. Alias disimpan di links.json, situs diterbitkan ulang lewat GitHub Actions.",
     "tags": ["HTML", "Shortlink"],
     "repo": "https://github.com/nopanpeno/NvanCut",
-    "live": "https://nopanpeno.github.io/NvanCut/"
+    "live": "https://nopanpeno.github.io/NvanHub/cut/"
   },
   {
     "name": "NvanExif",
