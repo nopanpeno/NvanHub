@@ -2,6 +2,7 @@
 // Jalankan: node scripts/smoke.cjs   (server statis dijalankan sendiri di port acak)
 // Memeriksa: tidak ada error JS atau request gagal, kartu = jumlah proyek, tidak ada scroll
 // horizontal di 375px dan 1280px, font pixel termuat, dan mode reduced-motion tanpa animasi.
+// Juga: NvanPass di /pass/ tampil dan memuat manifest, dan hub serta NvanPass tetap bisa dibuka offline.
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -67,7 +68,8 @@ async function visit(browser, base, { width, reduced }) {
   expect(await list.evaluate((el) => el === document.activeElement), `[${label}] fokus tidak pindah ke daftar topik`);
   const box = await list.boundingBox();
   expect(box && box.x >= 0 && box.x + box.width <= width, `[${label}] daftar topik keluar dari layar`);
-  const tall = await list.locator('[role=option]').first().evaluate((el) => el.getBoundingClientRect().height);
+  // Tinggi dari gaya terhitung, bukan getBoundingClientRect: rect ikut transform animasi masuk dan bisa meleset sub-piksel.
+  const tall = await list.locator('[role=option]').first().evaluate((el) => parseFloat(getComputedStyle(el).height));
   expect(tall >= 44, `[${label}] opsi topik lebih pendek dari 44px (${tall}px)`);
   await page.keyboard.press('ArrowDown');
   await page.keyboard.press('Enter');
@@ -113,12 +115,54 @@ async function visit(browser, base, { width, reduced }) {
   await ctx.close();
 }
 
+// NvanPass di /pass/: layar awal tampil, tombol kembali ke hub ada, manifest termuat, tidak ada scroll horizontal.
+async function visitPass(browser, base, { width }) {
+  const label = `pass ${width}px`;
+  const ctx = await browser.newContext({ viewport: { width, height: 800 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => problems.push(`[${label}] error JS: ${e.message}`));
+  page.on('requestfailed', (r) => problems.push(`[${label}] request gagal: ${r.url()}`));
+  page.on('response', (r) => { if (r.status() >= 400) problems.push(`[${label}] HTTP ${r.status()}: ${r.url()}`); });
+  await page.goto(`${base}pass/`, { waitUntil: 'load' });
+  await page.waitForTimeout(800);
+  expect(await page.locator('#go-send').isVisible(), `[${label}] layar awal NvanPass tidak tampil`);
+  expect((await page.locator('a.hub-back').getAttribute('href')) === '../', `[${label}] tombol kembali ke NvanHub tidak ada`);
+  expect((await page.locator('link[rel=manifest]').count()) === 1, `[${label}] link manifest tidak ada`);
+  const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(over <= 0, `[${label}] ada scroll horizontal (${over}px)`);
+  await ctx.close();
+}
+
+// Offline: setelah sekali dibuka lewat service worker, hub dan NvanPass tetap bisa dibuka tanpa jaringan.
+async function visitOffline(browser, base) {
+  const total = JSON.parse(fs.readFileSync(path.join(root, 'data/projects.json'), 'utf8')).length;
+  const ctx = await browser.newContext({ viewport: { width: 375, height: 800 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => problems.push(`[offline] error JS: ${e.message}`));
+  await page.goto(base, { waitUntil: 'load' });
+  // Install service worker selesai menyimpan aset dulu, baru mengambil alih halaman (controller terisi).
+  await page.waitForFunction(() => navigator.serviceWorker.controller !== null, null, { timeout: 15000 });
+  await page.reload({ waitUntil: 'load' });
+  await page.waitForTimeout(800);
+  await ctx.setOffline(true);
+  await page.reload({ waitUntil: 'load' });
+  await page.waitForTimeout(1500);
+  expect((await page.locator('.card').count()) === total, `[offline] hub tidak memuat ${total} kartu tanpa jaringan`);
+  await page.goto(`${base}pass/`, { waitUntil: 'load' });
+  await page.waitForTimeout(800);
+  expect(await page.locator('#go-send').isVisible(), '[offline] NvanPass tidak tampil tanpa jaringan');
+  await ctx.close();
+}
+
 (async () => {
   await new Promise((r) => server.listen(0, '127.0.0.1', r));
   const base = `http://127.0.0.1:${server.address().port}/`;
   const browser = await chromium.launch(process.env.CI ? { channel: 'chrome' } : {});
   try {
     for (const opts of [{ width: 1280 }, { width: 375 }, { width: 1280, reduced: true }]) await visit(browser, base, opts);
+    await visitPass(browser, base, { width: 375 });
+    await visitPass(browser, base, { width: 1280 });
+    await visitOffline(browser, base);
   } finally {
     await browser.close();
     server.close();

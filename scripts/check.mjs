@@ -81,6 +81,44 @@ for (const m of css.matchAll(/url\(\s*["']?([^"')]+)["']?\s*\)/g)) {
   else if (!existsSync(join(root, 'css', u.split(/[?#]/)[0]))) fail(`css/style.css: file "${u}" tidak ada`);
 }
 
+// ---- manifest.json: ikon yang didaftar harus ada ----
+const manifest = json('manifest.json');
+for (const ic of manifest?.icons ?? []) {
+  if (!existsSync(join(root, ic.src))) fail(`manifest.json: ikon "${ic.src}" tidak ada`);
+}
+
+// ---- sw.js: syntax, semua aset yang didaftar harus ada, tiap tool punya folder dan cache sendiri.
+// Hub gagal dipasang kalau satu aset hub hilang, jadi ini dicek di sini, bukan di browser. ----
+try {
+  execFileSync(process.execPath, ['--check', join(root, 'sw.js')], { stdio: 'pipe' });
+} catch (e) {
+  fail(`sw.js: syntax salah\n${String(e.stderr).trim().split('\n').slice(0, 4).join('\n')}`);
+}
+const sw = read('sw.js');
+const hubBody = sw.match(/const HUB = \{[\s\S]*?assets:\s*\[([\s\S]*?)\]/)?.[1];
+const hubCache = sw.match(/const HUB = \{\s*cache:\s*'([^']+)'/)?.[1];
+const tools = [...sw.matchAll(/(\w+):\s*\{\s*cache:\s*'([^']+)',\s*assets:\s*\[([\s\S]*?)\]/g)];
+if (hubBody === undefined || !hubCache) fail('sw.js: blok HUB (cache dan assets) tidak terbaca');
+const lists = [['hub', hubBody ?? ''], ...tools.map((m) => [m[1], m[3]])];
+for (const [owner, body] of lists) {
+  for (const [, p] of body.matchAll(/'([^']+)'/g)) {
+    const file = p.endsWith('/') ? `${p}index.html` : p;
+    if (!existsSync(join(root, file))) fail(`sw.js (${owner}): aset "${p}" tidak ada`);
+  }
+}
+const cacheNames = [hubCache, ...tools.map((m) => m[2])];
+if (cacheNames.some((c) => !c) || new Set(cacheNames).size !== cacheNames.length) {
+  fail('sw.js: nama cache harus ada dan tidak boleh dobel (tiap tool punya cache sendiri)');
+}
+for (const [, tool] of tools) {
+  if (!existsSync(join(root, tool, 'index.html'))) fail(`sw.js: tool "${tool}" tidak punya ${tool}/index.html`);
+}
+
+// ---- pass/index.html: punya link manifest, dan file manifest-nya ada ----
+const passManifest = read('pass/index.html').match(/<link rel="manifest" href="([^"]+)"/);
+if (!passManifest) fail('pass/index.html: link manifest tidak ada');
+else if (!existsSync(join(root, 'pass', passManifest[1]))) fail(`pass/index.html: manifest "${passManifest[1]}" tidak ada`);
+
 if (problems.length) {
   console.error(`Cek gagal (${problems.length}):\n- ${problems.join('\n- ')}`);
   process.exit(1);
