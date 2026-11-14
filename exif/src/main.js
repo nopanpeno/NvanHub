@@ -1,0 +1,299 @@
+import { readExif } from './exif-read.js';
+import { groupFields, hasGps } from './exif-groups.js';
+import { showMap, formatCoords } from './map.js';
+import { gpsDetails, mapLinks, decimalText, accuracyMeters } from './gps.js';
+import { cleanAll, cleanSelected, removableKeys, cleanName, detectFormat } from './clean.js';
+import { isJpeg } from './jpeg.js';
+import { scanStructure } from './scan.js';
+
+const $ = (id) => document.getElementById(id);
+const dropzone = $('dropzone');
+const input = $('file');
+const statusEl = $('status');
+const result = $('result');
+const groupsEl = $('groups');
+const metaEl = $('meta');
+const preview = $('preview');
+const btnAll = $('btn-all');
+const btnSel = $('btn-sel');
+const btnSens = $('btn-sens');
+const orient = $('orient');
+const note = $('note');
+const done = $('done');
+const doneInfo = $('done-info');
+const download = $('download');
+const left = $('left');
+const scanEl = $('scan');
+const mapbox = $('mapbox');
+const mapEl = $('map');
+const btnMap = $('btn-map');
+const coordsEl = $('coords');
+const gpsDetailsEl = $('gps-details');
+const btnCopy = $('btn-copy');
+
+let destroyMap = null;
+let gps = null;
+
+function resetMap() {
+  destroyMap?.();
+  destroyMap = null;
+  mapEl.hidden = true;
+  btnMap.textContent = 'Tampilkan di peta';
+  btnMap.disabled = false;
+}
+
+function renderGps(data) {
+  coordsEl.textContent = formatCoords(gps.lat, gps.lon);
+  gpsDetailsEl.replaceChildren(
+    ...gpsDetails(data).map((r) => {
+      const row = el('div', 'row');
+      row.append(el('dt', '', r.label), el('dd', '', r.value));
+      return row;
+    }),
+  );
+  const links = mapLinks(gps.lat, gps.lon);
+  $('link-osm').href = links.osm;
+  $('link-gmaps').href = links.google;
+  btnCopy.textContent = 'Salin koordinat';
+}
+
+btnCopy.addEventListener('click', async () => {
+  const text = decimalText(gps.lat, gps.lon);
+  try {
+    await navigator.clipboard.writeText(text);
+    btnCopy.textContent = 'Tersalin';
+  } catch {
+    btnCopy.textContent = text; // clipboard ditolak: tampilkan teks supaya bisa disalin manual
+  }
+});
+
+btnMap.addEventListener('click', async () => {
+  if (destroyMap) return resetMap();
+  btnMap.disabled = true;
+  btnMap.textContent = 'Memuat peta...';
+  try {
+    mapEl.hidden = false;
+    destroyMap = await showMap(mapEl, gps.lat, gps.lon, { accuracy: gps.accuracy });
+    btnMap.textContent = 'Matikan peta';
+  } catch (err) {
+    console.error(err);
+    resetMap();
+    setStatus('Gagal memuat peta.');
+  } finally {
+    btnMap.disabled = false;
+  }
+});
+
+const state = { file: null, removable: new Set(), jpeg: false, urls: { preview: null, out: null } };
+
+function setStatus(text) {
+  statusEl.textContent = text;
+}
+
+function el(tag, cls, text) {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (text !== undefined) e.textContent = text;
+  return e;
+}
+
+function swapUrl(slot, blob) {
+  if (state.urls[slot]) URL.revokeObjectURL(state.urls[slot]);
+  state.urls[slot] = URL.createObjectURL(blob);
+  return state.urls[slot];
+}
+
+function selectedKeys() {
+  return [...groupsEl.querySelectorAll('input[type=checkbox]:checked')].map((c) => c.dataset.key);
+}
+
+function updateSelButton() {
+  const n = selectedKeys().length;
+  btnSel.textContent = `Hapus yang dicentang (${n})`;
+  btnSel.disabled = n === 0 || !state.jpeg;
+}
+
+// selectable: tampilkan centang untuk field yang bisa dibuang satu per satu.
+function renderGroups(container, groups, { selectable }) {
+  container.replaceChildren();
+  if (!groups.length) {
+    container.append(el('p', 'empty', 'Tidak ada metadata EXIF yang terbaca.'));
+    return;
+  }
+  const sensitive = groups.reduce((n, g) => n + g.fields.filter((f) => f.sensitive).length, 0);
+  if (sensitive) {
+    container.append(
+      el('p', 'warn', `${sensitive} field sensitif (merah). Bisa membocorkan lokasi atau identitas.`),
+    );
+  }
+  for (const g of groups) {
+    const sec = el('section', 'group');
+    sec.append(el('h2', '', `${g.label} (${g.fields.length})`));
+    const dl = el('dl');
+    for (const f of g.fields) {
+      const row = el('div', f.sensitive ? 'row sensitive' : 'row');
+      const dt = el('dt');
+      if (selectable) {
+        const cb = el('input');
+        cb.type = 'checkbox';
+        cb.dataset.key = f.key;
+        cb.id = `cb-${f.key}`;
+        cb.disabled = !state.removable.has(f.key);
+        cb.addEventListener('change', updateSelButton);
+        const lab = el('label', '', f.key);
+        lab.htmlFor = cb.id;
+        dt.append(cb, lab);
+      } else {
+        dt.textContent = f.key;
+      }
+      row.append(dt, el('dd', '', f.value));
+      dl.append(row);
+    }
+    sec.append(dl);
+    container.append(sec);
+  }
+}
+
+async function handle(file) {
+  if (!file) return;
+  setStatus('Membaca metadata...');
+  result.hidden = true;
+  done.hidden = true;
+  try {
+    const format = await detectFormat(file);
+    if (!format) {
+      state.file = null;
+      setStatus('Format belum didukung. Pilih JPEG, PNG, atau WebP.');
+      return;
+    }
+    const [data, removable, head] = await Promise.all([
+      readExif(file),
+      removableKeys(file),
+      file.slice(0, 4).arrayBuffer(),
+    ]);
+    state.file = file;
+    state.removable = removable;
+    state.jpeg = isJpeg(new Uint8Array(head));
+    preview.src = swapUrl('preview', file);
+    metaEl.replaceChildren(
+      el('p', 'fname', file.name),
+      el('p', 'fsize', `${(file.size / 1024 / 1024).toFixed(2)} MB`),
+    );
+    resetMap();
+    gps = hasGps(data) ? { lat: data.latitude, lon: data.longitude, accuracy: accuracyMeters(data) } : null;
+    mapbox.hidden = !gps;
+    if (gps) renderGps(data);
+    renderGroups(groupsEl, groupFields(data), { selectable: state.jpeg });
+        btnSel.hidden = btnSens.hidden = !state.jpeg;
+    const groupsNow = groupFields(data);
+    note.textContent = state.jpeg
+      ? groupsNow.length && removable.size === 0
+        ? 'Field di file ini tidak bisa dihapus satu per satu (EXIF tidak terbaca oleh pembersih, atau hanya XMP/IPTC). Pakai "Hapus semua".'
+        : 'Field XMP dan IPTC tidak bisa dicentang satu per satu. Pakai "Hapus semua" untuk membuangnya.'
+      : 'Format ini hanya mendukung "Hapus semua". Metadata dibuang dari file, piksel tidak diubah.';
+    updateSelButton();
+    result.hidden = false;
+    setStatus('');
+  } catch (err) {
+    console.error(err);
+    setStatus('Gagal membaca file ini. Coba foto lain.');
+  }
+}
+
+function fmtBytes(n) {
+  return n < 1024 ? `${n} B` : `${(n / 1024).toFixed(1)} kB`;
+}
+
+function renderScan(r) {
+  scanEl.replaceChildren();
+  if (r.error) {
+    scanEl.append(el('p', 'warn', 'Struktur file tidak bisa dipindai penuh. Anggap hasil ini belum terverifikasi.'));
+  } else if (!r.found.length) {
+    scanEl.append(el('p', 'ok', 'Tidak ada wadah metadata di struktur file: EXIF, XMP, IPTC, komentar, dan data tambahan tidak ditemukan.'));
+  } else {
+    scanEl.append(el('p', 'warn', `Masih ada ${r.found.length} wadah metadata di file ini:`));
+    const ul = el('ul', 'scanlist');
+    for (const f of r.found) ul.append(el('li', '', `${f.label}, ${fmtBytes(f.bytes)}`));
+    scanEl.append(ul);
+  }
+  if (r.kept.length) {
+    scanEl.append(el('p', 'note', `Sengaja dipertahankan: ${r.kept.map((k) => k.label).join(', ')}.`));
+  }
+  scanEl.append(
+    el('p', 'note', 'Pemindai mengenali wadah metadata yang umum. Isi piksel, misalnya watermark tak kasat mata, tidak diperiksa.'),
+  );
+}
+
+async function finish(res) {
+  const url = swapUrl('out', res.blob);
+  download.href = url;
+  download.download = cleanName(state.file.name, res.ext);
+  const sizeMb = (res.blob.size / 1024 / 1024).toFixed(2);
+  doneInfo.textContent =
+    `File baru ${sizeMb} MB. ` +
+    (res.lossy
+      ? 'Dibuat dengan gambar ulang, kualitas bisa sedikit turun.'
+      : res.redrawn
+        ? 'Dibuat dengan gambar ulang. PNG tetap tanpa kehilangan kualitas.'
+        : 'Piksel foto tidak berubah.');
+  renderScan(scanStructure(new Uint8Array(await res.blob.arrayBuffer())));
+  const data = await readExif(res.blob);
+  if (hasGps(data)) {
+    scanEl.prepend(
+      el('p', 'warn', `Foto hasil masih memuat lokasi (${formatCoords(data.latitude, data.longitude)}). Centang field GPS lalu hapus, atau pakai "Hapus semua".`),
+    );
+  }
+  renderGroups(left, groupFields(data), { selectable: false });
+  if (!groupFields(data).length) {
+    left.replaceChildren(el('p', 'ok', 'Tidak ada EXIF yang terbaca oleh aplikasi. Untuk privasi sensitif, verifikasi file dengan alat metadata independen.'));
+  }
+  done.hidden = false;
+  const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  done.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'start' });
+  $('done-title').focus({ preventScroll: true });
+}
+
+async function run(job) {
+  btnAll.disabled = btnSel.disabled = true;
+  setStatus('Memproses...');
+  try {
+    await finish(await job());
+    setStatus('');
+  } catch (err) {
+    console.error(err);
+    setStatus(err.message || 'Gagal memproses foto.');
+  } finally {
+    btnAll.disabled = false;
+    updateSelButton();
+  }
+}
+
+btnAll.addEventListener('click', () => run(() => cleanAll(state.file, { keepOrientation: orient.checked })));
+btnSel.addEventListener('click', () => run(() => cleanSelected(state.file, selectedKeys())));
+btnSens.addEventListener('click', () => {
+  for (const row of groupsEl.querySelectorAll('.row.sensitive input[type=checkbox]')) {
+    if (!row.disabled) row.checked = true;
+  }
+  updateSelButton();
+});
+
+input.addEventListener('change', () => handle(input.files[0]));
+dropzone.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' || e.key === ' ') {
+    e.preventDefault();
+    input.click();
+  }
+});
+for (const ev of ['dragenter', 'dragover']) {
+  dropzone.addEventListener(ev, (e) => {
+    e.preventDefault();
+    dropzone.classList.add('over');
+  });
+}
+for (const ev of ['dragleave', 'drop']) {
+  dropzone.addEventListener(ev, (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('over');
+  });
+}
+dropzone.addEventListener('drop', (e) => handle(e.dataTransfer.files[0]));

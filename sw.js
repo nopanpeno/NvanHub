@@ -126,6 +126,32 @@ const TOOLS = {
       'cut/fonts/space-grotesk-latin-wght-normal.woff2',
     ],
   },
+  exif: {
+    cache: 'nvanhub-exif-v1',
+    assets: [
+      'exif/',
+      'exif/index.html',
+      'exif/logo.svg',
+      'exif/src/style.css',
+      'exif/src/main.js',
+      'exif/src/clean.js',
+      'exif/src/exif-groups.js',
+      'exif/src/exif-read.js',
+      'exif/src/gps.js',
+      'exif/src/jpeg.js',
+      'exif/src/map.js',
+      'exif/src/orient.js',
+      'exif/src/png.js',
+      'exif/src/scan.js',
+      'exif/src/webp.js',
+      'exif/src/fonts/dm-sans-latin-wght-normal.woff2',
+      'exif/src/fonts/space-grotesk-latin-wght-normal.woff2',
+      'exif/vendor/exifr.esm.js',
+      'exif/vendor/piexifjs.esm.js',
+      'exif/vendor/leaflet.esm.js',
+      'exif/vendor/leaflet.css',
+    ],
+  },
 };
 
 const KEEP = [HUB.cache, ...Object.values(TOOLS).map((t) => t.cache)];

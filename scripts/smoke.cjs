@@ -2,7 +2,7 @@
 // Jalankan: node scripts/smoke.cjs   (server statis dijalankan sendiri di port acak)
 // Memeriksa: tidak ada error JS atau request gagal, kartu = jumlah proyek, tidak ada scroll
 // horizontal di 375px dan 1280px, font pixel termuat, dan mode reduced-motion tanpa animasi.
-// Juga: NvanPass, NvanPlay, NvanVector, NvanQR, dan NvanCut tampil dan punya tombol kembali ke hub, dan hub serta tool tetap bisa dibuka offline.
+// Juga: NvanPass, NvanPlay, NvanVector, NvanQR, NvanExif, dan NvanCut tampil dan punya tombol kembali ke hub, dan hub serta tool tetap bisa dibuka offline.
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -212,6 +212,41 @@ async function visitQr(browser, base, { width }) {
   await ctx.close();
 }
 
+// NvanExif di /exif/: halaman tampil, tombol kembali ada, tidak melebar, modul Leaflet ada di vendor/.
+// Alur utama: pilih foto contoh, metadata terbaca, "Hapus semua" menghasilkan tautan unduh (blob:).
+async function visitExif(browser, base, { width }) {
+  const label = `exif ${width}px`;
+  const ctx = await browser.newContext({ viewport: { width, height: 800 } });
+  const page = await ctx.newPage();
+  // Modul yang gagal dimuat (MIME salah, path salah) tidak lewat pageerror, jadi konsol ikut dicek.
+  page.on('console', (m) => { if (m.type() === 'error') problems.push(`[${label}] console error: ${m.text()}`); });
+  page.on('pageerror', (e) => problems.push(`[${label}] error JS: ${e.message}`));
+  page.on('requestfailed', (r) => problems.push(`[${label}] request gagal: ${r.url()}`));
+  page.on('response', (r) => { if (r.status() >= 400) problems.push(`[${label}] HTTP ${r.status()}: ${r.url()}`); });
+  await page.goto(`${base}exif/`, { waitUntil: 'load' });
+  await page.waitForTimeout(500);
+  expect((await page.locator('a.hub-back').getAttribute('href')) === '../', `[${label}] tombol kembali ke NvanHub tidak ada`);
+  expect(await page.locator('#dropzone').isVisible(), `[${label}] area seret foto tidak tampil`);
+  const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(over <= 0, `[${label}] ada scroll horizontal (${over}px)`);
+  const leaflet = await page.evaluate(async () => {
+    const L = await import(new URL('vendor/leaflet.esm.js', location.href).href);
+    return typeof L.map === 'function' && typeof L.tileLayer === 'function' && typeof L.circle === 'function';
+  });
+  expect(leaflet, `[${label}] modul Leaflet tidak termuat dari vendor/`);
+  await page.setInputFiles('#file', path.join(root, 'exif/test/fixtures/sample.jpg'));
+  await page.waitForSelector('#result:not([hidden])', { timeout: 8000 }).catch(() => {});
+  expect(await page.locator('#result').isVisible(), `[${label}] hasil baca metadata tidak tampil`);
+  await page.click('#btn-all');
+  await page.waitForSelector('#done:not([hidden])', { timeout: 15000 }).catch(() => {});
+  expect(await page.locator('#done').isVisible(), `[${label}] hasil foto bersih tidak tampil`);
+  const href = await page.getAttribute('#download', 'href');
+  expect(Boolean(href && href.startsWith('blob:')), `[${label}] tautan unduh foto bersih tidak ada`);
+  const over2 = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(over2 <= 0, `[${label}] hasil bersih menimbulkan scroll horizontal (${over2}px)`);
+  await ctx.close();
+}
+
 // NvanCut di /cut/: beranda memuat semua link dari links.json, form ada, tombol kembali ke hub ada, tidak melebar.
 async function visitCut(browser, base, { width }) {
   const label = `cut ${width}px`;
@@ -281,6 +316,14 @@ async function visitOffline(browser, base) {
   await page.goto(`${base}cut/`, { waitUntil: 'load' });
   await page.waitForTimeout(800);
   expect((await page.locator('#shortlink-form').count()) === 1, '[offline] NvanCut tidak tampil tanpa jaringan');
+  // NvanExif: halaman, modul vendor, dan font ada di cache. Foto diproses di browser, jadi tidak butuh jaringan.
+  await page.goto(`${base}exif/`, { waitUntil: 'load' });
+  await page.waitForTimeout(800);
+  expect((await page.locator('#dropzone').count()) === 1, '[offline] NvanExif tidak tampil tanpa jaringan');
+  expect(await page.evaluate(async () => {
+    const L = await import(new URL('vendor/leaflet.esm.js', location.href).href);
+    return typeof L.map === 'function';
+  }), '[offline] modul Leaflet NvanExif tidak ada tanpa jaringan');
   await ctx.close();
 }
 
@@ -300,6 +343,8 @@ async function visitOffline(browser, base) {
     await visitQr(browser, base, { width: 1280 });
     await visitCut(browser, base, { width: 375 });
     await visitCut(browser, base, { width: 1280 });
+    await visitExif(browser, base, { width: 375 });
+    await visitExif(browser, base, { width: 1280 });
     checkCutPages();
     await visitOffline(browser, base);
   } finally {

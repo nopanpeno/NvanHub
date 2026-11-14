@@ -33,6 +33,11 @@ jobs:
           npm install --no-save playwright
           CI=1 node tools/smoke-halaman.js
         working-directory: vector
+      - name: Tes NvanExif (pembersihan metadata, dan ExifTool sebagai pembanding)
+        run: |
+          npm ci
+          npm test
+        working-directory: exif
       - name: Tes asap di browser
         run: |
           npm install --no-save playwright

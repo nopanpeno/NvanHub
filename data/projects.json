@@ -45,6 +45,6 @@
     "desc": "Pilih metadata yang mau dibuang, lalu simpan foto yang sudah bersih. Foto tidak dikirim ke server.",
     "tags": ["JavaScript", "EXIF"],
     "repo": "https://github.com/nopanpeno/NvanExif",
-    "live": "https://nopanpeno.github.io/NvanExif/"
+    "live": "https://nopanpeno.github.io/NvanHub/exif/"
   }
 ]
