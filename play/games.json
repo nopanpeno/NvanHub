@@ -1,0 +1,635 @@
+[
+  {
+    "id": "tebak-angka",
+    "title": "Tebak Angka",
+    "description": "Tebak angka 1 sampai 100 dalam 7 kali coba.",
+    "tags": [
+      "angka",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#2f6fed",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "kartu-memori",
+    "title": "Kartu Memori",
+    "description": "Cocokkan 8 pasang kartu dengan langkah sesedikit mungkin.",
+    "tags": [
+      "memori",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#2e9a55",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "klik-cepat",
+    "title": "Klik Cepat",
+    "description": "Ketuk sebanyak mungkin dalam 10 detik.",
+    "tags": [
+      "refleks",
+      "cepat"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#e5483a",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "suit",
+    "title": "Suit",
+    "description": "Batu gunting kertas lawan komputer. Kejar kemenangan beruntun.",
+    "tags": [
+      "klasik",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#8b5cf6",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "tebak-warna",
+    "title": "Tebak Warna",
+    "description": "Pilih warna tulisan, bukan arti katanya. 30 detik.",
+    "tags": [
+      "warna",
+      "refleks"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#ffb703",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "hitung-kilat",
+    "title": "Hitung Kilat",
+    "description": "Jawab soal penjumlahan sebanyak mungkin dalam 30 detik.",
+    "tags": [
+      "angka",
+      "refleks"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#2d45d6",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "ingat-urutan",
+    "title": "Ingat Urutan",
+    "description": "Ingat dan ulangi urutan warna yang makin panjang.",
+    "tags": [
+      "memori",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#8b5cf6",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "reaksi",
+    "title": "Reaksi",
+    "description": "Ketuk secepat mungkin saat layar berubah hijau.",
+    "tags": [
+      "refleks",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#0e8f8c",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "xo",
+    "title": "XO",
+    "description": "Tiga tanda segaris lawan komputer. Kejar kemenangan beruntun.",
+    "tags": [
+      "klasik",
+      "strategi"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#d6336c",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "tebak-kata",
+    "title": "Tebak Kata",
+    "description": "Tebak kata huruf demi huruf sebelum kesempatan salahmu habis.",
+    "tags": [
+      "kata",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#f97316",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "ludo-lokal",
+    "title": "Ludo Lokal",
+    "description": "Main Ludo 2–4 orang di satu layar, satu bidak untuk tiap pemain.",
+    "tags": [
+      "multiplayer",
+      "klasik",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#8b5cf6",
+    "touch": true,
+    "players": {
+      "min": 2,
+      "max": 4
+    },
+    "duration": "long"
+  },
+  {
+    "id": "ular-tangga",
+    "title": "Ular Tangga",
+    "description": "Balapan ke kotak 100 bersama 2–4 pemain di satu layar.",
+    "tags": [
+      "multiplayer",
+      "klasik",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#d94f5c",
+    "touch": true,
+    "players": {
+      "min": 2,
+      "max": 4
+    },
+    "duration": "long"
+  },
+  {
+    "id": "2048",
+    "title": "2048",
+    "description": "Geser dan gabungkan angka yang sama sampai mencapai 2048.",
+    "tags": [
+      "angka",
+      "puzzle",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#e99b62",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "labirin",
+    "title": "Labirin",
+    "description": "Temukan jalan keluar dari labirin acak secepat mungkin.",
+    "tags": [
+      "puzzle",
+      "refleks",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#287750",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "empat-segaris",
+    "title": "Empat Segaris",
+    "description": "Dua pemain bergantian menyusun empat bidak dalam satu garis.",
+    "tags": [
+      "multiplayer",
+      "strategi",
+      "klasik"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#2563eb",
+    "touch": true,
+    "players": {
+      "min": 2,
+      "max": 2
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "sapu-ranjau",
+    "title": "Sapu Ranjau",
+    "description": "Buka semua kotak aman tanpa menginjak ranjau. Rekor waktu tercepat.",
+    "tags": [
+      "puzzle",
+      "logika",
+      "klasik"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#4f6bed",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "tangkap-cacing",
+    "title": "Tangkap Cacing",
+    "description": "Makan buah, tumbuh panjang, jangan tabrak dinding atau badan sendiri.",
+    "tags": [
+      "arcade",
+      "refleks",
+      "klasik"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#2ea34f",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "tebak-emoji",
+    "title": "Tebak Emoji",
+    "description": "Tebak kata dan ungkapan dari petunjuk emoji.",
+    "tags": [
+      "kata",
+      "tebak",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#ffb703",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "ping-pong-lokal",
+    "title": "Ping Pong Lokal",
+    "description": "Adu refleks dua pemain dengan kontrol sederhana di satu layar.",
+    "tags": [
+      "multiplayer",
+      "refleks",
+      "klasik"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#3b82f6",
+    "touch": true,
+    "players": {
+      "min": 2,
+      "max": 2
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "pecah-balok",
+    "title": "Pecah Balok",
+    "description": "Pantulkan bola untuk meruntuhkan semua balok tanpa kehabisan nyawa.",
+    "tags": [
+      "arcade",
+      "refleks",
+      "klasik"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#e97937",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "sudoku-mini",
+    "title": "Sudoku Mini",
+    "description": "Isi papan 4×4 dengan angka 1–4 tanpa mengulang di baris, kolom, atau kotak.",
+    "tags": [
+      "puzzle",
+      "angka",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#8b72d6",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "puzzle-geser",
+    "title": "Puzzle Geser",
+    "description": "Geser keping angka untuk menyusunnya dari 1 sampai 15.",
+    "tags": [
+      "puzzle",
+      "angka",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#ed7c42",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "reversi-lokal",
+    "title": "Reversi Lokal",
+    "description": "Balik bidak lawan dan kuasai papan 8×8 bersama teman di satu layar.",
+    "tags": [
+      "strategi",
+      "multiplayer",
+      "klasik"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#3986ca",
+    "touch": true,
+    "players": {
+      "min": 2,
+      "max": 2
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "lari-retro",
+    "title": "Lari Retro",
+    "description": "Lompat melewati rintangan sejauh mungkin sebelum tersandung.",
+    "tags": [
+      "arcade",
+      "refleks",
+      "klasik"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#f3c83e",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "mini-golf",
+    "title": "Mini Golf",
+    "description": "Arahkan pukulan melewati bumper dan masukkan bola ke tiga hole.",
+    "tags": [
+      "arcade",
+      "puzzle",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#317c56",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "blok-susun",
+    "title": "Blok Susun",
+    "description": "Susun blok yang jatuh sampai rapat. Jangan biarkan menumpuk sampai atas.",
+    "tags": [
+      "arcade",
+      "puzzle",
+      "klasik"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#9b59d0",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "ketik-cepat",
+    "title": "Ketik Cepat",
+    "description": "Ketik kalimat yang tampil secepat mungkin dalam 30 detik.",
+    "tags": [
+      "kata",
+      "refleks",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#0891b2",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "terbang-pesawat",
+    "title": "Terbang Pesawat",
+    "description": "Ketuk untuk terbang, lewati celah antar gedung sebanyak mungkin.",
+    "tags": [
+      "arcade",
+      "refleks",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#0284c7",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "kuis-ibu-kota",
+    "title": "Kuis Ibu Kota",
+    "description": "Tebak ibu kota dari 4 pilihan. Negara dan provinsi Indonesia, pilihannya mirip-mirip.",
+    "tags": [
+      "kuis",
+      "pengetahuan",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#7c3aed",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "tebak-tts",
+    "title": "Tebak TTS",
+    "description": "Isi susunan teka-teki silang dari petunjuk. Kata maksimal 8 huruf.",
+    "tags": [
+      "kata",
+      "teka-teki",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#ea580c",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "medium"
+  },
+  {
+    "id": "tebak-bendera",
+    "title": "Tebak Bendera",
+    "description": "Lihat bendera, tebak nama negaranya dari 4 pilihan.",
+    "tags": [
+      "kuis",
+      "pengetahuan",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#0ea5e9",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "tembak-bola",
+    "title": "Tembak Bola",
+    "description": "Tembak bola warna sama di jalur berliku. Tiga atau lebih hilang sebelum masuk lubang.",
+    "tags": [
+      "refleks",
+      "strategi"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#e5483a",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "lempar-tulang",
+    "title": "Lempar Tulang",
+    "description": "Anjing dan kucing gantian melempar. Tahan untuk isi tenaga, kena lawan dapat nilai.",
+    "tags": [
+      "adu",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#f59e0b",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 2
+    },
+    "duration": "quick"
+  },
+  {
+    "id": "tumpuk-kontainer",
+    "title": "Tumpuk Kontainer",
+    "description": "Jatuhkan kontainer yang bergeser ke tumpukan. Meleset sekali, game over.",
+    "tags": [
+      "refleks",
+      "santai"
+    ],
+    "author": "nopanpeno",
+    "license": "MIT",
+    "color": "#f5b700",
+    "touch": true,
+    "players": {
+      "min": 1,
+      "max": 1
+    },
+    "duration": "quick"
+  }
+]

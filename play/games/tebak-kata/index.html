@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tebak Kata</title>
+  <link rel="stylesheet" href="../../css/game.css">
+  <script src="../../js/game-theme.js"></script>
+  <style>
+    #info { display: flex; justify-content: space-between; margin: 8px 0 0; color: var(--muted); }
+    #hint { margin: 4px 0 0; font-weight: bold; }
+    #gallows { display: block; width: 120px; height: 120px; margin: 4px auto; }
+    #gallows .frame { stroke: var(--fg); }
+    #gallows .part { stroke: var(--bad); display: none; }
+    #gallows .part.on { display: inline; }
+    #word { display: flex; justify-content: center; flex-wrap: wrap; gap: 6px; margin: 8px 0 12px; min-height: 2.6rem; }
+    .slot { width: 1.9rem; padding-bottom: 2px; border-bottom: 3px solid var(--fg); font-size: 1.7rem; font-weight: bold; line-height: 1.5; letter-spacing: 0; }
+    #word.long { gap: 4px; }
+    #word.long .slot { width: 1.45rem; font-size: 1.3rem; }
+    .slot.miss { color: var(--bad); }
+    #keys { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; }
+    #keys button { padding: 12px 0; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--fg); font: inherit; font-size: 1.05rem; font-weight: bold; cursor: pointer; touch-action: manipulation; }
+    #keys button.ok { background: var(--good-bg); border-color: var(--good); }
+    #keys button.no { background: var(--bad-bg); border-color: var(--bad); color: var(--bad); }
+    #keys button:disabled { cursor: default; }
+    #msg { min-height: 1.6em; margin: 12px 0 0; font-size: 1.1rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Tebak Kata</h1>
+    <div id="info"><span id="streak">Beruntun: 0</span><span id="best"></span></div>
+    <p id="hint"></p>
+    <svg id="gallows" viewBox="0 0 120 120" fill="none" stroke-width="5" stroke-linecap="round" role="img" aria-label="Gambar tiang gantung">
+      <g class="frame"><path d="M15 112h60M35 112V10h55M90 10v14"/></g>
+      <circle class="part" cx="90" cy="35" r="11"/>
+      <path class="part" d="M90 46v32"/>
+      <path class="part" d="M90 54L74 68"/>
+      <path class="part" d="M90 54l16 14"/>
+      <path class="part" d="M90 78L76 98"/>
+      <path class="part" d="M90 78l14 20"/>
+    </svg>
+    <div id="word" role="img" aria-label="Kata"></div>
+    <div id="keys" role="group" aria-label="Pilih huruf"></div>
+    <p id="msg" aria-live="polite"></p>
+    <button class="g-btn" id="again" type="button" hidden>Kata berikutnya</button>
+  </main>
+  <script src="../../js/game-storage.js"></script>
+  <script src="../../js/game-loader.js"></script>
+</body>
+</html>

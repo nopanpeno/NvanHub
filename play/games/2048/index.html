@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>2048</title>
+  <link rel="stylesheet" href="../../css/game.css">
+  <script src="../../js/game-theme.js"></script>
+  <style>
+    body { padding: 18px; font: 16px/1.45 system-ui, sans-serif; }
+    main { width: min(100%, 390px); max-width: none; padding: 0; text-align: left; }
+    h1 { font-size: 2rem; }
+    p { margin: 4px 0 12px; }
+    .scores { display: flex; gap: 8px; margin: 12px 0; }
+    .score { flex: 1; padding: 8px; border: 2px solid var(--line); border-radius: 8px; background: var(--surface); text-align: center; }
+    .score strong { display: block; font-size: 1.15rem; }
+    .board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; aspect-ratio: 1; padding: 8px; border-radius: 12px; background: var(--line); touch-action: none; outline-offset: 4px; }
+    .tile { display: grid; place-items: center; min-width: 0; border-radius: 8px; background: var(--hover); color: var(--fg); font-size: clamp(1.1rem, 8vw, 2rem); font-weight: 800; }
+    .tile[data-value="2"] { background: #eee4da; color: #433d35; } .tile[data-value="4"] { background: #ede0c8; color: #433d35; }
+    .tile[data-value="8"] { background: #f2b179; color: #2b1d10; } .tile[data-value="16"] { background: #f59563; color: #2b1d10; }
+    .tile[data-value="32"] { background: #f67c5f; color: #2b1d10; } .tile[data-value="64"] { background: #f65e3b; color: #2b1d10; }
+    .tile.high { background: #edcf72; color: #2b1d10; }
+    .status { min-height: 3em; margin: 10px 0; }
+    .controls { display: grid; grid-template-columns: repeat(3, 48px); grid-template-rows: repeat(2, 44px); justify-content: center; gap: 6px; margin: 12px auto; }
+    button { min-height: 44px; padding: 8px 12px; border: 2px solid var(--line); border-radius: 8px; background: var(--accent); color: var(--on-accent); font: inherit; font-weight: 700; cursor: pointer; touch-action: manipulation; }
+    .controls button { padding: 4px; font-size: 1.2rem; }
+    .up { grid-column: 2; grid-row: 1; } .left { grid-column: 1; grid-row: 2; } .down { grid-column: 2; grid-row: 2; } .right { grid-column: 3; grid-row: 2; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>2048</h1>
+    <p>Gabungkan angka yang sama sampai jadi 2048. Geser papan atau pakai tombol panah.</p>
+    <div class="scores">
+      <div class="score">Skor<strong id="score">0</strong></div>
+      <div class="score">Rekor<strong id="best">0</strong></div>
+    </div>
+    <div id="board" class="board" role="grid" aria-label="Papan 2048" tabindex="0"></div>
+    <p id="status" class="status" role="status" aria-live="polite">Gunakan tombol panah untuk menggeser.</p>
+    <div class="controls" role="group" aria-label="Kontrol geser">
+      <button class="up" data-direction="up" aria-label="Geser ke atas">↑</button>
+      <button class="left" data-direction="left" aria-label="Geser ke kiri">←</button>
+      <button class="down" data-direction="down" aria-label="Geser ke bawah">↓</button>
+      <button class="right" data-direction="right" aria-label="Geser ke kanan">→</button>
+    </div>
+    <button id="new-game" type="button">Mulai ulang</button>
+  </main>
+  <script src="../../js/game-storage.js"></script>
+  <script src="../../js/game-loader.js"></script>
+</body>
+</html>

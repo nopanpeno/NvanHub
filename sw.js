@@ -50,6 +50,36 @@ const TOOLS = {
       'pass/vendor/jsQR.js',
     ],
   },
+  // Game (games/<id>/) tidak didaftar di sini. Disimpan saat pertama dibuka, lewat fetch di bawah.
+  play: {
+    cache: 'nvanhub-play-v1',
+    assets: [
+      'play/',
+      'play/index.html',
+      'play/player.html',
+      'play/data.html',
+      'play/cara-main.html',
+      'play/games.json',
+      'play/css/style.css',
+      'play/css/game.css',
+      'play/css/how-to-play.css',
+      'play/js/app.js',
+      'play/js/data.js',
+      'play/js/data/bendera.js',
+      'play/js/data/ibu-kota.js',
+      'play/js/data/tebak-tts.js',
+      'play/js/game-loader.js',
+      'play/js/game-storage.js',
+      'play/js/game-theme.js',
+      'play/js/how-to-play.js',
+      'play/js/player.js',
+      'play/js/theme.js',
+      'play/fonts/bricolage-grotesque-latin-wght-normal.woff2',
+      'play/fonts/press-start-2p-latin-400-normal.woff2',
+      'play/fonts/silkscreen-latin-400-normal.woff2',
+      'play/fonts/silkscreen-latin-700-normal.woff2',
+    ],
+  },
 };
 
 const KEEP = [HUB.cache, ...Object.values(TOOLS).map((t) => t.cache)];
