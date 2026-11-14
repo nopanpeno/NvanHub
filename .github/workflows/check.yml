@@ -21,6 +21,13 @@ jobs:
       - name: Cek kontrak game NvanPlay
         run: node scripts/check-games.mjs
         working-directory: play
+      - name: Tes NvanVector (codec dan trace di browser)
+        run: |
+          npm ci
+          npm test
+          npm install --no-save playwright
+          CI=1 node tools/smoke-halaman.js
+        working-directory: vector
       - name: Tes asap di browser
         run: |
           npm install --no-save playwright

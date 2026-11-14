@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b100d">
+  <meta name="description" content="Ubah gambar atau SVG jadi XML Alight Motion. Semua jalan di browser, file tidak diunggah.">
+  <title>SVG ke XML Alight Motion</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <nav class="hub-nav" aria-label="NvanHub">
+    <a class="hub-back" href="../">&larr; Kembali ke NvanHub</a>
+  </nav>
+  <header class="top">
+    <a class="brand" href="./" aria-label="NvanVector">
+      <span class="brand-mark" aria-hidden="true">&gt;_</span>
+      <span>NvanVector</span>
+    </a>
+  </header>
+
+  <main>
+    <noscript><p class="msg msg-warn">Halaman ini butuh JavaScript untuk mengubah gambar jadi XML.</p></noscript>
+
+    <h1>SVG ke XML Alight Motion</h1>
+    <p class="lead">Gambar jadi garis vector, lalu bisa diimpor ke Alight Motion. Semua jalan di browser, file tidak diunggah ke mana-mana.</p>
+
+    <section>
+      <p class="step step-1">01 / 03</p>
+      <h2>Masukkan gambar atau SVG</h2>
+      <label class="drop" for="file">
+        <input id="file" type="file" accept="image/*,.svg" class="sr-only">
+        <span class="drop-title">Pilih file dari perangkat</span>
+        <span class="muted">Pilih gambar untuk ditrace, atau SVG untuk langsung dikonversi.</span>
+      </label>
+
+      <div id="traceBox" hidden>
+        <div class="grid">
+          <div>
+            <label for="colors">Maks jumlah warna</label>
+            <input id="colors" type="number" min="2" max="64" value="8" aria-describedby="traceHelp">
+          </div>
+          <div>
+            <label for="detail">Detail</label>
+            <select id="detail">
+              <option value="low">Ringan (sedikit shape)</option>
+              <option value="mid" selected>Sedang</option>
+              <option value="high">Tinggi (banyak shape)</option>
+            </select>
+          </div>
+          <div>
+            <label for="maxside">Ukuran trace, sisi terpanjang (px)</label>
+            <input id="maxside" type="number" min="100" max="1500" value="1500">
+          </div>
+        </div>
+        <p id="traceHelp" class="muted">Gambar diperbesar atau diperkecil ke ukuran ini sebelum trace, jadi tepinya halus. Makin besar, garis tipis (garis tepi anime) makin utuh, tapi trace lebih lama dan pathnya lebih banyak. Kalau di HP terlalu lama, turunkan ke 900. Warna campuran di tepi dibuang otomatis, jadi hasilnya bisa kurang dari angka maksimum. Latar transparan tidak dihitung sebagai warna. Kalau palet akhirnya dua warna (logo hitam putih), trace memakai Potrace yang dimuat dari internet, hasilnya lebih halus. Logo dua warna: isi 2. Gambar berwarna: 8 sampai 16 paling bersih, 16 menjaga warna kecil dan kulit. Di atas 16 warna lapis saling menimpa supaya tidak ada celah putih. Jangan isi 2 untuk gambar berwarna, semua warnanya jadi satu.</p>
+        <div class="actions"><button id="traceBtn" type="button" class="btn btn-primary">Trace jadi SVG</button></div>
+      </div>
+
+      <div class="preview" id="srcPreview" hidden>
+        <figure><figcaption>Gambar asli</figcaption><img id="srcImg" alt="gambar asli"></figure>
+        <figure><figcaption>Hasil SVG</figcaption><img id="svgImg" alt="hasil svg"></figure>
+      </div>
+
+      <p class="or" aria-hidden="true">atau</p>
+      <label for="svgText" class="field">Tempel kode SVG</label>
+      <p class="muted">Tempel dokumen SVG lengkap kalau kamu sudah punya kodenya.</p>
+      <textarea id="svgText" spellcheck="false" placeholder="<svg ...>...</svg>"></textarea>
+    </section>
+
+    <section>
+      <p class="step step-2">02 / 03</p>
+      <h2>Atur proyek</h2>
+      <div class="grid">
+        <div><label for="w">Lebar kanvas</label><input id="w" type="number" value="1080"></div>
+        <div><label for="h">Tinggi kanvas</label><input id="h" type="number" value="1920"></div>
+        <div><label for="fit">Ukuran gambar (%)</label><input id="fit" type="number" min="10" max="300" value="100"></div>
+        <div><label for="dur">Durasi (ms)</label><input id="dur" type="number" value="5000"></div>
+        <div><label for="bg">Warna latar (#AARRGGBB)</label><input id="bg" type="text" value="#ff000000"></div>
+        <div><label for="minarea">Buang bercak kecil (% luas gambar)</label><input id="minarea" type="number" min="0" step="0.01" value="0.05"></div>
+        <div><label for="maxshapes">Maks jumlah shape (0 = bebas)</label><input id="maxshapes" type="number" min="0" value="200"></div>
+      </div>
+      <div class="checks">
+        <label class="check"><input id="layer" type="checkbox" checked> Mode trace: buang lubang, urut dari besar ke kecil</label>
+        <label class="check"><input id="merge" type="checkbox" checked> Gabung bentuk kecil berwarna sama (yang besar, misal bulatan mahkota, tetap shape sendiri selama muat di batas shape)</label>
+        <label class="check"><input id="stroke" type="checkbox" checked> Bawa garis pinggir</label>
+      </div>
+      <div class="actions"><button id="convertBtn" type="button" class="btn btn-primary">Convert ke XML</button></div>
+      <p id="status" class="msg" role="status"></p>
+    </section>
+
+    <section>
+      <p class="step step-3">03 / 03</p>
+      <h2>Unduh hasil XML</h2>
+      <div class="preview" id="outPreview" hidden>
+        <figure>
+          <figcaption>Pratinjau seperti di Alight Motion (garis pinggir belum digambar)</figcaption>
+          <img id="outImg" alt="Pratinjau hasil XML">
+        </figure>
+      </div>
+      <textarea id="xmlOut" spellcheck="false" readonly placeholder="XML muncul di sini"></textarea>
+      <div class="actions">
+        <button id="dlBtn" type="button" class="btn btn-primary" disabled>Download .xml</button>
+        <button id="copyBtn" type="button" class="btn" disabled>Salin</button>
+      </div>
+      <ul id="warnList" aria-live="polite"></ul>
+      <p class="muted">Impor file XML-nya ke Alight Motion sama seperti preset XML biasa. Impor dan urutan layer sudah dites di aplikasi. Alight Motion tidak menampilkan lubang di dalam satu path, jadi mode trace membuang lubang dan memakai shape di atasnya buat mengisi. Lebar garis pinggir belum dites.</p>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <span>Semua jalan di browser. Gambar tidak diunggah ke server mana pun.</span>
+    <a href="https://github.com/nopanpeno/NvanVector" rel="noopener">GitHub</a>
+  </footer>
+
+<script src="vendor/imagetracer_v1.2.6.js"></script>
+<script src="palette.js"></script>
+<script src="tumpang.js"></script>
+<script src="binarytrace.js"></script>
+<script src="converter.js"></script>
+<script>
+(function () {
+  var $ = function (id) { return document.getElementById(id); };
+  var fileEl = $('file'), traceBox = $('traceBox'), srcPrev = $('srcPreview');
+  var srcImg = $('srcImg'), svgImg = $('svgImg'), svgText = $('svgText');
+  var outPrev = $('outPreview'), outImg = $('outImg');
+  var xmlOut = $('xmlOut'), statusEl = $('status'), warnList = $('warnList');
+  var dlBtn = $('dlBtn'), copyBtn = $('copyBtn');
+  var currentImage = null, lastName = 'gambar';
+
+  function say(text, cls) { statusEl.textContent = text; statusEl.className = 'msg' + (cls ? ' msg-' + cls : ''); }
+
+  // Gambar ulang XML hasil convert seperti Alight Motion menggambarnya (tanpa lubang), supaya
+  // bagian yang hilang kelihatan sebelum file diimpor.
+  function showPreview(xml) {
+    try {
+      var url = URL.createObjectURL(new Blob([SvgToAm.previewSvg(xml)], { type: 'image/svg+xml' }));
+      outImg.onload = function () { URL.revokeObjectURL(url); };
+      outImg.src = url;
+      outPrev.hidden = false;
+    } catch (e) {
+      outPrev.hidden = true;
+    }
+  }
+
+  function showSvg(text) {
+    var url = URL.createObjectURL(new Blob([text], { type: 'image/svg+xml' }));
+    svgImg.onload = function () { URL.revokeObjectURL(url); };
+    svgImg.src = url;
+  }
+
+  fileEl.addEventListener('change', function () {
+    var f = fileEl.files[0];
+    if (!f) return;
+    lastName = f.name.replace(/\.[^.]+$/, '') || 'gambar';
+    var isSvg = f.type === 'image/svg+xml' || /\.svg$/i.test(f.name);
+    if (isSvg) {
+      var r = new FileReader();
+      r.onload = function () {
+        svgText.value = r.result;
+        showSvg(r.result);
+        $('layer').checked = false; // SVG buatan sendiri: jaga urutan aslinya
+        traceBox.hidden = true;
+        srcPrev.hidden = true;
+        say('SVG dimuat. Lanjut atur proyek lalu Convert.', 'ok');
+      };
+      r.readAsText(f);
+      return;
+    }
+    var url = URL.createObjectURL(f);
+    var img = new Image();
+    img.onload = function () {
+      currentImage = img;
+      srcImg.src = url;
+      traceBox.hidden = false;
+      srcPrev.hidden = false;
+      say('Gambar dimuat. Tekan Trace jadi SVG.', 'ok');
+    };
+    img.onerror = function () { say('Gambar tidak bisa dibuka.', 'warn'); };
+    img.src = url;
+  });
+
+  // Potrace (esm-potrace-wasm, GPL-2.0) dimuat dari CDN saat pertama dibutuhkan, bukan di awal halaman.
+  var potracePromise = null;
+  function loadPotrace() {
+    if (!potracePromise) {
+      potracePromise = import(NvanBinary.POTRACE_URL).then(function (m) {
+        return m.init().then(function () { return m; });
+      });
+      potracePromise.catch(function () { potracePromise = null; }); // gagal: boleh coba lagi lain kali
+    }
+    return potracePromise;
+  }
+  async function tracePotrace(plan) {
+    var mod = await loadPotrace();
+    var traced = [];
+    for (var i = 0; i < plan.layers.length; i++) {
+      var m = plan.layers[i].mask;
+      var paths = await mod.potrace(new ImageData(m.data, m.width, m.height), { pathonly: true, extractcolors: false });
+      traced.push({ paths: paths, color: plan.layers[i].color });
+    }
+    return traced;
+  }
+
+  $('traceBtn').addEventListener('click', function () {
+    if (!currentImage) return;
+    if (typeof ImageTracer === 'undefined') {
+      say('Library trace gagal dimuat (perlu internet). Atau pakai SVG langsung.', 'warn');
+      return;
+    }
+    var btn = $('traceBtn');
+    btn.disabled = true;
+    say('Lagi trace...');
+    // kasih browser waktu menggambar teks status dulu
+    setTimeout(async function () {
+      try {
+        var max = Math.max(100, parseInt($('maxside').value, 10) || 500);
+        var scale = max / Math.max(currentImage.naturalWidth, currentImage.naturalHeight);
+        var cw = Math.max(1, Math.round(currentImage.naturalWidth * scale));
+        var ch = Math.max(1, Math.round(currentImage.naturalHeight * scale));
+        var canvas = document.createElement('canvas');
+        canvas.width = cw; canvas.height = ch;
+        var ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(currentImage, 0, 0, cw, ch);
+        var imgd = ctx.getImageData(0, 0, cw, ch);
+        var detail = { low: { pathomit: 20, ltres: 2, qtres: 2 }, mid: { pathomit: 8, ltres: 1, qtres: 1 }, high: { pathomit: 2, ltres: 0.5, qtres: 0.5 } }[$('detail').value];
+        var colors = Math.min(64, Math.max(2, parseInt($('colors').value, 10) || 8));
+        var pal = NvanPalette.makePalette(imgd, colors);
+        var svg = null, usedPotrace = false, note = '';
+        // Palet dua warna (atau satu warna di latar transparan): Potrace, hasilnya lebih halus.
+        // Selain itu, atau kalau Potrace gagal dimuat (perlu internet): imagetracer.
+        var plan = NvanBinary.plan(imgd, pal);
+        if (plan) {
+          try {
+            var traced = await tracePotrace(plan);
+            svg = NvanBinary.wrapSvg(traced, cw, ch, plan.bg);
+            usedPotrace = true;
+          } catch (pe) {
+            note = ' Potrace gagal dimuat (' + pe.message + '), dipakai imagetracer.';
+          }
+        }
+        if (!svg) {
+          // 13 warna ke atas: lapis digemukkan 1 piksel supaya tetangga saling menimpa, tanpa celah putih (lihat tumpang.js)
+          NvanOverlap.install(ImageTracer, pal.length > 12 ? 1 : 0);
+          svg = ImageTracer.imagedataToSVG(imgd, {
+            numberofcolors: pal.length, pal: pal, colorquantcycles: 1,
+            pathomit: Math.max(1, Math.round(detail.pathomit * scale)),
+            // Diperbesar: toleransi tetap di piksel gambar yang dilacak. Dikali skala, bulatan kecil jadi segi tujuh.
+            // Diperkecil: ikut skala, seperti sebelumnya.
+            ltres: detail.ltres * Math.min(scale, 1), qtres: detail.qtres * Math.min(scale, 1),
+            strokewidth: 0, roundcoords: 2, viewbox: true, desc: false
+          });
+        }
+        svgText.value = svg;
+        showSvg(svg);
+        $('layer').checked = true; // hasil trace: lubang diisi lapisan di atasnya
+        say(usedPotrace
+          ? 'Trace selesai (Potrace, dua warna). Lanjut atur proyek lalu Convert.'
+          : 'Trace selesai.' + note + ' Untuk logo dua warna, coba Jumlah warna 2. Lanjut atur proyek lalu Convert.', note ? 'warn' : 'ok');
+      } catch (e) {
+        say('Trace gagal: ' + e.message, 'warn');
+      }
+      btn.disabled = false;
+    }, 30);
+  });
+
+  svgText.addEventListener('input', function () {
+    if (svgText.value.trim()) showSvg(svgText.value);
+  });
+
+  $('convertBtn').addEventListener('click', function () {
+    warnList.innerHTML = '';
+    xmlOut.value = '';
+    outPrev.hidden = true;
+    dlBtn.disabled = copyBtn.disabled = true;
+    var text = svgText.value.trim();
+    if (!text) { say('Belum ada SVG. Pilih file atau tempel kodenya.', 'warn'); return; }
+    try {
+      var res = SvgToAm.convert(text, {
+        width: parseInt($('w').value, 10) || 1080,
+        height: parseInt($('h').value, 10) || 1920,
+        fit: (parseFloat($('fit').value) || 100) / 100,
+        duration: parseInt($('dur').value, 10) || 5000,
+        bg: $('bg').value.trim() || '#ff000000',
+        layerMode: $('layer').checked,
+        minAreaPct: parseFloat($('minarea').value) || 0,
+        tinyKeepDiff: 64, // bercak kecil tetap dipakai kalau warnanya beda jauh dari yang di bawahnya
+        maxShapes: parseInt($('maxshapes').value, 10) || 0,
+        mergeColors: $('merge').checked,
+        autoApart: $('merge').checked, // yang besar tetap shape sendiri, hanya yang kecil digabung sampai muat di batas
+        includeStroke: $('stroke').checked,
+        title: lastName
+      });
+      xmlOut.value = res.xml;
+      if (res.shapeCount > 0) showPreview(res.xml);
+      res.warnings.forEach(function (w) {
+        var li = document.createElement('li');
+        li.textContent = w;
+        warnList.appendChild(li);
+      });
+      if (res.shapeCount > 0) {
+        dlBtn.disabled = copyBtn.disabled = false;
+        say('Selesai. ' + res.shapeCount + ' shape.' +
+          (res.tinyDropped ? ' ' + res.tinyDropped + ' bercak kecil dibuang.' : '') +
+          (res.shapeCount > 100 ? ' Masih banyak. Naikkan angka bercak kecil atau kurangi jumlah warna.' : ''), 'ok');
+      } else {
+        say('Tidak ada shape yang bisa dipakai.', 'warn');
+      }
+    } catch (e) {
+      say('Gagal: ' + e.message, 'warn');
+    }
+  });
+
+  dlBtn.addEventListener('click', function () {
+    var blob = new Blob([xmlOut.value], { type: 'application/xml' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = lastName + '.xml';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  });
+
+  copyBtn.addEventListener('click', function () {
+    var done = function () { say('XML disalin.', 'ok'); };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(xmlOut.value).then(done, function () { xmlOut.select(); document.execCommand('copy'); done(); });
+    } else {
+      xmlOut.select(); document.execCommand('copy'); done();
+    }
+  });
+})();
+</script>
+</body>
+</html>

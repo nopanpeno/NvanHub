@@ -2,7 +2,7 @@
 // Jalankan: node scripts/smoke.cjs   (server statis dijalankan sendiri di port acak)
 // Memeriksa: tidak ada error JS atau request gagal, kartu = jumlah proyek, tidak ada scroll
 // horizontal di 375px dan 1280px, font pixel termuat, dan mode reduced-motion tanpa animasi.
-// Juga: NvanPass di /pass/ tampil dan memuat manifest, dan hub serta NvanPass tetap bisa dibuka offline.
+// Juga: NvanPass, NvanPlay, dan NvanVector tampil dan punya tombol kembali ke hub, dan hub serta tool tetap bisa dibuka offline.
 const http = require('node:http');
 const fs = require('node:fs');
 const path = require('node:path');
@@ -161,6 +161,24 @@ async function visitPlay(browser, base, { width }) {
   await ctx.close();
 }
 
+// NvanVector di /vector/: halaman utama tampil, tombol kembali ke hub ada, library trace termuat dari repo, tidak ada scroll horizontal.
+async function visitVector(browser, base, { width }) {
+  const label = `vector ${width}px`;
+  const ctx = await browser.newContext({ viewport: { width, height: 800 } });
+  const page = await ctx.newPage();
+  page.on('pageerror', (e) => problems.push(`[${label}] error JS: ${e.message}`));
+  page.on('requestfailed', (r) => problems.push(`[${label}] request gagal: ${r.url()}`));
+  page.on('response', (r) => { if (r.status() >= 400) problems.push(`[${label}] HTTP ${r.status()}: ${r.url()}`); });
+  await page.goto(`${base}vector/`, { waitUntil: 'load' });
+  await page.waitForTimeout(800);
+  expect((await page.locator('#file').count()) === 1, `[${label}] input gambar tidak ada`);
+  expect((await page.locator('a.hub-back').getAttribute('href')) === '../', `[${label}] tombol kembali ke NvanHub tidak ada`);
+  expect(await page.evaluate(() => typeof ImageTracer !== 'undefined' && typeof NvanBinary !== 'undefined'), `[${label}] library trace tidak termuat`);
+  const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(over <= 0, `[${label}] ada scroll horizontal (${over}px)`);
+  await ctx.close();
+}
+
 // Offline: setelah sekali dibuka lewat service worker, hub dan NvanPass tetap bisa dibuka tanpa jaringan.
 async function visitOffline(browser, base) {
   const total = JSON.parse(fs.readFileSync(path.join(root, 'data/projects.json'), 'utf8')).length;
@@ -183,6 +201,11 @@ async function visitOffline(browser, base) {
   await page.goto(`${base}play/`, { waitUntil: 'load' });
   await page.waitForTimeout(800);
   expect((await page.locator('#catalog a[href^="player.html"]').count()) === playTotal, '[offline] katalog NvanPlay tidak tampil tanpa jaringan');
+  // NvanVector: halaman dan library trace (termasuk Potrace di vendor/) harus ada di cache
+  await page.goto(`${base}vector/`, { waitUntil: 'load' });
+  await page.waitForTimeout(800);
+  expect((await page.locator('#file').count()) === 1, '[offline] NvanVector tidak tampil tanpa jaringan');
+  expect(await page.evaluate(() => typeof ImageTracer !== 'undefined' && typeof NvanBinary !== 'undefined'), '[offline] library trace NvanVector tidak ada tanpa jaringan');
   await ctx.close();
 }
 
@@ -196,6 +219,8 @@ async function visitOffline(browser, base) {
     await visitPass(browser, base, { width: 1280 });
     await visitPlay(browser, base, { width: 375 });
     await visitPlay(browser, base, { width: 1280 });
+    await visitVector(browser, base, { width: 375 });
+    await visitVector(browser, base, { width: 1280 });
     await visitOffline(browser, base);
   } finally {
     await browser.close();
