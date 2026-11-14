@@ -96,6 +96,22 @@ const TOOLS = {
       'vector/vendor/esm-potrace-wasm/index.js',
     ],
   },
+  qr: {
+    cache: 'nvanhub-qr-v1',
+    assets: [
+      'qr/',
+      'qr/index.html',
+      'qr/scan.html',
+      'qr/css/style.css',
+      'qr/js/main.js',
+      'qr/js/scanner.js',
+      'qr/logo.svg',
+      'qr/vendor/qrcode.js',
+      'qr/vendor/jsQR.js',
+      'qr/fonts/dm-sans-latin-wght-normal.woff2',
+      'qr/fonts/space-grotesk-latin-wght-normal.woff2',
+    ],
+  },
 };
 
 const KEEP = [HUB.cache, ...Object.values(TOOLS).map((t) => t.cache)];

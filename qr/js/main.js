@@ -1,0 +1,213 @@
+
+const $ = (selector) => document.querySelector(selector);
+const canvas = $('#qr-canvas');
+let contentType = 'link';
+let exportSize = 512;
+let currentPayload = '';
+let renderId = 0;
+
+function escapeWifi(value) {
+  return value.replace(/[\\;:,\"]/g, (character) => `\\${character}`);
+}
+
+// Input punya awalan "https://" di layar, jadi pengguna boleh mengetik tanpa skema.
+// Skema lain (javascript:, mailto:, dll) tetap ditolak.
+function normalizeLink(raw) {
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (/^(javascript|data|vbscript|file|ftp|mailto|tel|sms|blob):/i.test(raw) || /^[a-z][a-z0-9+.-]*:\/\//i.test(raw)) return '';
+  return `https://${raw.replace(/^\/+/, '')}`;
+}
+
+function getPayload() {
+  if (contentType === 'link') {
+    const value = $('#link-input').value.trim();
+    if (!value) return { error: 'Masukkan URL untuk membuat QR code.' };
+    try {
+      const url = new URL(normalizeLink(value));
+      const host = url.hostname;
+      if (!['http:', 'https:'].includes(url.protocol) || !host || !(host.includes('.') || host === 'localhost')) throw new Error();
+      return { value: url.href };
+    } catch {
+      return { error: 'URL tidak valid. Contoh: contoh.com/halaman atau https://contoh.com.' };
+    }
+  }
+  if (contentType === 'text') {
+    const value = $('#text-input').value;
+    if (!value.trim()) return { error: 'Tulis teks untuk membuat QR code.' };
+    if (value.length > 1200) return { error: 'Teks terlalu panjang. Batasi hingga 1.200 karakter.' };
+    return { value };
+  }
+  const ssid = $('#ssid-input').value;
+  const security = $('#security-input').value;
+  if (!ssid.trim()) return { error: 'Masukkan nama jaringan Wi-Fi.' };
+  const password = $('#password-input').value;
+  if (security !== 'nopass' && !password) return { error: 'Masukkan kata sandi Wi-Fi.' };
+  const value = `WIFI:T:${security};S:${escapeWifi(ssid)};${security === 'nopass' ? '' : `P:${escapeWifi(password)};`}H:${$('#hidden-input').checked ? 'true' : 'false'};;`;
+  return { value };
+}
+
+function channelToLinear(value) {
+  const c = value / 255;
+  return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+}
+
+function hexLuminance(hex) {
+  const value = hex.replace('#', '');
+  const r = parseInt(value.slice(0, 2), 16);
+  const g = parseInt(value.slice(2, 4), 16);
+  const b = parseInt(value.slice(4, 6), 16);
+  return 0.2126 * channelToLinear(r) + 0.7152 * channelToLinear(g) + 0.0722 * channelToLinear(b);
+}
+
+function contrastRatio(foreground, background) {
+  const a = hexLuminance(foreground);
+  const b = hexLuminance(background);
+  return (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05);
+}
+
+function setStatus(message, error = false) {
+  $('#status').textContent = message;
+  $('#status').classList.toggle('error', error);
+}
+
+function setDownloadState(enabled) {
+  $('#download-png').disabled = !enabled;
+  $('#download-svg').disabled = !enabled;
+}
+
+async function refresh() {
+  const thisRender = ++renderId;
+  const result = getPayload();
+  if (result.error) {
+    currentPayload = '';
+    canvas.hidden = true;
+    $('#qr-placeholder').hidden = false;
+    setDownloadState(false);
+    setStatus(result.error, Boolean($('#link-input').value || $('#text-input').value || $('#ssid-input').value));
+    return;
+  }
+  try {
+    await QRCode.toCanvas(canvas, result.value, {
+      width: 360,
+      margin: 4,
+      errorCorrectionLevel: 'M',
+      color: { dark: $('#foreground-input').value, light: $('#background-input').value }
+    });
+    if (thisRender !== renderId) return;
+    currentPayload = result.value;
+    canvas.hidden = false;
+    $('#qr-placeholder').hidden = true;
+    setDownloadState(true);
+    const ratio = contrastRatio($('#foreground-input').value, $('#background-input').value);
+    if (ratio < 4) {
+      setStatus('Kontras warna rendah. QR mungkin sulit dipindai. Pilih warna yang lebih kontras.', true);
+    } else {
+      setStatus('QR code siap dipindai.');
+    }
+  } catch {
+    if (thisRender !== renderId) return;
+    currentPayload = '';
+    canvas.hidden = true;
+    $('#qr-placeholder').hidden = false;
+    setDownloadState(false);
+    setStatus('Konten terlalu panjang untuk dibuat sebagai QR code.', true);
+  }
+}
+
+function updateActiveTab(type) {
+  contentType = type;
+  document.querySelectorAll('.tab').forEach((tab) => {
+    const active = tab.dataset.type === type;
+    tab.classList.toggle('active', active);
+    tab.setAttribute('aria-selected', String(active));
+    tab.tabIndex = active ? 0 : -1;
+  });
+  document.querySelectorAll('.form-panel').forEach((panel) => {
+    const active = panel.dataset.panel === type;
+    panel.hidden = !active;
+    panel.classList.toggle('active', active);
+  });
+  $('#content-panel').setAttribute('aria-labelledby', `tab-${type}`);
+  refresh();
+}
+
+document.querySelectorAll('.tab').forEach((tab) => tab.addEventListener('click', () => updateActiveTab(tab.dataset.type)));
+['#link-input', '#text-input', '#ssid-input', '#password-input', '#security-input', '#hidden-input', '#foreground-input', '#background-input'].forEach((selector) => $(selector).addEventListener('input', refresh));
+$('#security-input').addEventListener('change', () => {
+  const hasPassword = $('#security-input').value !== 'nopass';
+  $('#password-field').hidden = !hasPassword;
+  $('#password-input').required = hasPassword;
+  refresh();
+});
+$('#text-input').addEventListener('input', () => { $('#char-count').textContent = `${$('#text-input').value.length} / 1.200`; });
+
+for (const [id, output] of [['foreground-input', 'foreground-value'], ['background-input', 'background-value']]) {
+  $(`#${id}`).addEventListener('input', (event) => {
+    $(`#${output}`).textContent = event.target.value.toUpperCase();
+    refresh();
+  });
+}
+
+document.querySelectorAll('.size-option').forEach((button) => button.addEventListener('click', () => {
+  exportSize = Number(button.dataset.size);
+  document.querySelectorAll('.size-option').forEach((item) => {
+    const selected = item === button;
+    item.classList.toggle('selected', selected);
+    item.setAttribute('aria-pressed', String(selected));
+  });
+}));
+
+$('#download-png').addEventListener('click', async () => {
+  if (!currentPayload) return;
+  const data = await QRCode.toDataURL(currentPayload, {
+    width: exportSize,
+    margin: 4,
+    errorCorrectionLevel: 'M',
+    color: { dark: $('#foreground-input').value, light: $('#background-input').value }
+  });
+  download(data, 'nvanqr.png');
+});
+
+$('#download-svg').addEventListener('click', async () => {
+  if (!currentPayload) return;
+  const svg = await QRCode.toString(currentPayload, {
+    type: 'svg',
+    width: exportSize,
+    margin: 4,
+    errorCorrectionLevel: 'M',
+    color: { dark: $('#foreground-input').value, light: $('#background-input').value }
+  });
+  download(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`, 'nvanqr.svg');
+});
+
+function download(href, filename) {
+  const anchor = document.createElement('a');
+  anchor.href = href;
+  anchor.download = filename;
+  anchor.click();
+}
+
+// Titik latar bergeser sedikit mengikuti kursor (paralaks halus), seperti NvanCut.
+// Hanya untuk mouse, dan dimatikan jika pengguna minta gerak minimal.
+if (matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  const root = document.documentElement;
+  const RANGE = 6;
+  let targetX = 0, targetY = 0, currentX = 0, currentY = 0, frame = 0;
+
+  const tick = () => {
+    currentX += (targetX - currentX) * 0.12;
+    currentY += (targetY - currentY) * 0.12;
+    root.style.setProperty('--dx', `${currentX.toFixed(2)}px`);
+    root.style.setProperty('--dy', `${currentY.toFixed(2)}px`);
+    const settled = Math.abs(targetX - currentX) < 0.05 && Math.abs(targetY - currentY) < 0.05;
+    frame = settled ? 0 : requestAnimationFrame(tick);
+  };
+
+  window.addEventListener('pointermove', (event) => {
+    targetX = (0.5 - event.clientX / window.innerWidth) * 2 * RANGE;
+    targetY = (0.5 - event.clientY / window.innerHeight) * 2 * RANGE;
+    if (!frame) frame = requestAnimationFrame(tick);
+  }, { passive: true });
+}
+
+refresh();

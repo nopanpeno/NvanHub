@@ -29,7 +29,7 @@
     "desc": "QR untuk tautan, teks, dan Wi-Fi. Dibuat dan dipindai di perangkat, tidak dikirim ke server.",
     "tags": ["JavaScript", "QR Code"],
     "repo": "https://github.com/nopanpeno/NvanQR",
-    "live": "https://nopanpeno.github.io/NvanQR/"
+    "live": "https://nopanpeno.github.io/NvanHub/qr/"
   },
   {
     "name": "NvanCut",
