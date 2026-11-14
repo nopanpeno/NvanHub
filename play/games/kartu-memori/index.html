@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kartu Memori</title>
+  <link rel="stylesheet" href="../../css/game.css">
+  <script src="../../js/game-theme.js"></script>
+  <style>
+    #info { display: flex; justify-content: space-between; margin: 8px 0; color: var(--muted); }
+    #board { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+    .card { aspect-ratio: 1; font-size: 2rem; border: 2px solid var(--line); border-radius: 10px; padding: 0; background: var(--accent); color: transparent; cursor: pointer; }
+    .card.open { background: var(--surface); color: inherit; border-color: var(--accent); }
+    .card.done { background: var(--good-bg); color: inherit; border-color: var(--good); cursor: default; }
+    #msg { min-height: 1.6em; margin: 12px 0 0; font-size: 1.05rem; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Kartu Memori</h1>
+    <div id="info"><span id="moves">Langkah: 0</span><span id="best"></span></div>
+    <div id="board"></div>
+    <p id="msg" aria-live="polite"></p>
+    <button class="g-btn" id="again" type="button" hidden>Main lagi</button>
+  </main>
+  <script src="../../js/game-storage.js"></script>
+  <script src="../../js/game-loader.js"></script>
+</body>
+</html>

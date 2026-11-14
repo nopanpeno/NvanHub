@@ -13,7 +13,7 @@
     "desc": "Tanpa akun, tanpa database. Skor disimpan di perangkat masing-masing.",
     "tags": ["JavaScript", "Game"],
     "repo": "https://github.com/nopanpeno/NvanPlay",
-    "live": "https://nopanpeno.github.io/NvanPlay/"
+    "live": "https://nopanpeno.github.io/NvanHub/play/"
   },
   {
     "name": "NvanVector",

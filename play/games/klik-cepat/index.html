@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Klik Cepat</title>
+  <link rel="stylesheet" href="../../css/game.css">
+  <script src="../../js/game-theme.js"></script>
+  <style>
+    body { -webkit-user-select: none; user-select: none; }
+    #info { display: flex; justify-content: space-between; margin: 12px 0; font-size: 1.1rem; }
+    #tap { width: 100%; aspect-ratio: 1; max-height: 50vh; font-size: 1.6rem; font-weight: bold; border: 2px solid var(--line); border-radius: 20px; background: var(--accent); color: var(--on-accent); cursor: pointer; touch-action: manipulation; }
+    #tap:active { filter: brightness(.85); }
+    #tap:disabled { background: var(--muted); cursor: default; }
+    #msg { min-height: 1.6em; margin: 12px 0 0; font-size: 1.05rem; }
+    #best { color: var(--muted); margin: 4px 0 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Klik Cepat</h1>
+    <p>Ketuk sebanyak mungkin dalam 10 detik.</p>
+    <div id="info"><span id="time">Waktu: 10,0</span><span id="count">Ketukan: 0</span></div>
+    <button id="tap" type="button">Mulai!</button>
+    <p id="msg" aria-live="polite"></p>
+    <p id="best"></p>
+    <button class="g-btn" id="again" type="button" hidden>Main lagi</button>
+  </main>
+  <script src="../../js/game-storage.js"></script>
+  <script src="../../js/game-loader.js"></script>
+</body>
+</html>

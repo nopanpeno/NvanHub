@@ -18,6 +18,9 @@ jobs:
       - name: Tes NvanPass (codec dan protokol transfer)
         run: npm test
         working-directory: pass
+      - name: Cek kontrak game NvanPlay
+        run: node scripts/check-games.mjs
+        working-directory: play
       - name: Tes asap di browser
         run: |
           npm install --no-save playwright

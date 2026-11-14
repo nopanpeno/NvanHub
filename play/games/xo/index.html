@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>XO</title>
+  <link rel="stylesheet" href="../../css/game.css">
+  <script src="../../js/game-theme.js"></script>
+  <style>
+    #info { display: flex; justify-content: space-between; margin: 8px 0; color: var(--muted); }
+    #board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .cell { aspect-ratio: 1; padding: 0; border: 3px solid var(--line); border-radius: 12px; background: var(--surface); color: var(--fg); font: inherit; font-size: 3rem; font-weight: bold; line-height: 1; cursor: pointer; touch-action: manipulation; }
+    .cell:disabled { cursor: default; }
+    .cell[data-mark="X"] { color: var(--accent); }
+    .cell[data-mark="O"] { color: var(--bad); }
+    .cell.win { background: var(--highlight); }
+    #msg { min-height: 1.6em; margin: 12px 0 0; font-size: 1.1rem; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>XO</h1>
+    <p>Kamu X, komputer O. Buat tiga tanda segaris.</p>
+    <div id="info"><span id="streak">Beruntun: 0</span><span id="best"></span></div>
+    <div id="board" role="group" aria-label="Papan XO"></div>
+    <p id="msg" aria-live="polite">Giliranmu.</p>
+    <button class="g-btn" id="again" type="button" hidden>Main lagi</button>
+  </main>
+  <script src="../../js/game-storage.js"></script>
+  <script src="../../js/game-loader.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tebak Angka</title>
+  <link rel="stylesheet" href="../../css/game.css">
+  <script src="../../js/game-theme.js"></script>
+  <style>
+    #hint { min-height: 3em; margin: 16px 0; font-size: 1.1rem; }
+    #tries { color: var(--muted); margin: 0; }
+    form { display: flex; gap: 8px; }
+    form .g-btn { margin-top: 0; }
+    input { flex: 1; min-width: 0; font-size: 1.2rem; padding: 12px; border: 2px solid var(--line); border-radius: 10px; background: var(--surface); color: var(--fg); }
+    #again { margin-top: 12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Tebak Angka</h1>
+    <p>Angka 1 sampai 100. Kamu punya 7 kali coba.</p>
+    <p id="hint" aria-live="polite">Ayo mulai!</p>
+    <form id="form">
+      <input id="guess" type="number" inputmode="numeric" min="1" max="100" placeholder="1 - 100" required>
+      <button class="g-btn" type="submit">Tebak</button>
+    </form>
+    <p id="tries"></p>
+    <p id="best"></p>
+    <button class="g-btn" id="again" type="button" hidden>Main lagi</button>
+  </main>
+  <script src="../../js/game-storage.js"></script>
+  <script src="../../js/game-loader.js"></script>
+</body>
+</html>
