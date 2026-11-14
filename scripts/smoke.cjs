@@ -145,6 +145,16 @@ async function visitPlay(browser, base, { width }) {
   await page.goto(`${base}play/`, { waitUntil: 'load' });
   await page.waitForTimeout(1000);
   expect((await page.locator('#catalog a[href^="player.html"]').count()) === total, `[${label}] katalog tidak memuat ${total} game`);
+  // Halaman data dan pemutar juga punya tombol kembali ke hub, dan tidak melebar di layar sempit.
+  for (const pg of ['data.html', 'player.html?id=2048']) {
+    await page.goto(`${base}play/${pg}`, { waitUntil: 'load' });
+    await page.waitForTimeout(800);
+    expect((await page.locator('a[href="../"]').count()) >= 1, `[${label}] ${pg}: tombol kembali ke NvanHub tidak ada`);
+    const pageOver = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+    expect(pageOver <= 0, `[${label}] ${pg}: ada scroll horizontal (${pageOver}px)`);
+  }
+  await page.goto(`${base}play/`, { waitUntil: 'load' });
+  await page.waitForTimeout(800);
   expect((await page.locator('a.hub-back').getAttribute('href')) === '../', `[${label}] tombol kembali ke NvanHub tidak ada`);
   const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(over <= 0, `[${label}] ada scroll horizontal (${over}px)`);
