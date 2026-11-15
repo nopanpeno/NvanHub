@@ -95,3 +95,7 @@ node scripts/smoke.cjs
 ```
 
 Membuka halaman di browser pada 1280px, 375px, dan reduced-motion, lalu `/pass/`, `/play/`, `/vector/`, `/qr/` (termasuk pulang-pergi buat QR lalu pindai), `/cut/`, dan `/exif/` (pilih foto, hapus metadata, unduh hasil). Memeriksa tidak ada error JS atau request gagal, jumlah kartu sama dengan jumlah proyek, tidak ada scroll horizontal, font termuat, dan tombol kembali ke hub ada. Juga memastikan hub, NvanPass, NvanPlay, NvanVector, NvanQR, NvanExif, dan NvanCut tetap tampil saat offline.
+
+## Lisensi
+
+Kode di repo ini pakai lisensi MIT (lihat `LICENSE`), kecuali `vector/` yang pakai GPL-2.0 (lihat `vector/LICENSE`). Library pihak ketiga di folder `vendor/` tetap pakai lisensinya sendiri.
