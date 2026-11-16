@@ -182,8 +182,20 @@ main {
 }
 .site-header nav a:hover { color: var(--link-hover); text-decoration: underline; }
 
-/* Tombol pasang di header: pakai gaya .btn, tanpa panah. Tersembunyi lewat atribut hidden (js/install.js). */
-.site-header .install::after { content: none; }
+/* Tombol pasang di header: tampil seperti link Tentang (teks, tanpa bingkai, tanpa gerak).
+   Tersembunyi lewat atribut hidden (js/install.js). */
+.site-header nav .install {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+.site-header nav .install:hover { color: var(--link-hover); text-decoration: underline; }
 .install[hidden] { display: none; }
 
 /* Panduan pasang di iPhone: dialog asli, Escape menutup dan fokus kembali ke tombol. */
