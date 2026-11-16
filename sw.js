@@ -3,13 +3,14 @@
 // Tiap tool (folder) punya cache sendiri. Kalau satu tool gagal di-cache, hub dan tool lain
 // tetap jalan. Ganti nomor versi tool hanya kalau daftar filenya berubah.
 const HUB = {
-  cache: 'nvanhub-v1',
+  cache: 'nvanhub-v2',
   assets: [
     './',
     'index.html',
     'manifest.json',
     'css/style.css',
     'js/main.js',
+    'js/install.js',
     'js/mascot.js',
     'js/motion.js',
     'js/motion-glow.js',
