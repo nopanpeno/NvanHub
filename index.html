@@ -26,6 +26,7 @@
     <span class="brand">NvanHub</span>
     <nav>
       <a href="#tentang">Tentang</a>
+      <button type="button" class="install" id="btn-install" aria-controls="install-help" hidden>Pasang aplikasi</button>
     </nav>
   </header>
 
@@ -123,6 +124,18 @@
     </div>
   </footer>
 
+  <dialog id="install-help" class="install-help" aria-labelledby="install-help-title">
+    <h3 id="install-help-title">Pasang di iPhone</h3>
+    <ol>
+      <li>Buka halaman ini lewat Safari.</li>
+      <li>Ketuk tombol Bagikan, kotak dengan panah ke atas.</li>
+      <li>Pilih "Tambah ke Layar Utama", lalu "Tambah".</li>
+    </ol>
+    <form method="dialog">
+      <button type="submit" class="btn">Tutup</button>
+    </form>
+  </dialog>
+
   <script src="assets/vendor/gsap.min.js" defer></script>
   <script src="js/motion.js" defer></script>
   <script src="js/motion-hero.js" defer></script>
@@ -130,6 +143,7 @@
   <script src="js/motion-glow.js" defer></script>
   <script src="js/main.js" defer></script>
   <script src="js/mascot.js" defer></script>
+  <script src="js/install.js" defer></script>
   <script>
     // PWA: daftar service worker supaya web bisa dipasang di layar utama dan terbuka saat offline.
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');

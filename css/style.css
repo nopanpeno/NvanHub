@@ -182,6 +182,44 @@ main {
 }
 .site-header nav a:hover { color: var(--link-hover); text-decoration: underline; }
 
+/* Tombol pasang di header: tampil seperti link Tentang (teks, tanpa bingkai, tanpa gerak).
+   Tersembunyi lewat atribut hidden (js/install.js). */
+.site-header nav .install {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0;
+  background: none;
+  border: 0;
+  color: var(--muted);
+  font: inherit;
+  cursor: pointer;
+}
+.site-header nav .install:hover { color: var(--link-hover); text-decoration: underline; }
+.install[hidden] { display: none; }
+
+/* Panduan pasang di iPhone: dialog asli, Escape menutup dan fokus kembali ke tombol. */
+.install-help {
+  max-width: min(92vw, 420px);
+  padding: 24px;
+  background: var(--surface);
+  color: var(--ink);
+  border: 2px solid var(--ink);
+  border-radius: 6px;
+  box-shadow: 4px 4px 0 var(--shadow-color);
+}
+.install-help::backdrop { background: rgb(6 22 31 / 0.7); }
+.install-help .btn::after { content: none; }
+.install-help h3 {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: calc(var(--text-h3) * var(--display-scale));
+  font-weight: var(--weight-display);
+  line-height: 1.2;
+}
+.install-help ol { margin: 0 0 24px; padding-left: 20px; line-height: 1.5; }
+.install-help li + li { margin-top: 8px; }
+
 /* Judul bagian (h2): pixel, lebih besar dari judul kartu (h3) */
 .label {
   margin: 0 0 16px;
