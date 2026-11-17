@@ -73,6 +73,10 @@ ul, ol { list-style: none; }
 ::selection { background: var(--accent); color: var(--bg); }
 :focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
 section[id] { scroll-margin-top: 4rem; }
+/* Klik tautan ke bagian (Tentang, Lihat proyek) scroll halus, hanya kalau gerak boleh. */
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
 
 .sr-only {
   position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
