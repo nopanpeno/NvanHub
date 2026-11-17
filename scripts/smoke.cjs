@@ -87,6 +87,11 @@ async function visit(browser, base, { width, reduced }) {
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(reduced ? 0 : 400);
   expect(await page.locator('.signature').isVisible(), `[${label}] tanda NvanHub di footer tidak tampil`);
+  // Kembali ke atas harus benar-benar membawa halaman ke atas (header fixed tidak boleh jadi target fragment).
+  await page.click('.to-top');
+  await page.waitForTimeout(reduced ? 0 : 1500);
+  const top = await page.evaluate(() => window.scrollY);
+  expect(top === 0, `[${label}] Kembali ke atas tidak membawa ke atas (scrollY ${top})`);
   await ctx.close();
 }
 
