@@ -42,16 +42,6 @@ if (projects) {
   }
 }
 
-// ---- data/mascot.json: daftar kalimat pendek (balon harus muat di HP) ----
-const mascot = json('data/mascot.json');
-if (mascot) {
-  if (!Array.isArray(mascot) || mascot.length < 2) fail('data/mascot.json: butuh daftar minimal dua sapaan (satu sapaan tidak bisa berganti)');
-  else mascot.forEach((s, i) => {
-    if (!text(s)) fail(`data/mascot.json #${i + 1}: kalimat kosong`);
-    else if (s.length > 120) fail(`data/mascot.json #${i + 1}: ${s.length} karakter, jaga sekitar 90 supaya balon muat di HP`);
-  });
-}
-
 // ---- syntax semua file JS ----
 const jsFiles = readdirSync(join(root, 'js')).filter((f) => f.endsWith('.js'));
 for (const f of jsFiles) {
@@ -123,4 +113,4 @@ if (problems.length) {
   console.error(`Cek gagal (${problems.length}):\n- ${problems.join('\n- ')}`);
   process.exit(1);
 }
-console.log(`Cek lolos: ${projects?.length ?? 0} proyek, ${mascot?.length ?? 0} sapaan, ${jsFiles.length} file JS, ${refs.length} rujukan di index.html.`);
+console.log(`Cek lolos: ${projects?.length ?? 0} proyek, ${jsFiles.length} file JS, ${refs.length} rujukan di index.html.`);

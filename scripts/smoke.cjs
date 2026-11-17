@@ -1,7 +1,7 @@
 // Tes asap di browser sungguhan. Butuh Playwright: npm install --no-save playwright
 // Jalankan: node scripts/smoke.cjs   (server statis dijalankan sendiri di port acak)
 // Memeriksa: tidak ada error JS atau request gagal, kartu = jumlah proyek, tidak ada scroll
-// horizontal di 375px dan 1280px, font pixel termuat, dan mode reduced-motion tanpa animasi.
+// horizontal di 375px dan 1280px, font Anton dan Onest termuat, dan mode reduced-motion tanpa animasi.
 // Juga: NvanPass, NvanPlay, NvanVector, NvanQR, NvanExif, dan NvanCut tampil dan punya tombol kembali ke hub, dan hub serta tool tetap bisa dibuka offline.
 const http = require('node:http');
 const fs = require('node:fs');
@@ -29,24 +29,19 @@ async function visit(browser, base, { width, reduced }) {
   page.on('requestfailed', (r) => problems.push(`[${label}] request gagal: ${r.url()}`));
   page.on('response', (r) => { if (r.status() >= 400) problems.push(`[${label}] HTTP ${r.status()}: ${r.url()}`); });
   await page.goto(base, { waitUntil: 'load' });
-  await page.waitForTimeout(1500);
+  // Animasi judul dan kartu jalan saat load. Beri waktu sampai selesai.
+  await page.waitForTimeout(900);
 
   const total = JSON.parse(fs.readFileSync(path.join(root, 'data/projects.json'), 'utf8')).length;
   expect((await page.locator('.card').count()) === total, `[${label}] jumlah kartu bukan ${total}`);
   const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(over <= 0, `[${label}] ada scroll horizontal (${over}px)`);
-  expect(await page.evaluate(() => document.fonts.check('16px "Jersey 10"')), `[${label}] font Jersey 10 tidak termuat`);
-  const hasMotion = await page.evaluate(() => Boolean(window.NvanMotion && window.gsap));
-  expect(reduced || hasMotion, `[${label}] GSAP atau NvanMotion tidak ada`);
-  if (reduced) {
-    expect((await page.locator('.plate').count()) === 0, `[${label}] kotak nama muncul padahal gerak dikurangi`);
-    expect((await page.locator('.grid-glow').count()) === 0, `[${label}] grid glow muncul padahal gerak dikurangi`);
-  } else {
-    expect((await page.locator('.plate').count()) === 1, `[${label}] kotak nama tidak ada`);
+  for (const face of ['Anton', 'Onest']) {
+    const loaded = await page.evaluate(async (f) => (await document.fonts.load(`16px "${f}"`)).some((x) => x.status === 'loaded'), face);
+    expect(loaded, `[${label}] font ${face} tidak termuat`);
   }
   expect((await page.evaluate(() => getComputedStyle(document.querySelector('.hero h1')).opacity)) === '1', `[${label}] judul hero tidak terlihat`);
-  // Titik di akhir nama ada di dalam kotak nama (bukan di luar).
-  expect((await page.textContent('.accent')).trim().endsWith('.'), `[${label}] titik di akhir nama keluar dari .accent`);
+  expect((await page.getAttribute('.hero-name', 'aria-label')) === 'NvanHub', `[${label}] judul hero tidak bernama NvanHub`);
   // Tombol Lihat proyek: setelah intro tampil penuh dan transform dilepas (hover CSS bisa jalan).
   await page.waitForTimeout(reduced ? 0 : 800);
   const cta = await page.evaluate(() => { const c = getComputedStyle(document.querySelector('.hero .btn')); return { op: c.opacity, tf: c.transform }; });
@@ -61,10 +56,8 @@ async function visit(browser, base, { width, reduced }) {
   expect((await btn.getAttribute('aria-expanded')) === 'false', `[${label}] dropdown harus tertutup di awal`);
   await btn.click();
   expect((await btn.getAttribute('aria-expanded')) === 'true', `[${label}] dropdown tidak terbuka saat diklik`);
-  // Opsi masuk berurutan hanya kalau gerak boleh: opsi terakhir menunggu lebih lama dari yang pertama.
-  const anim = await list.evaluate((el) => [...el.querySelectorAll('[role=option]')].map((o) => { const c = getComputedStyle(o); return [c.animationName, parseFloat(c.animationDelay) || 0]; }));
-  if (reduced) expect(anim.every(([n]) => n === 'none'), `[${label}] opsi dropdown beranimasi padahal gerak dikurangi`);
-  else expect(anim[0][0] === 'dropdown-opt-in' && anim[anim.length - 1][1] > anim[0][1], `[${label}] opsi dropdown tidak masuk berurutan`);
+  // Daftar topik tampil saat dibuka.
+  expect(await list.isVisible(), `[${label}] daftar topik tidak tampil`);
   expect(await list.evaluate((el) => el === document.activeElement), `[${label}] fokus tidak pindah ke daftar topik`);
   const box = await list.boundingBox();
   expect(box && box.x >= 0 && box.x + box.width <= width, `[${label}] daftar topik keluar dari layar`);
@@ -90,28 +83,10 @@ async function visit(browser, base, { width, reduced }) {
   expect(over2 <= 0, `[${label}] dropdown menimbulkan scroll horizontal (${over2}px)`);
   // Sub-bab Fun fact ada di dalam Tentang, tingkat h3.
   expect((await page.locator('.about h3.label-sub').count()) === 1, `[${label}] sub-bab Fun fact tidak ada di Tentang`);
-  // Garis footer: biru penuh di dasar halaman (scaleX 1 atau tanpa transform), baik animasi nyala maupun mati.
-  const lineScale = () => page.evaluate(() => {
-    const t = getComputedStyle(document.querySelector('.footer-line-fill')).transform;
-    return t === 'none' ? 1 : new DOMMatrixReadOnly(t).m11;
-  });
+  // Tanda NvanHub di footer tampil saat halaman sudah di dasar.
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
-  await page.waitForTimeout(500);
-  const full = await lineScale();
-  expect(full > 0.99, `[${label}] garis footer belum penuh di dasar halaman (scaleX ${full})`);
-  const dashFull = await page.evaluate(() => {
-    const t = getComputedStyle(document.querySelector('.footer-dash-fill')).transform;
-    return t === 'none' ? 0 : new DOMMatrixReadOnly(t).m41;
-  });
-  expect(Math.abs(dashFull) < 1, `[${label}] garis putus-putus footer belum penuh di dasar halaman (geser ${dashFull}px)`);
-  if (!reduced) {
-    await page.evaluate(() => window.scrollTo(0, 0));
-    await page.waitForTimeout(400);
-    const empty = await lineScale();
-    expect(empty < 0.05, `[${label}] garis footer harus kosong saat footer di luar layar (scaleX ${empty})`);
-    const dashX = await page.evaluate(() => new DOMMatrixReadOnly(getComputedStyle(document.querySelector('.footer-dash-fill')).transform).m41);
-    expect(dashX < -100, `[${label}] garis putus-putus footer harus tersembunyi saat footer di luar layar (geser ${dashX}px)`);
-  }
+  await page.waitForTimeout(reduced ? 0 : 400);
+  expect(await page.locator('.signature').isVisible(), `[${label}] tanda NvanHub di footer tidak tampil`);
   await ctx.close();
 }
 

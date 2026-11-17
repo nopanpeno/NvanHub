@@ -1,861 +1,407 @@
-/* Font pixel Jersey 10 (lisensi OFL, lihat assets/fonts/OFL-Jersey-10.txt). Disimpan di repo,
-   bukan dari CDN, jadi tampil sama walau jaringan atau Google Fonts bermasalah.
-   Hanya subset latin (cukup untuk teks Indonesia). */
+/* NvanHub: gelap, judul Anton tinggi, bodi Onest. Aturan lengkap ada di .ux-profile.md.
+   Kedua font disimpan di assets/fonts (lisensi OFL), tidak dari CDN. */
+
 @font-face {
-  font-family: "Jersey 10";
+  font-family: "Anton";
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("../assets/fonts/jersey-10-latin-400-normal.woff2") format("woff2");
+  src: url("../assets/fonts/anton-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/onest-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../assets/fonts/onest-latin-500-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Onest";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../assets/fonts/onest-latin-600-normal.woff2") format("woff2");
 }
 
-/* Palet gelap-biru dan gaya pixel-retro. Sumber: .ux-profile.md */
 :root {
   color-scheme: dark;
-  --bg: #06161f;            /* latar halaman (60%) */
-  --surface: #0d2633;       /* kartu (30%) */
-  --ink: #e6f4ff;           /* teks utama, border, fokus (14:1 di atas bg) */
-  --muted: #a6c0d1;         /* teks sekunder (8.3:1 di atas surface) */
-  --blue: #0a6bd6;          /* tombol utama, teks putih 5.1:1 */
-  --blue-hover: #0856ad;    /* hover tombol, teks putih 7.1:1 */
-  --blue-pressed: #063a78;  /* pressed tombol */
-  --link: #6cc4ff;          /* link dan aksen teks (8.2:1 di atas surface) */
-  --link-hover: #b3e0ff;      /* hover link (11:1 di atas surface) */
-  --sky: #38a8f0;           /* dekorasi saja, bukan teks */
-  --shadow-color: #0b5aa8;  /* bayangan solid offset, tanpa blur */
-  --grid: #0c2431;          /* garis grid latar, hiasan tipis */
-  --grid-dot: #1a4a63;      /* titik di persimpangan grid (sama dengan assets/bg/grid-dot.svg) */
-
-  /* Maskot robot: biru cyber. Hanya fill rata, tanpa glow. Visor memakai warna latar. */
-  --bot: #2b7bff;
-  --bot-dark: #1849d6;
-  --bot-light: #5aa0ff;
-  --cyan: #38cfff;
-  --cyan-hi: #e0fcff;
-  /* Cadangan kalau file font gagal dimuat: monospace, paling mirip gaya pixel. */
-  --font-display: "Jersey 10", ui-monospace, "Courier New", monospace;
-  /* Jersey 10 hanya punya bobot 400 dan hurufnya kecil: ukuran judul dikali 1.25 supaya
-     terlihat sama besar dengan skala tipe di bawah. */
-  --weight-display: 400;
-  --display-scale: 1.25;
-  --shadow: 4px 4px 0 var(--shadow-color);
-
-  /* Tipe: bodi 16, sekunder 14, meta 12. Judul naik Minor Third (x1.2). Hanya dua bobot: 400 dan 700. */
-  --text-meta: 0.75rem;
-  --text-secondary: 0.875rem;
-  --text-body: 1rem;
-  --text-h3: 1.2rem;
-  --text-h2: 1.44rem;
-  --text-h1: clamp(2.074rem, 6vw, 3.583rem);
-  --weight-regular: 400;
-  --weight-bold: 700;
-
-  /* Lebar kolom halaman. Dipakai main; header dan footer penuh lebar tapi sejajar kolom ini. */
-  --page-max: 960px;
-  --gutter: max(24px, calc((100% - var(--page-max)) / 2 + 24px));
+  --bg: #08080a;            /* latar halaman (60%) */
+  --fg: #f3f1ea;            /* teks utama dan fokus */
+  --surface: #111114;       /* dialog dan daftar topik (30%) */
+  --surface-2: #17171b;     /* hover kartu, tanda NvanHub besar */
+  --muted: #8e8d86;         /* teks sekunder, 6.0:1 di atas bg */
+  --line: rgba(243, 241, 234, 0.12);
+  --line-strong: rgba(243, 241, 234, 0.26);
+  --accent: #ff3b1d;        /* aksen (10%): tombol utama, topik aktif, nomor kartu */
+  --accent-2: #ff6a3d;      /* hover tombol utama */
+  --gutter: 2.5rem;
+  --section: 9rem;
+  --font-display: "Anton", Impact, sans-serif;
+  --font-sans: "Onest", system-ui, sans-serif;
+  /* Durasi: 150, 200, 300 ms. Pengecualian (marquee) ada di .ux-profile.md. */
+  --t-fast: 150ms;
+  --t-base: 200ms;
+  --t-slow: 300ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in: cubic-bezier(0.7, 0, 0.84, 0);
 }
 
-* { box-sizing: border-box; }
-
-:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 2px;
+@media (max-width: 640px) {
+  :root { --gutter: 16px; --section: 5rem; }
 }
 
+[hidden] { display: none !important; }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { font-size: 16px; background: var(--bg); scroll-padding-top: 4rem; }
+html.lock { overflow: hidden; }
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--ink);
-  font-family: system-ui, sans-serif;
-  font-size: var(--text-body);
-  font-weight: var(--weight-regular);
-  line-height: 1.5;
-  /* Kartu masuk dari samping: geseran tidak boleh memunculkan scroll horizontal. */
-  overflow-x: clip;
+  background: var(--bg); color: var(--fg);
+  font-family: var(--font-sans); font-size: 1rem; line-height: 1.55;
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
 }
+img, svg { display: block; max-width: 100%; }
+a { color: inherit; }
+button { font: inherit; color: inherit; background: none; border: 0; cursor: pointer; }
+ul, ol { list-style: none; }
+::selection { background: var(--accent); color: var(--bg); }
+:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+section[id] { scroll-margin-top: 4rem; }
 
-/* Latar tetap di layar, tiga lapis. js/motion.js menggeser tiap lapis dengan kecepatan beda saat
-   scroll (parallax): bintang jauh 10%, grid 25%, bintang dekat 40%. Tidak ada loop.
-   Tiap lapis lebih tinggi satu ubin supaya geseran tidak membuka tepi kosong.
-   Garis grid digeser 1px supaya titik 3x3 di persimpangan tepat di tengah garis. */
-.bg-grid,
-.bg-stars {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  z-index: -1;
-  pointer-events: none;
-}
-.bg-grid {
-  height: calc(100% + 32px);
-  background-image:
-    url("../assets/bg/grid-dot.svg"),
-    linear-gradient(var(--grid) 1px, transparent 1px),
-    linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-  background-size: 32px 32px, 32px 32px, 32px 32px;
-  background-position: 0 0, 1px 1px, 1px 1px;
-}
-/* Kotak grid menyala dekat kursor (js/motion.js). Anak .bg-grid, jadi ikut bergeser bersama grid.
-   Fill rata warna sky (dekorasi saja), tanpa glow. Hanya opacity yang dianimasi. */
-.grid-glow {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 31px;
-  height: 31px;
-  background: var(--sky);
-  opacity: 0;
-  pointer-events: none;
-}
-/* Bintang pixel: kotak kecil tersebar, warna sky (dekorasi saja), dibuat redup lewat opacity
-   supaya tidak mengganggu teks. */
-.bg-stars-far {
-  height: calc(100% + 288px);
-  background-image: url("../assets/bg/stars-far.svg");
-  background-size: 288px 288px;
-  opacity: 0.3;
-}
-.bg-stars-near {
-  height: calc(100% + 400px);
-  background-image: url("../assets/bg/stars-near.svg");
-  background-size: 400px 400px;
-  opacity: 0.45;
-}
-
-/* Garis kemajuan scroll di tepi atas. Dibuat oleh js/motion.js. */
-.progress {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 4px;
-  background: var(--sky);
-  transform: scaleX(0);
-  transform-origin: left;
-  z-index: 20;
-  pointer-events: none;
-}
-
-/* Cuma main yang dibatasi lebarnya. Header dan footer penuh lebar. */
-main {
-  max-width: var(--page-max);
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-/* Skip link: pertama di Tab. Tersembunyi sampai difokus. */
-.skip-link {
-  position: absolute;
-  left: 16px;
-  top: 8px;
-  z-index: 10;
-  transform: translateY(-200%);
-  background: var(--surface);
-  color: var(--ink);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
-  padding: 8px 16px;
-  min-height: 44px;
-  display: inline-flex;
-  align-items: center;
-  text-decoration: none;
-  font-weight: var(--weight-bold);
-}
-.skip-link:focus { transform: none; }
-
-/* Header dan navigasi */
-.site-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 32px var(--gutter) 0;
-}
-.brand { font-family: var(--font-display); font-weight: var(--weight-display); font-size: calc(var(--text-h2) * var(--display-scale)); line-height: 1; }
-.site-header nav { display: flex; gap: 16px; }
-.site-header nav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--muted);
-  text-decoration: none;
-}
-.site-header nav a:hover { color: var(--link-hover); text-decoration: underline; }
-
-/* Tombol pasang di header: tampil seperti link Tentang (teks, tanpa bingkai, tanpa gerak).
-   Tersembunyi lewat atribut hidden (js/install.js). */
-.site-header nav .install {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0;
-  background: none;
-  border: 0;
-  color: var(--muted);
-  font: inherit;
-  cursor: pointer;
-}
-.site-header nav .install:hover { color: var(--link-hover); text-decoration: underline; }
-.install[hidden] { display: none; }
-
-/* Panduan pasang di iPhone: dialog asli, Escape menutup dan fokus kembali ke tombol. */
-.install-help {
-  max-width: min(92vw, 420px);
-  padding: 24px;
-  background: var(--surface);
-  color: var(--ink);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 4px 4px 0 var(--shadow-color);
-}
-.install-help::backdrop { background: rgb(6 22 31 / 0.7); }
-.install-help .btn::after { content: none; }
-.install-help h3 {
-  margin: 0 0 12px;
-  font-family: var(--font-display);
-  font-size: calc(var(--text-h3) * var(--display-scale));
-  font-weight: var(--weight-display);
-  line-height: 1.2;
-}
-.install-help ol { margin: 0 0 24px; padding-left: 20px; line-height: 1.5; }
-.install-help li + li { margin-top: 8px; }
-
-/* Judul bagian (h2): pixel, lebih besar dari judul kartu (h3) */
-.label {
-  margin: 0 0 16px;
-  font-family: var(--font-display);
-  font-size: calc(var(--text-h2) * var(--display-scale));
-  font-weight: var(--weight-display);
-  line-height: 1.2;
-  color: var(--ink);
-}
-
-/* Hero: teks di kiri, maskot di kanan. Di layar sempit maskot pindah ke atas. */
-.hero {
-  padding: 64px 0 48px;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 48px;
-}
-.mascot-wrap { position: relative; width: 144px; }
-/* Maskot adalah button asli: Enter dan Space jalan sendiri, fokus pakai ring global. */
-.mascot {
-  display: block;
-  width: 100%;
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  cursor: pointer;
-}
-.mascot svg { display: block; width: 100%; height: auto; overflow: visible; }
-.mascot .bot { fill: var(--bot); }
-.mascot .dark { fill: var(--bot-dark); }
-.mascot .light { fill: var(--bot-light); }
-.mascot .cyan, .mascot .seg { fill: var(--cyan); }
-.mascot .hi { fill: var(--cyan-hi); }
-.mascot .visor { fill: var(--bg); }
-
-/* Balon ucapan maskot. Posisinya absolut, jadi muncul tanpa menggeser tata letak. Di layar lebar
-   duduk di bawah maskot dan selebar kolom maskot + celah (144 + 48), supaya tidak menimpa teks hero. */
-.bubble {
-  position: absolute;
-  z-index: 5;
-  top: calc(100% + 12px);
-  right: 0;
-  width: 192px;
-  margin: 0;
-  padding: 12px 16px;
-  background: var(--surface);
-  color: var(--ink);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: var(--shadow);
-  font-size: var(--text-secondary);
-  line-height: 1.5;
-}
-/* Ekor balon: takik kotak kecil yang menghadap maskot. */
-.bubble::before {
-  content: "";
-  position: absolute;
-  top: -8px;
-  right: 60px;
-  width: 12px;
-  height: 8px;
-  background: var(--surface);
-  border: 2px solid var(--ink);
-  border-bottom: 0;
-}
-/* Teks khusus pembaca layar. */
 .sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
-@media (max-width: 767.98px) {
-  .hero { grid-template-columns: 1fr; gap: 24px; padding-top: 32px; }
-  .mascot-wrap { order: -1; width: 96px; }
-  /* Maskot di kiri atas: balon pindah ke kanannya, ruang kosong di samping maskot. */
-  .bubble {
-    top: 0;
-    right: auto;
-    left: calc(100% + 16px);
-    width: max-content;
-    max-width: min(220px, calc(100vw - 48px - 96px - 16px));
-  }
-  .bubble::before {
-    top: 16px;
-    right: auto;
-    left: -8px;
-    width: 8px;
-    height: 12px;
-    border: 2px solid var(--ink);
-    border-right: 0;
-  }
+.skip-link {
+  position: absolute; left: 16px; top: -100px; z-index: 200;
+  padding: 8px 12px; background: var(--fg); color: var(--bg); font-weight: 600;
 }
-/* Robot pojok: muncul hanya saat petunjuk "Buka website" (js/mascot.js). Tetap di layar, tidak
-   menerima klik, jadi tidak menutupi tombol di bawahnya. Setengah ukuran hero: sel 3px, tetap tajam.
-   Muncul dan hilang lewat fade opacity (kelas .on). visibility menunggu fade keluar selesai, supaya
-   robot tidak lenyap mendadak. Reduced-motion: tanpa transisi, langsung muncul dan hilang. */
-.dock {
-  position: fixed;
-  z-index: 5;
-  right: 16px;
-  bottom: 16px;
-  width: 72px;
+.skip-link:focus { top: 16px; }
+
+/* ---------- header ---------- */
+.site-header {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem var(--gutter);
+  background: linear-gradient(to bottom, var(--bg) 40%, rgba(8, 8, 10, 0));
   pointer-events: none;
-  opacity: 0;
-  visibility: hidden;
 }
-.dock.on { opacity: 1; visibility: visible; }
-@media (prefers-reduced-motion: no-preference) {
-  .dock { transition: opacity 150ms ease-in, visibility 0s linear 150ms; }
-  .dock.on { transition: opacity 200ms ease-out, visibility 0s; }
+.site-header > * { pointer-events: auto; }
+.brand { display: flex; align-items: center; gap: 0.75rem; min-height: 44px; text-decoration: none; }
+.mono {
+  display: grid; place-items: center;
+  width: 2.5rem; height: 2.5rem; border-radius: 9999px;
+  border: 1px solid var(--line-strong);
+  font-weight: 600; font-size: 0.875rem; letter-spacing: -0.01em;
 }
-.dock .mascot { cursor: default; }
-.dock .bubble {
-  top: auto;
-  bottom: calc(100% + 12px);
-  left: auto;
-  right: 0;
-  width: max-content;
-  max-width: min(220px, calc(100vw - 32px));
+.brand-name {
+  display: none;
+  font-size: 0.875rem; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.18em; color: var(--muted);
 }
-/* Ekor balon menghadap ke bawah, ke robot. */
-.dock .bubble::before {
-  top: auto;
-  bottom: -8px;
-  left: auto;
-  right: 28px;
-  width: 12px;
-  height: 8px;
-  border: 2px solid var(--ink);
-  border-top: 0;
+@media (min-width: 640px) { .brand-name { display: inline; } }
+.site-header nav { display: flex; align-items: center; gap: 2.5rem; }
+.site-header nav a,
+.install {
+  min-height: 44px; display: inline-flex; align-items: center;
+  font-size: 0.875rem; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.16em; color: var(--muted); text-decoration: none;
 }
-.hero h1 {
-  font-family: var(--font-display);
-  font-weight: var(--weight-display);
-  font-size: calc(var(--text-h1) * var(--display-scale));
-  margin: 0 0 12px;
-  line-height: 1.1;
-  color: var(--ink);
-}
-.accent { color: var(--link); }
-
-/* Nama di hero saat gerak boleh (js/motion.js menambah kelas .accent-plate): kotak putih di belakang
-   teks. Saat scroll, biru menyapu dari kiri ke kanan (.plate-fill, scaleX). Tiap huruf memakai
-   gradien dengan tepi keras di --c (0 sampai 1, diisi JS): bagian di kiri tepi putih, di kanan biru,
-   jadi teks berganti warna tepat di tepi sapuan. Putih di atas biru dan biru di atas putih sama-sama 5.1:1.
-   Tanpa JS atau reduced-motion: kelas ini tidak ada, nama tetap biru muda seperti biasa. */
-.accent-plate {
-  position: relative;
-  display: inline-block;
-  isolation: isolate;
-  line-height: 0.95; /* kotak rapat ke huruf, lebih pendek dari baris judul (1.1) */
-  padding: 0 6px;
-  margin: 0 0 0 -6px; /* teks tetap sejajar kolom. Titik di akhir nama ikut di dalam kotak. */
-}
-.accent-plate .plate {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background: #fff;
-  box-shadow: 3px 3px 0 var(--shadow-color);
-}
-.accent-plate .plate-fill {
-  position: absolute;
-  inset: 0;
-  background: var(--blue);
-  transform: scaleX(0);
-  transform-origin: left;
-}
-.accent-plate .char { --c: 0; color: var(--blue); }
-@supports ((-webkit-background-clip: text) or (background-clip: text)) {
-  .accent-plate .char {
-    color: transparent;
-    background-image: linear-gradient(90deg, #fff calc(var(--c) * 100%), var(--blue) calc(var(--c) * 100%));
-    -webkit-background-clip: text;
-    background-clip: text;
+@media (hover: hover) {
+  .site-header nav a:hover,
+  .install:hover {
+    color: var(--fg); text-decoration: underline; text-decoration-color: var(--accent);
+    text-decoration-thickness: 2px; text-underline-offset: 6px;
   }
 }
-.lead {
-  color: var(--muted);
-  font-size: var(--text-h3);
-  max-width: 65ch;
-  margin: 0 0 24px;
-}
 
-/* Tombol utama: pill, border tebal, bayangan solid */
+/* ---------- eyebrow dan tombol ---------- */
+.eyebrow {
+  display: flex; align-items: center; gap: 0.75rem;
+  font-size: 0.875rem; font-weight: 500; line-height: 1.2;
+  text-transform: uppercase; letter-spacing: 0.18em; color: var(--muted);
+}
+.eyebrow::before {
+  content: ""; width: 0.5rem; height: 0.5rem; border-radius: 9999px;
+  background: var(--accent); flex: none;
+}
 .btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  background: var(--blue);
-  color: #fff;
-  text-decoration: none;
-  font-weight: var(--weight-bold);
-  padding: 8px 16px;
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  box-shadow: 3px 3px 0 var(--shadow-color);
-  transition: transform 120ms ease-out;
-}
-.btn::after {
-  content: "";
-  width: 16px;
-  height: 16px;
-  background: currentColor;
-  -webkit-mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
-  mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
-}
-/* Hover: tombol naik 2px dan bayangan ikut memanjang (bayangan berubah langsung, gerak tombol 120ms).
-   Ditekan: tombol turun menutup bayangan. Panah menggeser 3px saat hover, hanya kalau gerak boleh. */
-.btn:hover { background: var(--blue-hover); transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--shadow-color); }
-.btn:active { background: var(--blue-pressed); transform: translate(3px, 3px); box-shadow: 0 0 0 var(--shadow-color); }
-
-@media (prefers-reduced-motion: no-preference) {
-  .btn::after { transition: transform 120ms ease-out; }
-  .btn:hover::after { transform: translateX(3px); }
-  .btn:active::after { transform: none; }
-}
-
-/* Proyek */
-.projects { padding-bottom: 48px; }
-
-.grid {
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-}
-
-.card {
-  background: var(--surface);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: var(--shadow);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  position: relative;
-  transition: transform 120ms ease-out;
-}
-/* Hover: kartu naik 2px, bayangan memanjang jadi 6px (bayangan berubah langsung, sama seperti .btn). */
-.card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 var(--shadow-color); }
-/* Miring 1 derajat saat hover, arah bergantian ganjil-genap supaya deretan kartu tidak seragam.
-   Hanya kalau gerak boleh. Rotasi = transform, jadi tidak menggeser tata letak. */
-@media (prefers-reduced-motion: no-preference) {
-  .card:nth-child(odd):hover { transform: translate(-2px, -2px) rotate(-1deg); }
-  .card:nth-child(even):hover { transform: translate(-2px, -2px) rotate(1deg); }
-}
-
-/* Nomor urut proyek di pojok kanan atas. Hiasan, aria-hidden. Pakai warna link (8.2:1 di atas surface). */
-.card-no {
-  position: absolute;
-  top: 16px;
-  right: 24px;
-  font-family: var(--font-display);
-  font-size: calc(var(--text-body) * var(--display-scale));
-  font-weight: var(--weight-display);
-  line-height: 1;
-  color: var(--link);
-  pointer-events: none;
-}
-.card h3 { margin: 0; padding-right: 40px; font-family: var(--font-display); font-size: calc(var(--text-h3) * var(--display-scale)); font-weight: var(--weight-display); line-height: 1.2; }
-.tagline { margin: 0; }
-.desc { margin: 0; color: var(--muted); font-size: var(--text-secondary); }
-
-.tags {
-  list-style: none;
-  padding: 0;
-  margin: 4px 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px 8px;
-}
-
-/* Tag = tombol filter. Tampilan tetap kecil, area sentuh dilebarkan ke 44px lewat ::after.
-   Aktif (aria-pressed): isi biru, teks putih (5.1:1). */
-.tags button {
-  position: relative;
-  font: inherit;
-  font-size: var(--text-meta);
-  line-height: 1.4;
-  background: none;
-  border: 1.5px solid var(--ink);
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 44px; padding: 0.75rem 1.25rem; margin-top: 1.5rem;
+  background: var(--accent); color: var(--bg);
+  font-weight: 600; letter-spacing: 0.02em; text-decoration: none;
   border-radius: 2px;
-  padding: 4px 8px;
-  color: var(--ink);
-  cursor: pointer;
 }
-.tags button::after {
-  content: "";
-  position: absolute;
-  inset: -9px -4px;
-}
-.tags button:hover { text-decoration: underline; }
-.tags button[aria-pressed="true"] { background: var(--blue); color: #fff; }
+@media (hover: hover) { .btn:hover { background: var(--accent-2); } }
+.install-help .btn { margin-top: 0; }
 
-/* Cerita kartu: disclosure bawaan. Tombolnya pill kecil setinggi 44px, teks berganti sesuai keadaan. */
-.story summary {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding: 0 16px;
-  border: 1.5px solid var(--ink);
-  border-radius: 999px;
-  color: var(--ink);
-  font-size: var(--text-secondary);
-  font-weight: var(--weight-bold);
-  cursor: pointer;
-  list-style: none;
-}
-.story summary::-webkit-details-marker { display: none; }
-.story summary:hover { text-decoration: underline; }
-.story .story-close, .story[open] .story-open { display: none; }
-.story[open] .story-close { display: inline; }
-.story p { margin: 8px 0 0; color: var(--muted); font-size: var(--text-secondary); line-height: 1.5; }
-
-/* Label tombol tidak dipotong. Kalau dua tombol tidak muat sebaris (kartu 3 kolom), yang kedua turun. */
-/* Garis putus-putus memisahkan isi kartu dari tombolnya, jadi aksi selalu sejajar di dasar kartu. */
-.links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 16px;
-  margin-top: auto;
-  padding-top: 8px;
-  border-top: 2px dashed var(--shadow-color);
-}
-.links a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  white-space: nowrap;
-  color: var(--link);
-  text-decoration: none;
-  font-weight: var(--weight-bold);
-}
-.links a::after {
-  content: "";
-  width: 12px;
-  height: 12px;
-  background: currentColor;
-  -webkit-mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
-  mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
-}
-.links a:hover { color: var(--link-hover); text-decoration: underline; }
-
-/* Link ke tab baru pakai ikon external, bukan panah. Tanda visual sejalan dengan teks aria. */
-.links a[target="_blank"]::after,
-.links-list a[target="_blank"]::after {
-  content: "";
-  width: 12px;
-  height: 12px;
-  background: currentColor;
-  -webkit-mask: url("../assets/icons/external.svg") center / contain no-repeat;
-  mask: url("../assets/icons/external.svg") center / contain no-repeat;
-}
-
-/* Filter topik: satu kolom, lebar tetap di layar lebar, penuh lebar di HP */
-.controls {
+/* ---------- hero ---------- */
+.hero {
   position: relative;
-  z-index: 20; /* daftar dropdown tampil di atas kartu di bawahnya */
-  margin-bottom: 24px;
-  max-width: 240px;
+  display: flex; flex-direction: column;
+  min-height: 100vh; min-height: 100svh;
+  padding: 7rem var(--gutter) 0;
+  overflow: hidden;
 }
-@media (max-width: 767.98px) {
-  .controls { max-width: none; }
+@media (min-width: 768px) { .hero { padding-top: 8rem; } }
+.hero-top { display: flex; flex-direction: column; gap: 2rem; }
+@media (min-width: 768px) {
+  .hero-top { flex-direction: row; justify-content: space-between; align-items: flex-start; }
 }
-.field { display: flex; flex-direction: column; gap: 12px; }
-/* Label form: font bodi, bukan pixel. Font pixel di 16px sulit dibaca (C terbaca O).
-   Berdiri sendiri, tidak memakai .label (itu untuk judul bagian h2). */
-.field > label { margin: 0; font-family: system-ui, sans-serif; font-size: var(--text-body); font-weight: var(--weight-bold); line-height: 1.2; color: var(--ink); }
+.roles {
+  margin-top: 1.5rem;
+  font-family: var(--font-display); font-weight: 400; text-transform: uppercase;
+  font-size: 1.75rem; line-height: 1.1; letter-spacing: -0.01em;
+}
+@media (min-width: 768px) { .roles { font-size: 3.25rem; } }
+.ln { display: block; overflow: hidden; padding-bottom: 0.08em; margin-bottom: -0.08em; }
+.ln > span { display: block; }
+.hero-side { max-width: 26rem; }
+.lead { color: var(--muted); font-size: 1.25rem; line-height: 1.5; }
+@media (min-width: 768px) {
+  .hero-side { text-align: right; }
+  .hero-side .btn { margin-left: auto; }
+}
 
-/* Dropdown topik buatan sendiri (tombol + listbox), supaya daftarnya ikut gaya situs. Popup <select> asli
-   digambar oleh OS dan tidak bisa di-style. Pola ARIA listbox, keyboard di js/main.js. Daftar absolut di
-   bawah tombol, jadi tidak menggeser layout. Panah memakai ikon pixel yang sama: ke bawah saat tertutup,
-   ke atas saat terbuka. */
+.hero-name {
+  margin-top: auto;
+  padding-top: 3rem;
+  display: flex; flex-direction: column; align-items: center;
+  font-family: var(--font-display); font-weight: 400; text-transform: uppercase;
+  line-height: 1.1; letter-spacing: -0.01em; white-space: nowrap;
+  color: var(--accent);
+  font-size: min(44vw, 12rem);
+  user-select: none;
+}
+@media (min-width: 768px) { .hero-name { font-size: min(30vw, 28rem); } }
+.hero-name .l { display: block; }
+.hero-name .l + .l { margin-top: -0.12em; } /* rapatkan dua baris tanpa mengubah line-height */
+
+/* ---------- marquee (satu-satunya loop di halaman) ---------- */
+.marquee {
+  position: relative; overflow: hidden;
+  background: var(--bg);
+  border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+  padding-block: 2rem;
+}
+.marquee-track { display: flex; width: max-content; animation: marquee 26s linear infinite; }
+.marquee-set { display: flex; align-items: center; flex-wrap: nowrap; }
+.marquee-set span {
+  font-family: var(--font-display); font-size: 3.25rem; line-height: 1.1;
+  text-transform: uppercase; letter-spacing: -0.01em; white-space: nowrap;
+}
+.marquee-set i {
+  display: block; flex: none; width: 0.625rem; height: 0.625rem;
+  margin-inline: 2rem; border-radius: 9999px; background: var(--accent);
+}
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ---------- judul bagian ---------- */
+.label {
+  font-family: var(--font-display); font-weight: 400; text-transform: uppercase;
+  font-size: 3.25rem; line-height: 1.1; letter-spacing: -0.01em;
+}
+@media (min-width: 768px) { .label { font-size: 5rem; } }
+.label.label-sub { font-size: 1.75rem; }
+
+/* ---------- proyek ---------- */
+.projects { padding: var(--section) var(--gutter); }
+.section-head { display: flex; flex-direction: column; gap: 1.5rem; }
+@media (min-width: 768px) {
+  .section-head { flex-direction: row; align-items: flex-end; justify-content: space-between; }
+}
+.controls { width: 100%; }
+@media (min-width: 768px) { .controls { width: 260px; } }
+.field { position: relative; }
+.field label {
+  display: block; margin-bottom: 0.5rem;
+  font-size: 0.875rem; font-weight: 500; text-transform: uppercase;
+  letter-spacing: 0.16em; color: var(--muted);
+}
 .dropdown { position: relative; }
 .dropdown-btn {
-  display: block;
-  width: 100%;
-  min-height: 44px;
-  background: var(--surface);
-  color: var(--ink);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
-  padding: 8px 48px 8px 16px;
-  font: inherit;
-  text-align: left;
-  box-shadow: 3px 3px 0 var(--shadow-color);
-  cursor: pointer;
+  position: relative; display: block; width: 100%; min-height: 44px;
+  padding: 0.625rem 2.75rem 0.625rem 1rem; text-align: left;
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: 2px;
 }
 .dropdown-btn::after {
-  content: "";
-  position: absolute;
-  right: 16px;
-  top: 50%;
-  width: 16px;
-  height: 16px;
-  transform: translateY(-50%) rotate(90deg);
-  background: var(--ink);
-  pointer-events: none;
-  -webkit-mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
-  mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
+  content: ""; position: absolute; right: 1.25rem; top: 50%;
+  width: 0.5rem; height: 0.5rem;
+  border-right: 2px solid var(--fg); border-bottom: 2px solid var(--fg);
+  transform: translateY(-70%) rotate(45deg);
 }
-.dropdown-btn[aria-expanded="true"]::after { transform: translateY(-50%) rotate(-90deg); }
+.dropdown-btn[aria-expanded="true"]::after { transform: translateY(-30%) rotate(-135deg); }
+@media (hover: hover) { .dropdown-btn:hover { border-color: var(--fg); } }
 .dropdown-list {
-  position: absolute;
-  z-index: 30;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  max-height: min(412px, 60vh); /* 9 opsi muat; lebih banyak dari itu, daftar bergulir di dalam */
-  overflow-y: auto;
-  margin: 0;
-  padding: 4px;
-  list-style: none;
-  background: var(--surface);
-  border: 2px solid var(--ink);
-  border-radius: 6px;
-  box-shadow: 3px 3px 0 var(--shadow-color);
-  opacity: 0;
-  visibility: hidden;
-  outline: none; /* fokus ditandai opsi yang menyala (.is-active), bukan garis di sekeliling daftar */
+  position: absolute; z-index: 30; top: calc(100% + 8px); left: 0; right: 0;
+  max-height: min(412px, 60vh); overflow-y: auto; padding: 4px;
+  background: var(--surface); border: 1px solid var(--line-strong); border-radius: 2px;
+  opacity: 0; visibility: hidden; outline: none;
+  transition: opacity var(--t-fast) ease-in, visibility 0s linear var(--t-fast);
 }
-.dropdown-list.open { opacity: 1; visibility: visible; }
+.dropdown-list.open {
+  opacity: 1; visibility: visible;
+  transition: opacity var(--t-base) ease-out, visibility 0s;
+}
 .dropdown-opt {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 44px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  color: var(--ink);
-  cursor: pointer;
+  display: flex; align-items: center; min-height: 44px; padding: 0 0.75rem;
+  font-size: 1rem; cursor: pointer;
 }
-.dropdown-opt[aria-selected="true"] { font-weight: var(--weight-bold); }
-.dropdown-opt[aria-selected="true"]::after {
-  content: "";
-  flex: none;
-  width: 12px;
-  height: 12px;
-  background: currentColor;
-  -webkit-mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
-  mask: url("../assets/icons/arrow.svg") center / contain no-repeat;
-}
-.dropdown-opt.is-active { background: var(--blue); color: #fff; }
-/* Muncul fade opacity 200ms ease-out, hilang 150ms ease-in. visibility menunggu fade keluar selesai.
-   Saat dibuka, opsi masuk berurutan dari atas: tiap opsi turun 8px sambil muncul (180ms), jeda 30ms
-   antar opsi (--i diisi js/main.js, dibatasi 8 langkah, jadi total di bawah 450ms). Animasi hanya ada
-   di kelas .open, jadi saat menutup opsi tetap terlihat selama daftar memudar.
-   Reduced-motion: langsung tanpa transisi dan tanpa urutan. */
-@media (prefers-reduced-motion: no-preference) {
-  .dropdown-list { transition: opacity 150ms ease-in, visibility 0s linear 150ms; }
-  .dropdown-list.open { transition: opacity 200ms ease-out, visibility 0s; }
-  .dropdown-btn::after { transition: transform 150ms ease-out; }
-  .dropdown-list.open .dropdown-opt {
-    animation: dropdown-opt-in 180ms ease-out backwards;
-    animation-delay: calc(min(var(--i, 0), 8) * 30ms);
-  }
-}
-@keyframes dropdown-opt-in {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: none; }
-}
+.dropdown-opt[aria-selected="true"] { font-weight: 600; }
+.dropdown-opt.is-active { background: var(--accent); color: var(--bg); }
 
-/* Tombol kecil bentuk pill. Dipakai pesan kosong dan gagal. */
-.filter {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  background: var(--surface);
-  color: var(--ink);
-  border: 2px solid var(--ink);
-  border-radius: 999px;
-  padding: 0 16px;
-  font: inherit;
-  font-size: var(--text-secondary);
-  cursor: pointer;
-  transition: transform 120ms ease-out;
+.grid {
+  display: grid; grid-template-columns: 1fr; gap: 1px;
+  margin-top: 3rem;
+  background: var(--line); border: 1px solid var(--line);
 }
-.filter:hover { transform: translate(-1px, -1px); }
-.filter[hidden] { display: none; }
+@media (min-width: 768px) { .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 
-/* Kosong dan gagal */
-.empty { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; color: var(--muted); }
+.card {
+  position: relative; display: flex; flex-direction: column; gap: 0.75rem;
+  padding: 2rem; background: var(--surface); min-width: 0;
+}
+@media (hover: hover) { .card:hover { background: var(--surface-2); } }
+/* Kartu masuk saat kelas "ready" ada, dan tiap kartu baru hasil filter juga.
+   Jeda 30ms per kartu, total tidak lewat 150ms. */
+.js.ready .card { animation: rise var(--t-slow) var(--ease-out) both; }
+.js.ready .card:nth-child(2) { animation-delay: 30ms; }
+.js.ready .card:nth-child(3) { animation-delay: 60ms; }
+.js.ready .card:nth-child(4) { animation-delay: 90ms; }
+.js.ready .card:nth-child(5) { animation-delay: 120ms; }
+.js.ready .card:nth-child(6) { animation-delay: 150ms; }
+.card-no {
+  position: absolute; top: 1.5rem; right: 1.5rem;
+  font-family: var(--font-display); font-size: 1.5rem; line-height: 1.1; color: var(--accent);
+}
+.card h3 {
+  padding-right: 3rem;
+  font-family: var(--font-display); font-weight: 400; font-size: 2.5rem; line-height: 1.1;
+  text-transform: uppercase; letter-spacing: -0.01em;
+}
+.tagline { font-size: 1.25rem; font-weight: 500; line-height: 1.4; }
+.desc { color: var(--muted); font-size: 1rem; line-height: 1.55; }
+
+.tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: auto; padding-top: 0.5rem; }
+.tags button {
+  min-height: 44px; padding: 0 0.875rem;
+  font-size: 0.875rem; font-weight: 500;
+  border: 1px solid var(--line-strong); border-radius: 2px;
+}
+@media (hover: hover) { .tags button:hover { border-color: var(--fg); } }
+.tags button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+
+.story { margin-top: 0.25rem; }
+.story summary {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-weight: 600; cursor: pointer; list-style: none;
+  text-decoration: underline; text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px; text-underline-offset: 6px;
+}
+.story summary::-webkit-details-marker { display: none; }
+.story .story-close, .story[open] .story-open { display: none; }
+.story[open] .story-close { display: inline; }
+.story p { margin-top: 0.5rem; color: var(--muted); font-size: 1rem; line-height: 1.55; }
+
+.links { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1.5rem; margin-top: 0.5rem; }
+.links a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 600; text-decoration: none; }
+.links a:first-child {
+  padding: 0 1.25rem; background: var(--accent); color: var(--bg); border-radius: 2px;
+}
+@media (hover: hover) { .links a:first-child:hover { background: var(--accent-2); } }
+.links a:not(:first-child) { color: var(--muted); text-decoration: underline; text-underline-offset: 6px; }
+@media (hover: hover) { .links a:not(:first-child):hover { color: var(--fg); } }
+
+.empty {
+  grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
+  padding: 2rem; background: var(--surface); color: var(--muted);
+}
 .empty p { margin: 0; }
+.filter {
+  min-height: 44px; padding: 0 1.25rem; background: var(--fg); color: var(--bg);
+  font-weight: 600; border-radius: 2px;
+}
+.no-js { margin-top: 2rem; color: var(--muted); max-width: 65ch; }
+.no-js a { color: var(--fg); font-weight: 600; }
 
-/* Tentang */
-.about { padding-bottom: 48px; max-width: 70ch; }
-.about p { color: var(--muted); }
-/* Sub-bab Fun fact (h3) di dalam Tentang: tampil seperti judul Tentang (kelas .label, ukuran sama),
-   hanya diberi jarak atas. Tingkat judulnya h3 supaya urutan di pembaca layar benar. Judul pixel di
-   ukuran kartu (24px) terlihat lebih kecil dari teks isinya, jadi ukurannya tidak diturunkan.
-   Teks isinya memakai ukuran yang sama dengan paragraf Tentang di atasnya (16px). Tetap ikut animasi
-   kata dan muncul saat scroll. */
-.label-sub { margin-top: 40px; }
+/* ---------- tentang ---------- */
+.about { padding: var(--section) var(--gutter); border-top: 1px solid var(--line); }
+.about-body {
+  max-width: 65ch; margin-top: 2.5rem;
+  display: grid; gap: 1.25rem;
+  font-size: 1.25rem; line-height: 1.55; color: var(--muted);
+}
+.about-body .label-sub { margin-top: 1.5rem; }
 
-/* Footer */
+/* ---------- footer ---------- */
 .site-footer {
-  position: relative;
-  margin-top: 16px;
-  padding: 48px var(--gutter) 32px;
-  color: var(--muted);
-  font-size: var(--text-secondary);
+  position: relative; overflow: hidden;
+  padding: var(--section) var(--gutter) 2rem;
+  border-top: 1px solid var(--line);
 }
-/* Garis pemisah di tepi atas footer, selebar layar. Bentuknya sama dengan kotak di belakang nama di
-   hero: pelat putih dengan bayangan solid (offset 4px ke bawah, tanpa blur). js/motion-scroll.js
-   menyapukan biru (.footer-line-fill, scaleX) dari kiri ke kanan saat footer naik ke layar.
-   Pelat memotong isinya sendiri (overflow hidden), bayangannya tetap terlihat.
-   Tanpa JS atau gerak dikurangi: biru penuh dan diam. */
-.footer-line {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 12px;
-  pointer-events: none;
-}
-.footer-line-plate {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  background: #fff;
-  box-shadow: 0 4px 0 var(--shadow-color);
-}
-.footer-line-fill {
-  position: absolute;
-  inset: 0;
-  background: var(--blue);
-  transform-origin: left;
-}
-/* Garis putus-putus di dalam pelat, di tengah sapuan biru, warna putih supaya terlihat di atas biru:
-   titik 8x4px, jeda 8px, kotak kepala 8px di ujung kanan. Pelat memotong isinya. js/motion-scroll.js
-   menggeser .footer-dash-fill (translateX) dari kiri bersama sapuan biru, jadi ujung garis selalu
-   sejajar tepi biru. Tanpa JS atau gerak dikurangi: tampil penuh, diam. */
-.footer-dash-fill {
-  position: absolute;
-  inset: 0;
-  background: repeating-linear-gradient(90deg, #fff 0 8px, transparent 8px 16px) center / 100% 4px no-repeat;
-}
-.footer-dash-fill::after {
-  content: "";
-  position: absolute;
-  right: 0;
-  top: 2px;
-  width: 8px;
-  height: 8px;
-  background: #fff;
-}
-.site-footer p { margin: 0; }
-.links-list {
-  list-style: none;
-  padding: 0;
-  margin: 8px 0 16px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0 16px;
-}
-/* Pesan saat JavaScript mati (index.html, <noscript>). */
-.no-js { margin: 0; color: var(--muted); max-width: 65ch; }
-.no-js a { color: var(--link); font-weight: var(--weight-bold); }
-.no-js a:hover { color: var(--link-hover); text-decoration: underline; }
-
+.links-list { display: flex; flex-direction: column; gap: 0.25rem; margin-top: 2rem; font-size: 1.5rem; font-weight: 500; }
 .links-list a {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  color: var(--link);
-  text-decoration: none;
-  font-weight: var(--weight-bold);
+  display: inline-flex; align-items: center; min-height: 44px;
+  text-decoration: underline; text-decoration-color: var(--accent);
+  text-decoration-thickness: 2px; text-underline-offset: 6px;
 }
-.links-list a:hover { color: var(--link-hover); text-decoration: underline; }
-
-/* Baris bawah footer: hak cipta di kiri, "Kembali ke atas" di kanan. Ditumpuk kalau tidak muat. */
 .footer-bottom {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px 16px;
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem;
+  margin-top: 3rem; font-size: 0.875rem; color: var(--muted);
 }
-.to-top {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  min-height: 44px;
-  color: var(--link);
-  text-decoration: none;
-  font-weight: var(--weight-bold);
+.to-top { display: inline-flex; align-items: center; min-height: 44px; color: var(--fg); }
+.signature {
+  margin-top: 4rem;
+  font-family: var(--font-display); font-size: min(22rem, 22vw); line-height: 1.1;
+  text-transform: uppercase; white-space: nowrap; color: var(--surface-2);
+  user-select: none;
 }
-.to-top::after {
-  content: "";
-  width: 12px;
-  height: 12px;
-  background: currentColor;
-  -webkit-mask: url("../assets/icons/arrow-up.svg") center / contain no-repeat;
-  mask: url("../assets/icons/arrow-up.svg") center / contain no-repeat;
+
+/* ---------- dialog pasang (iPhone) ---------- */
+.install-help {
+  width: min(420px, calc(100vw - 32px)); padding: 2rem;
+  background: var(--surface); color: var(--fg);
+  border: 1px solid var(--line-strong); border-radius: 2px;
 }
-.to-top:hover { color: var(--link-hover); text-decoration: underline; }
-
-/* Hero masuk (js/motion.js). Disembunyikan hanya saat html.motion menyala.
-   Jaring pengaman: kalau JS atau GSAP gagal, teks muncul sendiri setelah 2 detik. */
-.motion .hero h1,
-.motion .hero .lead,
-.motion .hero .btn,
-.motion .hero .mascot {
-  opacity: 0;
-  animation: motion-failsafe 0s linear 2s forwards;
+.install-help::backdrop { background: rgba(8, 8, 10, 0.75); }
+.install-help h3 {
+  font-family: var(--font-display); font-weight: 400; font-size: 2rem;
+  text-transform: uppercase; line-height: 1.1;
 }
-@keyframes motion-failsafe { to { opacity: 1; } }
+.install-help ol { margin: 1rem 0 1.5rem; padding-left: 1.25rem; line-height: 1.5; color: var(--muted); }
+.install-help li + li { margin-top: 0.5rem; }
 
-/* Elemen yang sedang masuk lewat GSAP: matikan transisi CSS supaya tidak saling tarik. */
-.revealing { transition: none !important; }
+/* ---------- gerak ----------
+   Judul hero dan kartu baru masuk saat kelas "ready" ada (lihat js/intro.js). */
+@keyframes lineUp { from { transform: translateY(105%); } to { transform: none; } }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
 
-/* Hasil pecah teks. Kata tidak boleh putus di tengah. */
-.word { display: inline-block; white-space: nowrap; }
-/* Kata di hero dan di Tentang menuju putih satu per satu saat user scroll. js/motion.js mengisi --w (0 sampai 1)
-   per kata. currentcolor = warna asli kata (ink, link, atau muted). Tanpa JS, --w kosong, warna tetap. */
-.hero .word,
-.about .word { color: color-mix(in srgb, #fff calc(var(--w, 0) * 100%), currentcolor); }
-.char { display: inline-block; }
+.js .roles .ln > span { transform: translateY(105%); }
+.js.ready .roles .ln > span {
+  animation: lineUp var(--t-slow) var(--ease-out) both;
+  animation-delay: var(--d, 0s);
+}
+.js .hero-name .l { opacity: 0; }
+.js.ready .hero-name .l { opacity: 1; animation: rise var(--t-slow) var(--ease-out) both; }
+.js.ready .hero-name .l + .l { animation-delay: 60ms; }
 
-/* Hormati pengaturan sistem: tanpa transisi, hero tampil langsung */
+.js .reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity var(--t-slow) var(--ease-out), transform var(--t-slow) var(--ease-out);
+}
+.js .reveal.in { opacity: 1; transform: none; }
+
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { transition: none !important; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .marquee-track { animation: none; }
+  .js .roles .ln > span { transform: none; }
+  .js .hero-name .l { opacity: 1; }
+  .js .reveal { opacity: 1; transform: none; }
 }

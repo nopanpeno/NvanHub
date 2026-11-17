@@ -5,25 +5,28 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="NvanHub: kumpulan tool kecil yang jalan langsung di browser. Gratis, tanpa server.">
   <title>NvanHub</title>
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%230a6bd6%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2216%22 font-family=%22sans-serif%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22white%22%3EN%3C/text%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23ff3b1d%22/%3E%3Ctext x=%2216%22 y=%2222%22 font-size=%2216%22 font-family=%22sans-serif%22 font-weight=%22700%22 text-anchor=%22middle%22 fill=%22%2308080a%22%3EN%3C/text%3E%3C/svg%3E">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#06161f">
+  <meta name="theme-color" content="#08080a">
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
-  <link rel="preload" href="assets/fonts/jersey-10-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <script>
-    // Nyalakan mode gerak sebelum cat pertama, kecuali user minta gerak dikurangi.
-    if (!matchMedia('(prefers-reduced-motion: reduce)').matches) document.documentElement.classList.add('motion');
+    // Tanda JS aktif. Animasi judul dan kartu jalan setelah js/intro.js memberi kelas "ready".
+    // Pengaman: kalau js/intro.js gagal, kelas "ready" tetap datang setelah 3 detik.
+    document.documentElement.classList.add('js');
+    setTimeout(function () { document.documentElement.classList.add('ready'); }, 3000);
   </script>
   <link rel="stylesheet" href="css/style.css">
   <noscript><style>.controls { display: none; }</style></noscript>
 </head>
 <body>
-  <div class="bg-stars bg-stars-far" aria-hidden="true"></div>
-  <div class="bg-grid" aria-hidden="true"></div>
-  <div class="bg-stars bg-stars-near" aria-hidden="true"></div>
   <a class="skip-link" href="#main">Lewati ke konten</a>
+
   <header class="site-header" id="top">
-    <span class="brand">NvanHub</span>
+    <a class="brand" href="#top" aria-label="NvanHub, kembali ke atas">
+      <span class="mono" aria-hidden="true">NH</span>
+      <span class="brand-name">NvanHub</span>
+    </a>
     <nav>
       <a href="#tentang">Tentang</a>
       <button type="button" class="install" id="btn-install" aria-controls="install-help" hidden>Pasang aplikasi</button>
@@ -32,65 +35,49 @@
 
   <main id="main" tabindex="-1">
     <section class="hero">
-      <div class="hero-text">
-        <h1>Halo, aku <span class="accent">nopanpeno.</span></h1>
-        <p class="lead">Aku bikin tool kecil yang jalan langsung di browser. Gratis, tanpa server, tanpa ribet. Mau kirim file, bikin QR, atau bersihin metadata foto, semuanya diproses di perangkatmu.</p>
-        <a class="btn" href="#proyek">Lihat proyek</a>
+      <div class="hero-top">
+        <div>
+          <p class="eyebrow">Halo, aku nopanpeno.</p>
+          <h2 class="roles">
+            <span class="ln" style="--d:.15s"><span>Gratis</span></span>
+            <span class="ln" style="--d:.27s"><span>Tanpa server</span></span>
+            <span class="ln" style="--d:.39s"><span>Tanpa akun</span></span>
+            <span class="ln" style="--d:.51s"><span>Di browser</span></span>
+          </h2>
+        </div>
+        <div class="hero-side">
+          <p class="lead">Aku bikin tool kecil yang jalan langsung di browser. Gratis, tanpa server, tanpa ribet. Mau kirim file, bikin QR, atau bersihin metadata foto, semuanya diproses di perangkatmu.</p>
+          <a class="btn" href="#proyek">Lihat proyek</a>
+        </div>
       </div>
-      <!-- Maskot robot pixel, gambar asli buatan sendiri, grid 24x29. Bisa diklik: balon ucapan
-           memuat sapaan dari data/mascot.json (js/mascot.js). -->
-      <div class="mascot-wrap">
-      <button type="button" class="mascot" id="mascot" aria-label="Sapa robot">
-        <svg viewBox="0 0 24 29" shape-rendering="crispEdges" focusable="false">
-          <g class="m-ring">
-            <rect class="seg" x="7" y="0" width="5" height="1"/>
-            <rect class="seg" x="12" y="0" width="5" height="1"/>
-            <rect class="seg" x="17" y="1" width="2" height="1"/>
-            <rect class="seg" x="12" y="2" width="5" height="1"/>
-            <rect class="seg" x="7" y="2" width="5" height="1"/>
-            <rect class="seg" x="5" y="1" width="2" height="1"/>
-          </g>
-          <g class="m-body">
-            <rect class="dark" x="2" y="8" width="2" height="3"/>
-            <rect class="dark" x="20" y="8" width="2" height="3"/>
-            <rect class="bot" x="5" y="4" width="14" height="10"/>
-            <rect class="bot" x="4" y="5" width="16" height="8"/>
-            <rect class="light" x="5" y="4" width="14" height="1"/>
-            <rect class="dark" x="5" y="13" width="14" height="1"/>
-            <rect class="visor" x="6" y="7" width="12" height="5"/>
-            <g class="eye"><rect class="cyan" x="8" y="8" width="2" height="3"/><rect class="hi" x="8" y="8" width="1" height="1"/></g>
-            <g class="eye"><rect class="cyan" x="14" y="8" width="2" height="3"/><rect class="hi" x="14" y="8" width="1" height="1"/></g>
-            <rect class="dark" x="10" y="14" width="4" height="2"/>
-            <rect class="dark" x="3" y="16" width="3" height="7"/>
-            <rect class="dark" x="18" y="16" width="3" height="7"/>
-            <rect class="cyan" x="3" y="22" width="3" height="1"/>
-            <rect class="cyan" x="18" y="22" width="3" height="1"/>
-            <rect class="bot" x="6" y="16" width="12" height="9"/>
-            <rect class="light" x="6" y="16" width="12" height="1"/>
-            <rect class="dark" x="6" y="24" width="12" height="1"/>
-            <rect class="visor" x="10" y="19" width="4" height="3"/>
-            <rect class="cyan" x="11" y="20" width="2" height="1"/>
-            <rect class="bot" x="8" y="25" width="3" height="3"/>
-            <rect class="bot" x="13" y="25" width="3" height="3"/>
-            <rect class="dark" x="7" y="28" width="4" height="1"/>
-            <rect class="dark" x="13" y="28" width="4" height="1"/>
-          </g>
-        </svg>
-      </button>
-        <!-- Balon cuma tampilan. Pembaca layar mendengar ucapan lewat wilayah live di bawahnya. -->
-        <p id="bubble" class="bubble" aria-hidden="true" hidden></p>
-        <p id="bubble-live" class="sr-only" aria-live="polite"></p>
+
+      <h1 class="hero-name" aria-label="NvanHub">
+        <span class="l" aria-hidden="true">Nvan</span>
+        <span class="l" aria-hidden="true">Hub</span>
+      </h1>
+    </section>
+
+    <section class="marquee" aria-label="Tool di NvanHub">
+      <div class="marquee-track">
+        <div class="marquee-set">
+          <span>Kirim File</span><i></i><span>Bikin QR</span><i></i><span>Main Game</span><i></i><span>Hapus Metadata</span><i></i><span>Gambar ke Vector</span><i></i><span>Bikin Shortlink</span><i></i>
+        </div>
+        <div class="marquee-set" aria-hidden="true">
+          <span>Kirim File</span><i></i><span>Bikin QR</span><i></i><span>Main Game</span><i></i><span>Hapus Metadata</span><i></i><span>Gambar ke Vector</span><i></i><span>Bikin Shortlink</span><i></i>
+        </div>
       </div>
     </section>
 
     <section id="proyek" class="projects">
-      <h2 class="label">Proyek</h2>
-      <div class="controls">
-        <div class="field">
-          <label id="tag-label" for="tag">Topik</label>
-          <div class="dropdown">
-            <button type="button" id="tag" class="dropdown-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="tag-list" aria-labelledby="tag-label tag-value"><span id="tag-value">Semua topik</span></button>
-            <ul id="tag-list" class="dropdown-list" role="listbox" tabindex="-1" aria-labelledby="tag-label"></ul>
+      <div class="section-head reveal">
+        <h2 class="label">Proyek</h2>
+        <div class="controls">
+          <div class="field">
+            <label id="tag-label" for="tag">Topik</label>
+            <div class="dropdown">
+              <button type="button" id="tag" class="dropdown-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="tag-list" aria-labelledby="tag-label tag-value"><span id="tag-value">Semua topik</span></button>
+              <ul id="tag-list" class="dropdown-list" role="listbox" tabindex="-1" aria-labelledby="tag-label"></ul>
+            </div>
           </div>
         </div>
       </div>
@@ -102,26 +89,27 @@
     </section>
 
     <section id="tentang" class="about">
-      <h2 class="label">Tentang</h2>
-      <p>NvanHub aku bikin sebagai pintu utama buat semua website yang aku buat. Tiap proyek punya alamat sendiri-sendiri, jadi aku butuh satu tempat yang menghubungkan semuanya. Di sini semuanya aku kumpulin jadi satu: tinggal pilih topik, lalu klik.</p>
-      <p>Aku suka eksperimen. Ide yang kepikiran langsung dicoba, dan website ini juga jadi tempat aku belajar. Tiap proyek di sini cara aku nyobain hal baru. Kalau jalan, aku bagikan lewat repo, jadi semuanya bisa dibuka, dipelajari, dan dipakai siapa saja.</p>
-      <p>Harapanku sederhana: kamu mampir, nemu sesuatu yang berguna atau seru, lalu pulang bawa ide buat dicoba sendiri.</p>
-      <h3 class="label label-sub">Fun fact</h3>
-      <p class="fun-fact">Web ini dibuat tanpa framework, cuma HTML, CSS, dan JS biasa, jadi semua proyek di sini jalan tanpa server sendiri. Robot pixel di atas aku gambar sendiri, kotak demi kotak, dan skor game di NvanPlay disimpan di perangkatmu, bukan di server.</p>
+      <h2 class="label reveal">Tentang</h2>
+      <div class="about-body">
+        <p class="reveal">NvanHub aku bikin sebagai pintu utama buat semua website yang aku buat. Tiap proyek punya alamat sendiri-sendiri, jadi aku butuh satu tempat yang menghubungkan semuanya. Di sini semuanya aku kumpulin jadi satu: tinggal pilih topik, lalu klik.</p>
+        <p class="reveal">Aku suka eksperimen. Ide yang kepikiran langsung dicoba, dan website ini juga jadi tempat aku belajar. Tiap proyek di sini cara aku nyobain hal baru. Kalau jalan, aku bagikan lewat repo, jadi semuanya bisa dibuka, dipelajari, dan dipakai siapa saja.</p>
+        <p class="reveal">Harapanku sederhana: kamu mampir, nemu sesuatu yang berguna atau seru, lalu pulang bawa ide buat dicoba sendiri.</p>
+        <h3 class="label label-sub reveal">Fun fact</h3>
+        <p class="reveal">Web ini dibuat tanpa framework, cuma HTML, CSS, dan JS biasa, jadi semua proyek di sini jalan tanpa server sendiri. Skor game di NvanPlay disimpan di perangkatmu, bukan di server.</p>
+      </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <div class="footer-line" aria-hidden="true"><span class="footer-line-plate"><span class="footer-line-fill"></span><span class="footer-dash-fill"></span></span></div>
-    <h2 class="label">Tautan</h2>
-    <ul class="links-list">
+    <h2 class="label reveal">Tautan</h2>
+    <ul class="links-list reveal">
       <li><a href="https://github.com/nopanpeno" target="_blank" rel="noopener" aria-label="GitHub, di tab baru">GitHub</a></li>
-      <li><a href="mailto:nopanpeno@gmail.com">nopanpeno@gmail.com</a></li>
     </ul>
     <div class="footer-bottom">
       <p>NvanHub · nopanpeno</p>
       <a class="to-top" href="#top">Kembali ke atas</a>
     </div>
+    <p class="signature" aria-hidden="true">NvanHub</p>
   </footer>
 
   <dialog id="install-help" class="install-help" aria-labelledby="install-help-title">
@@ -136,13 +124,8 @@
     </form>
   </dialog>
 
-  <script src="assets/vendor/gsap.min.js" defer></script>
-  <script src="js/motion.js" defer></script>
-  <script src="js/motion-hero.js" defer></script>
-  <script src="js/motion-scroll.js" defer></script>
-  <script src="js/motion-glow.js" defer></script>
+  <script src="js/intro.js" defer></script>
   <script src="js/main.js" defer></script>
-  <script src="js/mascot.js" defer></script>
   <script src="js/install.js" defer></script>
   <script>
     // PWA: daftar service worker supaya web bisa dipasang di layar utama dan terbuka saat offline.
