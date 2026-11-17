@@ -122,19 +122,9 @@ function showMessage(text, buttonText, onClick) {
 
   box.append(msg, btn);
   document.getElementById('grid').replaceChildren(box);
-  window.NvanMotion?.revealCards([]); // hentikan animasi kartu yang tersisa
-  window.NvanMotion?.fadeIn(box);
-}
-
-// Ganti isi grid. Saat animate, isi lama pudar dulu (kartu atau pesan), baru build() jalan.
-// swapId menjaga urutan: kalau filter berganti cepat, hanya yang terakhir yang dijalankan.
-let swapId = 0;
-function swapGrid(build, animate) {
-  const id = ++swapId;
-  const old = [...document.getElementById('grid').children];
-  const run = () => { if (id === swapId) build(); };
-  if (animate && old.length && window.NvanMotion?.fadeOut) window.NvanMotion.fadeOut(old, run);
-  else run();
+  // Pembaca layar mendengar pesan ini lewat wilayah status. Menimpa kabar jumlah proyek yang tadi.
+  const status = document.getElementById('status');
+  if (status) status.textContent = text;
 }
 
 // Kabar untuk pembaca layar tiap filter berganti. Render pertama tidak diumumkan.
@@ -145,24 +135,21 @@ function announce(n) {
   rendered = true;
 }
 
-function render(animate = true) {
+function render() {
   const shown = allProjects.filter((p) => !activeTag || p.tags.includes(activeTag));
   announce(shown.length);
 
-  swapGrid(() => {
-    if (shown.length === 0) {
-      showMessage('Tidak ada proyek di topik ini. Pilih topik lain atau hapus filter.', 'Hapus filter', clearFilters);
-    } else {
-      const cards = shown.map(makeCard);
-      document.getElementById('grid').replaceChildren(...cards);
-      window.NvanMotion?.revealCards(cards, animate);
-      if (focusAfter) {
-        const card = cards.find((c) => c.querySelector('h3')?.textContent === focusAfter.name);
-        card?.querySelector(`[data-tag="${CSS.escape(focusAfter.tag)}"]`)?.focus({ preventScroll: true });
-        focusAfter = null;
-      }
+  if (shown.length === 0) {
+    showMessage('Tidak ada proyek di topik ini. Pilih topik lain atau hapus filter.', 'Hapus filter', clearFilters);
+  } else {
+    const cards = shown.map(makeCard);
+    document.getElementById('grid').replaceChildren(...cards);
+    if (focusAfter) {
+      const card = cards.find((c) => c.querySelector('h3')?.textContent === focusAfter.name);
+      card?.querySelector(`[data-tag="${CSS.escape(focusAfter.tag)}"]`)?.focus({ preventScroll: true });
+      focusAfter = null;
     }
-  }, animate);
+  }
   topicSync(); // dropdown selalu ikut keadaan filter
 }
 
@@ -187,7 +174,6 @@ function renderTopics() {
   topic.items.forEach((it, i) => {
     const el = document.createElement('li');
     el.id = `tag-opt-${i}`;
-    el.style.setProperty('--i', i); // urutan masuk opsi (CSS)
     el.className = 'dropdown-opt';
     el.setAttribute('role', 'option');
     el.textContent = it.label;
