@@ -337,7 +337,7 @@ section[id] { scroll-margin-top: 4rem; }
   display: grid; gap: 1.25rem;
   font-size: 1.25rem; line-height: 1.55; color: var(--muted);
 }
-.about-body .label-sub { margin-top: 1.5rem; }
+.about-body .label-sub { margin-top: 1.5rem; color: var(--fg); }
 
 /* ---------- footer ---------- */
 .site-footer {
@@ -352,7 +352,7 @@ section[id] { scroll-margin-top: 4rem; }
   text-decoration-thickness: 2px; text-underline-offset: 6px;
 }
 .footer-bottom {
-  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem;
+  display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 1rem;
   margin-top: 3rem; font-size: 0.875rem; color: var(--muted);
 }
 .to-top { display: inline-flex; align-items: center; min-height: 44px; color: var(--fg); }
