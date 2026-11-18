@@ -24,12 +24,13 @@ Buka `data/projects.json`, lalu tambah satu objek di akhir daftar:
   "tagline": "Satu kalimat singkat tentang proyek.",
   "desc": "Penjelasan sedikit lebih panjang.",
   "tags": ["JavaScript", "Vite"],
+  "kategori": "alat",
   "repo": "https://github.com/nopanpeno/NamaProyek",
   "live": "https://nopanpeno.github.io/NamaProyek/"
 }
 ```
 
-Semua kolom di atas wajib diisi. Kartu, dropdown topik, dan jumlah proyek per topik dibuat otomatis dari file ini. Tidak ada kode lain yang perlu diubah.
+Semua kolom di atas wajib diisi. `kategori` harus salah satu dari `alat`, `foto`, atau `game`, sesuai tab kategori di halaman. Kartu dan filter dibuat otomatis dari file ini. Tidak ada kode lain yang perlu diubah.
 
 ### Cerita di kartu (opsional)
 
@@ -47,10 +48,10 @@ Fun fact di bagian Tentang, judul hero, dan daftar peran ada langsung di `index.
 
 ## Struktur
 
-- `index.html`: kerangka halaman (hero, marquee, proyek, tentang, footer)
+- `index.html`: kerangka halaman (hero, ticker, proyek, tentang, footer)
 - `css/style.css`: gaya, palet, dan animasi (token durasi ada di bagian atas)
-- `js/intro.js`: reveal bagian saat di-scroll, dan kelas `ready` untuk animasi judul dan kartu
-- `js/main.js`: render kartu dan dropdown topik
+- `js/main.js`: render kartu dan filter kategori lewat tab
+- `js/sakuga/`: elemen sakuga-vfx (tombol, tab, toast), MIT. Lisensi ada di folder itu
 - `js/install.js`: tombol "Pasang aplikasi" di header
 - `data/projects.json`: daftar proyek
 - `manifest.json` dan `sw.js`: bikin web bisa dipasang sebagai app (PWA) dan terbuka offline. Tiap tool punya cache sendiri di `sw.js` (objek `TOOLS`)

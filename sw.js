@@ -3,7 +3,7 @@
 // Tiap tool (folder) punya cache sendiri. Kalau satu tool gagal di-cache, hub dan tool lain
 // tetap jalan. Ganti nomor versi tool hanya kalau daftar filenya berubah.
 const HUB = {
-  cache: 'nvanhub-v4',
+  cache: 'nvanhub-v5',
   assets: [
     './',
     'index.html',
@@ -11,7 +11,9 @@ const HUB = {
     'css/style.css',
     'js/main.js',
     'js/install.js',
-    'js/intro.js',
+    'js/sakuga/button.js',
+    'js/sakuga/tabs.js',
+    'js/sakuga/toast.js',
     'data/projects.json',
     'assets/logo.svg',
     'assets/fonts/anton-latin-400-normal.woff2',

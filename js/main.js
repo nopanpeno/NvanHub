@@ -1,6 +1,11 @@
-// Baca data/projects.json, lalu gambar kartu. Bisa difilter per topik.
-let allProjects = [];
-let activeTag = null;
+// Baca data/projects.json, gambar kartu, lalu filter lewat tab kategori (elemen sakuga-tabs).
+// Kategori tiap proyek ada di kolom "kategori" di data/projects.json.
+const grid = document.getElementById('grid');
+const tabs = document.getElementById('tabs');
+const toast = document.getElementById('toast');
+const cta = document.getElementById('cta');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+const cards = [];
 
 async function loadProjects() {
   const res = await fetch('data/projects.json');
@@ -8,270 +13,117 @@ async function loadProjects() {
   return res.json();
 }
 
-function makeCard(p) {
-  const card = document.createElement('article');
-  card.className = 'card';
-
-  // Nomor urut di daftar asli, jadi tetap sama saat kartu difilter. Hiasan saja.
-  const no = document.createElement('span');
-  no.className = 'card-no';
-  no.setAttribute('aria-hidden', 'true');
-  no.textContent = String(allProjects.indexOf(p) + 1).padStart(2, '0');
-
-  const title = document.createElement('h3');
-  title.textContent = p.name;
-
-  const tagline = document.createElement('p');
-  tagline.className = 'tagline';
-  tagline.textContent = p.tagline;
-
-  const desc = document.createElement('p');
-  desc.className = 'desc';
-  desc.textContent = p.desc;
-
-  const tags = document.createElement('ul');
-  tags.className = 'tags';
-  for (const t of p.tags) {
-    // Tag = tombol filter. Klik lagi di tag yang aktif untuk melepas filter.
-    const li = document.createElement('li');
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = t;
-    btn.dataset.tag = t;
-    btn.setAttribute('aria-pressed', String(t === activeTag));
-    btn.addEventListener('click', () => pickTag(t, p.name));
-    li.append(btn);
-    tags.append(li);
-  }
-
-  const links = document.createElement('div');
-  links.className = 'links';
-  links.append(makeLink(p.live, `Buka website ${p.name}`, 'Buka'), makeLink(p.repo, `Lihat kode ${p.name}`, 'Lihat kode'));
-
-  card.append(no, title, tagline, desc, tags);
-  if (p.story) card.append(makeStory(p));
-  card.append(links);
-  return card;
+function el(tag, cls, text) {
+  const node = document.createElement(tag);
+  if (cls) node.className = cls;
+  if (text !== undefined) node.textContent = text;
+  return node;
 }
 
-// Cerita opsional ("kenapa aku bikin ini"). Pakai <details> asli: Enter dan Space jalan sendiri,
-// tanpa JS tambahan. Proyek tanpa kolom story tidak punya tombol.
-function makeStory(p) {
-  const box = document.createElement('details');
-  box.className = 'story';
-
-  const sum = document.createElement('summary');
-  // Nama accessible = teks yang terlihat + nama proyek (tersembunyi). Tanpa aria-label, jadi cocok
-  // dengan kontrol suara, dan label ikut berganti saat terbuka.
-  const label = (cls, text) => {
-    const s = document.createElement('span');
-    s.className = cls;
-    s.append(text);
-    const who = document.createElement('span');
-    who.className = 'sr-only';
-    who.textContent = ` ${p.name}`;
-    s.append(who);
-    return s;
-  };
-  sum.append(label('story-open', 'Baca ceritanya'), label('story-close', 'Tutup cerita'));
-
-  const text = document.createElement('p');
-  text.textContent = p.story;
-
-  box.append(sum, text);
-  return box;
-}
-
-function makeLink(href, label, text) {
-  const a = document.createElement('a');
+function makeLink(href, label, text, cls) {
+  const a = el('a', cls, text);
   a.href = href;
-  a.textContent = text;
-  a.setAttribute('aria-label', `${label}, di tab baru`);
   a.target = '_blank';
   a.rel = 'noopener';
+  a.setAttribute('aria-label', `${label}, di tab baru`);
   return a;
 }
 
-function clearFilters() {
-  activeTag = null;
-  render();
+// Cerita opsional ("kenapa aku bikin ini"). Pakai <details> asli, jadi Enter dan Space jalan sendiri.
+function makeStory(p) {
+  const box = el('details', 'story');
+  const sum = el('summary');
+  const open = el('span', 's-open', 'Baca ceritanya');
+  const close = el('span', 's-close', 'Tutup cerita');
+  const who = el('span', 'sr-only', ` ${p.name}`);
+  open.append(who.cloneNode(true));
+  close.append(who);
+  sum.append(open, close);
+  box.append(sum, el('p', null, p.story));
+  return box;
 }
 
-// Tag di kartu diklik. Kartu dibangun ulang, jadi fokus dikembalikan ke tag yang sama
-// (di kartu yang sama) setelah grid selesai diganti.
-let focusAfter = null;
-function pickTag(tag, name) {
-  activeTag = activeTag === tag ? null : tag;
-  focusAfter = { tag, name };
-  render();
+// Salin tautan: tanda selesai hanya kalau benar-benar tersalin.
+async function copyLink(btn, p) {
+  try {
+    await navigator.clipboard.writeText(p.live);
+    btn.done();
+    toast.show(`Tautan ${p.name} disalin`);
+  } catch {
+    toast.show('Belum bisa menyalin. Coba lagi.');
+  }
 }
 
-// Tampilkan satu pesan dengan satu tombol aksi di area grid.
-function showMessage(text, buttonText, onClick) {
-  const box = document.createElement('div');
-  box.className = 'empty';
+function makeCard(p, no) {
+  const card = el('article', 'card');
+  card.dataset.kategori = p.kategori ?? '';
 
-  const msg = document.createElement('p');
-  msg.textContent = text;
+  // Nomor urut di daftar asli, jadi tetap sama saat kartu difilter. Hiasan saja.
+  const badge = el('span', 'no', String(no).padStart(2, '0'));
+  badge.setAttribute('aria-hidden', 'true');
 
-  const btn = document.createElement('button');
+  const actions = el('div', 'actions');
+  const copy = document.createElement('sakuga-button');
+  copy.setAttribute('variant', 'secondary');
+  copy.className = 'copy';
+  copy.textContent = 'Salin tautan';
+  copy.addEventListener('click', () => copyLink(copy, p));
+  actions.append(
+    makeLink(p.live, `Buka website ${p.name}`, 'Buka', 'open'),
+    makeLink(p.repo, `Lihat kode ${p.name}`, 'Lihat kode', 'code'),
+    copy,
+  );
+
+  card.append(
+    badge,
+    el('h3', null, p.name),
+    el('p', 'tagline', p.tagline),
+    el('p', 'desc', p.desc),
+    el('p', 'meta', p.tags.join(' · ')),
+  );
+  if (p.story) card.append(makeStory(p));
+  card.append(actions);
+  return card;
+}
+
+// Tampilkan kartu sesuai kategori. Kembalikan jumlah yang tampil.
+function applyFilter(value) {
+  let n = 0;
+  for (const c of cards) {
+    const show = value === 'semua' || c.dataset.kategori === value;
+    c.hidden = !show;
+    if (show) n++;
+  }
+  return n;
+}
+
+function showError() {
+  const box = el('div', 'empty');
+  box.append(el('p', null, 'Proyek belum bisa dimuat. Coba muat ulang.'));
+  const btn = el('button', 'btn', 'Muat ulang');
   btn.type = 'button';
-  btn.className = 'filter';
-  btn.textContent = buttonText;
-  btn.addEventListener('click', onClick);
-
-  box.append(msg, btn);
-  document.getElementById('grid').replaceChildren(box);
-  // Pembaca layar mendengar pesan ini lewat wilayah status. Menimpa kabar jumlah proyek yang tadi.
-  const status = document.getElementById('status');
-  if (status) status.textContent = text;
+  btn.addEventListener('click', () => location.reload());
+  box.append(btn);
+  grid.replaceChildren(box);
 }
 
-// Kabar untuk pembaca layar tiap filter berganti. Render pertama tidak diumumkan.
-let rendered = false;
-function announce(n) {
-  const status = document.getElementById('status');
-  if (rendered && status) status.textContent = `${n} proyek${activeTag ? `, topik ${activeTag}` : ''}`;
-  rendered = true;
-}
-
-function render() {
-  const shown = allProjects.filter((p) => !activeTag || p.tags.includes(activeTag));
-  announce(shown.length);
-
-  if (shown.length === 0) {
-    showMessage('Tidak ada proyek di topik ini. Pilih topik lain atau hapus filter.', 'Hapus filter', clearFilters);
-  } else {
-    const cards = shown.map(makeCard);
-    document.getElementById('grid').replaceChildren(...cards);
-    if (focusAfter) {
-      const card = cards.find((c) => c.querySelector('h3')?.textContent === focusAfter.name);
-      card?.querySelector(`[data-tag="${CSS.escape(focusAfter.tag)}"]`)?.focus({ preventScroll: true });
-      focusAfter = null;
-    }
-  }
-  topicSync(); // dropdown selalu ikut keadaan filter
-}
-
-// Dropdown topik buatan sendiri (pola ARIA listbox). Tiap pilihan menunjukkan jumlah proyeknya, jadi tidak
-// ada topik kosong. Tombol: Enter, Space, panah buka daftar. Di daftar: panah, Home, End, huruf (cari),
-// Enter atau Space pilih, Escape atau Tab tutup tanpa memilih. Fokus kembali ke tombol saat tutup.
-const topic = {
-  btn: document.getElementById('tag'),
-  list: document.getElementById('tag-list'),
-  value: document.getElementById('tag-value'),
-  items: [], // { value, label, el }
-  active: 0, // indeks opsi yang menyala
-  typed: '',
-  typedTimer: 0,
-};
-
-function renderTopics() {
-  const count = new Map();
-  for (const t of allProjects.flatMap((p) => p.tags)) count.set(t, (count.get(t) ?? 0) + 1);
-
-  topic.items = [{ value: '', label: 'Semua topik' }, ...[...count.keys()].sort().map((t) => ({ value: t, label: `${t} (${count.get(t)})` }))];
-  topic.items.forEach((it, i) => {
-    const el = document.createElement('li');
-    el.id = `tag-opt-${i}`;
-    el.className = 'dropdown-opt';
-    el.setAttribute('role', 'option');
-    el.textContent = it.label;
-    el.addEventListener('click', () => topicPick(i));
-    el.addEventListener('pointerover', (e) => { if (e.pointerType === 'mouse') topicHighlight(i); });
-    it.el = el;
-  });
-  topic.list.replaceChildren(...topic.items.map((it) => it.el));
-  topicSync();
-}
-
-// Samakan teks tombol dan pilihan terpilih dengan filter yang aktif.
-function topicSync() {
-  const sel = Math.max(0, topic.items.findIndex((it) => it.value === (activeTag ?? '')));
-  if (topic.items.length) topic.value.textContent = topic.items[sel].label;
-  topic.items.forEach((it, i) => it.el.setAttribute('aria-selected', String(i === sel)));
-}
-
-function topicHighlight(i, scroll = false) {
-  topic.active = i;
-  topic.items.forEach((it, j) => it.el.classList.toggle('is-active', j === i));
-  topic.list.setAttribute('aria-activedescendant', topic.items[i].el.id);
-  if (scroll) topic.items[i].el.scrollIntoView({ block: 'nearest' });
-}
-
-const topicIsOpen = () => topic.list.classList.contains('open');
-
-function topicOpen() {
-  if (!topic.items.length || topicIsOpen()) return;
-  topic.list.classList.add('open');
-  topic.btn.setAttribute('aria-expanded', 'true');
-  topicHighlight(Math.max(0, topic.items.findIndex((it) => it.value === (activeTag ?? ''))));
-  topic.list.focus({ preventScroll: true });
-  topic.items[topic.active].el.scrollIntoView({ block: 'nearest' });
-  topic.list.scrollIntoView({ block: 'nearest' }); // daftar tidak terpotong di tepi bawah layar
-}
-
-function topicClose(refocus = true) {
-  if (!topicIsOpen()) return;
-  topic.list.classList.remove('open');
-  topic.btn.setAttribute('aria-expanded', 'false');
-  topic.list.removeAttribute('aria-activedescendant');
-  if (refocus) topic.btn.focus({ preventScroll: true });
-}
-
-function topicPick(i) {
-  topicClose();
-  const next = topic.items[i].value || null;
-  if (next === activeTag) return;
-  activeTag = next;
-  render();
-}
-
-topic.btn.addEventListener('click', () => (topicIsOpen() ? topicClose() : topicOpen()));
-topic.btn.addEventListener('keydown', (e) => {
-  if (['ArrowDown', 'ArrowUp', 'Enter', ' '].includes(e.key)) {
-    e.preventDefault();
-    topicOpen();
-  }
+tabs.addEventListener('change', (e) => {
+  const { value, label } = e.detail;
+  const n = applyFilter(value);
+  toast.show(`${n} proyek di ${label}`);
 });
 
-topic.list.addEventListener('keydown', (e) => {
-  const last = topic.items.length - 1;
-  const move = { ArrowDown: Math.min(topic.active + 1, last), ArrowUp: Math.max(topic.active - 1, 0), Home: 0, End: last }[e.key];
-  if (move !== undefined) {
-    e.preventDefault();
-    topicHighlight(move, true);
-  } else if (e.key === 'Enter' || e.key === ' ') {
-    e.preventDefault();
-    topicPick(topic.active);
-  } else if (e.key === 'Escape') {
-    e.preventDefault();
-    topicClose();
-  } else if (e.key === 'Tab') {
-    topicClose(); // fokus pindah ke tombol, lalu Tab lanjut dari sana
-  } else if (e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) {
-    // Cari: ketik huruf awal opsi. Huruf yang sama berulang menggilir opsi yang cocok.
-    clearTimeout(topic.typedTimer);
-    topic.typed += e.key.toLowerCase();
-    topic.typedTimer = setTimeout(() => { topic.typed = ''; }, 600);
-    const order = topic.items.map((_, i) => (topic.active + 1 + i) % topic.items.length);
-    const same = [...topic.typed].every((c) => c === topic.typed[0]);
-    const hit = order.find((i) => topic.items[i].label.toLowerCase().startsWith(same ? topic.typed[0] : topic.typed));
-    if (hit !== undefined) topicHighlight(hit, true);
-  }
-});
-
-// Klik atau sentuh di luar dropdown menutup daftar, tanpa memindah fokus.
-document.addEventListener('pointerdown', (e) => {
-  if (topicIsOpen() && !e.target.closest('.dropdown')) topicClose(false);
+// Tombol hero: turun ke daftar proyek.
+cta.addEventListener('click', () => {
+  document.getElementById('proyek').scrollIntoView({ behavior: reduce.matches ? 'auto' : 'smooth' });
 });
 
 loadProjects()
   .then((list) => {
-    allProjects = list;
-    renderTopics();
-    render();
+    list.forEach((p, i) => {
+      const card = makeCard(p, i + 1);
+      cards.push(card);
+      grid.append(card);
+    });
   })
-  .catch(() => {
-    showMessage('Proyek belum bisa dimuat. Coba muat ulang.', 'Muat ulang', () => location.reload());
-  });
+  .catch(showError);

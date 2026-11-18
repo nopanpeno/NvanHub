@@ -41,48 +41,27 @@ async function visit(browser, base, { width, reduced }) {
     expect(loaded, `[${label}] font ${face} tidak termuat`);
   }
   expect((await page.evaluate(() => getComputedStyle(document.querySelector('.hero h1')).opacity)) === '1', `[${label}] judul hero tidak terlihat`);
-  expect((await page.getAttribute('.hero-name', 'aria-label')) === 'NvanHub', `[${label}] judul hero tidak bernama NvanHub`);
-  // Tombol Lihat proyek: setelah intro tampil penuh dan transform dilepas (hover CSS bisa jalan).
-  await page.waitForTimeout(reduced ? 0 : 800);
-  const cta = await page.evaluate(() => { const c = getComputedStyle(document.querySelector('.hero .btn')); return { op: c.opacity, tf: c.transform }; });
-  expect(cta.op === '1', `[${label}] tombol Lihat proyek tidak terlihat (opacity ${cta.op})`);
-  expect(cta.tf === 'none', `[${label}] tombol Lihat proyek masih membawa transform (${cta.tf})`);
+  // Elemen sakuga: tombol Lihat proyek, tombol Salin tautan di tiap kartu, tab kategori, dan toast.
+  expect((await page.locator('sakuga-button#cta').count()) === 1, `[${label}] tombol Lihat proyek tidak ada`);
+  expect((await page.locator('sakuga-button.copy').count()) === total, `[${label}] tombol Salin tautan tidak ada di tiap kartu`);
+  expect((await page.locator('#toast').count()) === 1, `[${label}] toast tidak ada`);
   expect((await page.locator('header nav a').count()) === 1, `[${label}] nav header harus hanya berisi Tentang`);
-  // Dropdown topik: buka lewat klik, pilih lewat keyboard, filter jalan, Escape menutup dan fokus kembali.
-  const btn = page.locator('#tag');
-  const list = page.locator('#tag-list');
-  const opts = await list.locator('[role=option]').count();
-  expect(opts >= 2, `[${label}] dropdown topik kosong`);
-  expect((await btn.getAttribute('aria-expanded')) === 'false', `[${label}] dropdown harus tertutup di awal`);
-  await btn.click();
-  expect((await btn.getAttribute('aria-expanded')) === 'true', `[${label}] dropdown tidak terbuka saat diklik`);
-  // Daftar topik tampil saat dibuka.
-  expect(await list.isVisible(), `[${label}] daftar topik tidak tampil`);
-  expect(await list.evaluate((el) => el === document.activeElement), `[${label}] fokus tidak pindah ke daftar topik`);
-  const box = await list.boundingBox();
-  expect(box && box.x >= 0 && box.x + box.width <= width, `[${label}] daftar topik keluar dari layar`);
-  // Tinggi dari gaya terhitung, bukan getBoundingClientRect: rect ikut transform animasi masuk dan bisa meleset sub-piksel.
-  const tall = await list.locator('[role=option]').first().evaluate((el) => parseFloat(getComputedStyle(el).height));
-  expect(tall >= 44, `[${label}] opsi topik lebih pendek dari 44px (${tall}px)`);
-  await page.keyboard.press('ArrowDown');
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(reduced ? 100 : 700);
-  expect((await btn.getAttribute('aria-expanded')) === 'false', `[${label}] dropdown tidak menutup setelah memilih`);
-  expect(await btn.evaluate((el) => el === document.activeElement), `[${label}] fokus tidak kembali ke tombol topik`);
-  expect((await page.locator('.card').count()) < total, `[${label}] filter topik tidak menyaring kartu`);
-  expect(!(await btn.textContent()).startsWith('Semua'), `[${label}] teks tombol topik tidak ikut pilihan`);
-  await btn.click();
-  await page.keyboard.press('Escape');
-  expect(await btn.evaluate((el) => el === document.activeElement), `[${label}] Escape tidak mengembalikan fokus ke tombol`);
-  await btn.click();
-  await page.keyboard.press('Home');
-  await page.keyboard.press('Enter');
-  await page.waitForTimeout(reduced ? 100 : 700);
-  expect((await page.locator('.card').count()) === total, `[${label}] "Semua topik" tidak mengembalikan semua kartu`);
+  // Tab kategori: pilih Alat, kartu menyaring; pilih Semua, kartu kembali lengkap.
+  const tab = (name) => page.locator('#tabs [role=tab]', { hasText: name });
+  const shown = () => page.locator('.card:not([hidden])').count();
+  expect((await tab('Alat').count()) === 1, `[${label}] tab Alat tidak ada`);
+  await tab('Alat').click();
+  await page.waitForTimeout(reduced ? 0 : 300);
+  const alat = await shown();
+  expect(alat > 0 && alat < total, `[${label}] tab Alat tidak menyaring kartu (${alat} tampil)`);
+  expect((await tab('Alat').getAttribute('aria-selected')) === 'true', `[${label}] tab Alat tidak terpilih`);
+  await tab('Semua').click();
+  await page.waitForTimeout(reduced ? 0 : 300);
+  expect((await shown()) === total, `[${label}] "Semua" tidak mengembalikan semua kartu`);
   const over2 = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-  expect(over2 <= 0, `[${label}] dropdown menimbulkan scroll horizontal (${over2}px)`);
+  expect(over2 <= 0, `[${label}] tab kategori menimbulkan scroll horizontal (${over2}px)`);
   // Sub-bab Fun fact ada di dalam Tentang, tingkat h3.
-  expect((await page.locator('.about h3.label-sub').count()) === 1, `[${label}] sub-bab Fun fact tidak ada di Tentang`);
+  expect((await page.locator('.about h3').count()) === 1, `[${label}] sub-bab Fun fact tidak ada di Tentang`);
   // Tanda NvanHub di footer tampil saat halaman sudah di dasar.
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(reduced ? 0 : 400);

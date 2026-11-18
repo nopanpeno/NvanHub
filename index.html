@@ -7,24 +7,18 @@
   <title>NvanHub</title>
   <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#08080a">
+  <meta name="theme-color" content="#fbf9f4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#100e24" media="(prefers-color-scheme: dark)">
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
   <link rel="preload" href="assets/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <script>
-    // Tanda JS aktif. Animasi judul dan kartu jalan setelah js/intro.js memberi kelas "ready".
-    // Pengaman: kalau js/intro.js gagal, kelas "ready" tetap datang setelah 3 detik.
-    document.documentElement.classList.add('js');
-    setTimeout(function () { document.documentElement.classList.add('ready'); }, 3000);
-  </script>
   <link rel="stylesheet" href="css/style.css">
-  <noscript><style>.controls { display: none; }</style></noscript>
 </head>
 <body id="top">
   <a class="skip-link" href="#main">Lewati ke konten</a>
 
   <header class="site-header">
     <a class="brand" href="#top" aria-label="NvanHub, kembali ke atas">
-      <img class="mark" src="assets/logo.svg" width="40" height="40" alt="" aria-hidden="true">
+      <img class="mark" src="assets/logo.svg" width="36" height="36" alt="" aria-hidden="true">
       <span class="brand-name">NvanHub</span>
     </a>
     <nav>
@@ -34,53 +28,32 @@
   </header>
 
   <main id="main" tabindex="-1">
-    <section class="hero">
-      <div class="hero-top">
-        <div>
-          <p class="eyebrow">Halo, aku nopanpeno.</p>
-          <h2 class="roles">
-            <span class="ln" style="--d:.15s"><span>Gratis</span></span>
-            <span class="ln" style="--d:.27s"><span>Tanpa server</span></span>
-            <span class="ln" style="--d:.39s"><span>Tanpa akun</span></span>
-          </h2>
-        </div>
-        <div class="hero-side">
-          <p class="lead">Aku bikin tool kecil yang jalan langsung di browser. Gratis, tanpa server, tanpa ribet. Mau kirim file, bikin QR, atau bersihin metadata foto, semuanya diproses di perangkatmu.</p>
-          <a class="btn" href="#proyek">Lihat proyek</a>
-        </div>
+    <section class="hero" aria-labelledby="judul">
+      <div>
+        <p class="eyebrow">Halo, aku nopanpeno.</p>
+        <p class="roles" id="judul">Gratis.<br>Tanpa server.<br>Tanpa akun.</p>
       </div>
-
-      <h1 class="hero-name" aria-label="NvanHub">
-        <span class="l" aria-hidden="true">Nvan</span>
-        <span class="l" aria-hidden="true">Hub</span>
-      </h1>
+      <div class="hero-panel">
+        <p class="lead">Aku bikin tool kecil yang jalan langsung di browser. Gratis, tanpa server, tanpa ribet. Mau kirim file, bikin QR, atau bersihin metadata foto, semuanya diproses di perangkatmu.</p>
+        <sakuga-button id="cta">Lihat proyek</sakuga-button>
+      </div>
+      <h1 class="wordmark">NvanHub</h1>
     </section>
 
-    <section class="marquee" aria-label="Tool di NvanHub">
-      <div class="marquee-track">
-        <div class="marquee-set">
-          <span>Kirim File</span><i></i><span>Bikin QR</span><i></i><span>Main Game</span><i></i><span>Hapus Metadata</span><i></i><span>Gambar ke Vector</span><i></i><span>Bikin Shortlink</span><i></i>
-        </div>
-        <div class="marquee-set" aria-hidden="true">
-          <span>Kirim File</span><i></i><span>Bikin QR</span><i></i><span>Main Game</span><i></i><span>Hapus Metadata</span><i></i><span>Gambar ke Vector</span><i></i><span>Bikin Shortlink</span><i></i>
-        </div>
-      </div>
-    </section>
+    <ul class="ticker" aria-label="Tool di NvanHub">
+      <li>Kirim file</li><li>Bikin QR</li><li>Main game</li><li>Hapus metadata</li><li>Gambar ke vector</li><li>Bikin shortlink</li>
+    </ul>
 
     <section id="proyek" class="projects">
-      <div class="section-head reveal">
-        <h2 class="label">Proyek</h2>
-        <div class="controls">
-          <div class="field">
-            <label id="tag-label" for="tag">Topik</label>
-            <div class="dropdown">
-              <button type="button" id="tag" class="dropdown-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="tag-list" aria-labelledby="tag-label tag-value"><span id="tag-value">Semua topik</span></button>
-              <ul id="tag-list" class="dropdown-list" role="listbox" tabindex="-1" aria-labelledby="tag-label"></ul>
-            </div>
-          </div>
-        </div>
+      <div class="projects-head">
+        <h2 class="h-sec">Proyek</h2>
+        <sakuga-tabs id="tabs" label="Kategori proyek">
+          <option value="semua">Semua</option>
+          <option value="alat">Alat</option>
+          <option value="foto">Foto</option>
+          <option value="game">Game</option>
+        </sakuga-tabs>
       </div>
-      <p id="status" class="sr-only" aria-live="polite"></p>
       <div id="grid" class="grid"></div>
       <noscript>
         <p class="no-js">Daftar proyek dimuat lewat JavaScript. Aktifkan JavaScript di browsermu, atau <a href="https://github.com/nopanpeno">buka GitHub</a> untuk lihat semua proyeknya.</p>
@@ -88,20 +61,20 @@
     </section>
 
     <section id="tentang" class="about">
-      <h2 class="label reveal">Tentang</h2>
+      <h2 class="h-sec">Tentang</h2>
       <div class="about-body">
-        <p class="reveal">NvanHub aku bikin sebagai pintu utama buat semua website yang aku buat. Tiap proyek punya alamat sendiri-sendiri, jadi aku butuh satu tempat yang menghubungkan semuanya. Di sini semuanya aku kumpulin jadi satu: tinggal pilih topik, lalu klik.</p>
-        <p class="reveal">Aku suka eksperimen. Ide yang kepikiran langsung dicoba, dan website ini juga jadi tempat aku belajar. Tiap proyek di sini cara aku nyobain hal baru. Kalau jalan, aku bagikan lewat repo, jadi semuanya bisa dibuka, dipelajari, dan dipakai siapa saja.</p>
-        <p class="reveal">Harapanku sederhana: kamu mampir, nemu sesuatu yang berguna atau seru, lalu pulang bawa ide buat dicoba sendiri.</p>
-        <h3 class="label label-sub reveal">Fun fact</h3>
-        <p class="reveal">Web ini dibuat tanpa framework, cuma HTML, CSS, dan JS biasa, jadi semua proyek di sini jalan tanpa server sendiri. Skor game di NvanPlay disimpan di perangkatmu, bukan di server.</p>
+        <p>NvanHub aku bikin sebagai pintu utama buat semua website yang aku buat. Tiap proyek punya alamat sendiri-sendiri, jadi aku butuh satu tempat yang menghubungkan semuanya. Di sini semuanya aku kumpulin jadi satu: tinggal pilih topik, lalu klik.</p>
+        <p>Aku suka eksperimen. Ide yang kepikiran langsung dicoba, dan website ini juga jadi tempat aku belajar. Tiap proyek di sini cara aku nyobain hal baru. Kalau jalan, aku bagikan lewat repo, jadi semuanya bisa dibuka, dipelajari, dan dipakai siapa saja.</p>
+        <p>Harapanku sederhana: kamu mampir, nemu sesuatu yang berguna atau seru, lalu pulang bawa ide buat dicoba sendiri.</p>
+        <h3>Fun fact</h3>
+        <p>Web ini dibuat tanpa framework, cuma HTML, CSS, dan JS biasa, jadi semua proyek di sini jalan tanpa server sendiri. Skor game di NvanPlay disimpan di perangkatmu, bukan di server.</p>
       </div>
     </section>
   </main>
 
   <footer class="site-footer">
-    <h2 class="label reveal">Tautan</h2>
-    <ul class="links-list reveal">
+    <h2 class="h-sec">Tautan</h2>
+    <ul class="links-list">
       <li><a href="https://github.com/nopanpeno" target="_blank" rel="noopener" aria-label="GitHub, di tab baru">GitHub</a></li>
     </ul>
     <div class="footer-bottom">
@@ -109,6 +82,8 @@
       <a class="to-top" href="#top">Kembali ke atas</a>
     </div>
   </footer>
+
+  <sakuga-toast id="toast" class="toast"></sakuga-toast>
 
   <dialog id="install-help" class="install-help" aria-labelledby="install-help-title">
     <h3 id="install-help-title">Pasang di iPhone</h3>
@@ -122,7 +97,11 @@
     </form>
   </dialog>
 
-  <script src="js/intro.js" defer></script>
+  <!-- Elemen sakuga-vfx (MIT, lihat js/sakuga/LICENSE-sakuga-vfx.txt). Tiap file memuat intinya sendiri,
+       yang pertama dimuat yang dipakai bersama. -->
+  <script src="js/sakuga/button.js" defer></script>
+  <script src="js/sakuga/tabs.js" defer></script>
+  <script src="js/sakuga/toast.js" defer></script>
   <script src="js/main.js" defer></script>
   <script src="js/install.js" defer></script>
   <script>
