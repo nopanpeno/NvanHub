@@ -140,35 +140,24 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   font-family: var(--font-display); font-weight: 400;
   font-size: clamp(44px, 8vw, 104px); line-height: 1; text-transform: uppercase;
 }
-/* Tiga kata naik satu per satu, lalu naik dan hilang bersama, lalu mulai lagi. Tinggi blok tetap tiga baris.
+/* Tiga kata naik cepat satu per satu, lalu hilang satu per satu, cepat. Tinggi blok tetap tiga baris.
    Saat reduced-motion, ketiganya tampil diam. Semua kata tetap ada di DOM untuk pembaca layar. */
 .ln { display: block; }
 @media (prefers-reduced-motion: no-preference) {
-  .ln { animation: roleIn1 8s var(--ease-out) infinite both; }
-  .ln:nth-child(2) { animation-name: roleIn2; animation-delay: 0.8s; }
-  .ln:nth-child(3) { animation-name: roleIn3; animation-delay: 1.6s; }
+  .ln { animation: roleIn 3s var(--ease-out) infinite both; }
+  .ln:nth-child(2) { animation-delay: 0.25s; }
+  .ln:nth-child(3) { animation-delay: 0.5s; }
 }
 @media (prefers-reduced-motion: no-preference) and (hover: hover) {
   .roles:hover .ln { animation-play-state: paused; }
 }
-/* Naik dari bawah, tahan, lalu naik dan hilang. Keluar mulai di detik ke-6,4 untuk semua kata. */
-@keyframes roleIn1 {
+/* Naik dari bawah, tahan sebentar, lalu naik dan hilang. Tiap kata mulai 0,25 detik setelah kata sebelumnya,
+   dan keluarnya juga berurutan dengan jeda yang sama. */
+@keyframes roleIn {
   0% { opacity: 0; transform: translateY(0.6em); }
   6% { opacity: 1; transform: none; }
-  80% { opacity: 1; transform: none; }
-  88%, 100% { opacity: 0; transform: translateY(-0.6em); }
-}
-@keyframes roleIn2 {
-  0% { opacity: 0; transform: translateY(0.6em); }
-  6% { opacity: 1; transform: none; }
-  70% { opacity: 1; transform: none; }
-  78%, 100% { opacity: 0; transform: translateY(-0.6em); }
-}
-@keyframes roleIn3 {
-  0% { opacity: 0; transform: translateY(0.6em); }
-  6% { opacity: 1; transform: none; }
-  60% { opacity: 1; transform: none; }
-  68%, 100% { opacity: 0; transform: translateY(-0.6em); }
+  40% { opacity: 1; transform: none; }
+  46%, 100% { opacity: 0; transform: translateY(-0.6em); }
 }
 .hero-panel {
   padding: 28px; background: var(--card);
