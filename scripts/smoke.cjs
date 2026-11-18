@@ -62,10 +62,10 @@ async function visit(browser, base, { width, reduced }) {
   expect(over2 <= 0, `[${label}] tab kategori menimbulkan scroll horizontal (${over2}px)`);
   // Sub-bab Fun fact ada di dalam Tentang, tingkat h3.
   expect((await page.locator('.about h3').count()) === 1, `[${label}] sub-bab Fun fact tidak ada di Tentang`);
-  // Tanda NvanHub di footer tampil saat halaman sudah di dasar.
+  // Kembali ke atas di footer tampil saat halaman sudah di dasar.
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(reduced ? 0 : 400);
-  expect(await page.locator('.signature').isVisible(), `[${label}] tanda NvanHub di footer tidak tampil`);
+  expect(await page.locator('.to-top').isVisible(), `[${label}] Kembali ke atas di footer tidak tampil`);
   // Kembali ke atas harus benar-benar membawa halaman ke atas (header fixed tidak boleh jadi target fragment).
   await page.click('.to-top');
   await page.waitForTimeout(reduced ? 0 : 1500);

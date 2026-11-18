@@ -23,7 +23,6 @@
     </a>
     <nav>
       <a href="#tentang">Tentang</a>
-      <button type="button" class="install" id="btn-install" aria-controls="install-help" hidden>Pasang aplikasi</button>
     </nav>
   </header>
 
@@ -40,9 +39,16 @@
       <h1 class="wordmark">NvanHub</h1>
     </section>
 
-    <ul class="ticker" aria-label="Tool di NvanHub">
-      <li>Kirim file</li><li>Bikin QR</li><li>Main game</li><li>Hapus metadata</li><li>Gambar ke vector</li><li>Bikin shortlink</li>
-    </ul>
+    <div class="ticker">
+      <div class="ticker-track">
+        <ul class="ticker-set" aria-label="Tool di NvanHub">
+          <li>Kirim file</li><li>Bikin QR</li><li>Main game</li><li>Hapus metadata</li><li>Gambar ke vector</li><li>Bikin shortlink</li>
+        </ul>
+        <ul class="ticker-set" aria-hidden="true">
+          <li>Kirim file</li><li>Bikin QR</li><li>Main game</li><li>Hapus metadata</li><li>Gambar ke vector</li><li>Bikin shortlink</li>
+        </ul>
+      </div>
+    </div>
 
     <section id="proyek" class="projects">
       <div class="projects-head">
@@ -76,9 +82,9 @@
     <h2 class="h-sec">Tautan</h2>
     <ul class="links-list">
       <li><a href="https://github.com/nopanpeno" target="_blank" rel="noopener" aria-label="GitHub, di tab baru">GitHub</a></li>
+      <li><button type="button" class="install" id="btn-install" aria-controls="install-help" hidden>Pasang aplikasi</button></li>
     </ul>
     <div class="footer-bottom">
-      <p class="signature" aria-hidden="true">NvanHub</p>
       <a class="to-top" href="#top">Kembali ke atas</a>
     </div>
   </footer>

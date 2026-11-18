@@ -34,7 +34,7 @@
 :root {
   --paper: #fbf9f4; --card: #ffffff; --ink: #1d1a4a; --ink-2: #4f4c6b;
   --lav: #b8b3ff; --acc: #ff3b1d; --on-acc: #1d1a4a; --track: #d6d3ea;
-  --band: #1d1a4a; --band-fg: #fbf9f4; --foot-bg: #1d1a4a; --foot-fg: #fbf9f4; --sig: #34306b;
+  --band: #1d1a4a; --band-fg: #fbf9f4; --foot-bg: #1d1a4a; --foot-fg: #fbf9f4;
   --bw: 3px; --r: 14px; --sh: 6px 6px 0 var(--lav);
   --gutter: 40px; --section: 112px;
   --t-fast: 150ms; --t-base: 200ms; --t-slow: 300ms;
@@ -51,14 +51,14 @@
     color-scheme: dark;
     --paper: #100e24; --card: #1b1838; --ink: #efedff; --ink-2: #b4b0d6;
     --lav: #4d46a6; --on-acc: #100e24; --track: #3a3670;
-    --band: #efedff; --band-fg: #100e24; --foot-bg: #1b1838; --foot-fg: #efedff; --sig: #2c2858;
+    --band: #efedff; --band-fg: #100e24; --foot-bg: #1b1838; --foot-fg: #efedff;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
   --paper: #100e24; --card: #1b1838; --ink: #efedff; --ink-2: #b4b0d6;
   --lav: #4d46a6; --on-acc: #100e24; --track: #3a3670;
-  --band: #efedff; --band-fg: #100e24; --foot-bg: #1b1838; --foot-fg: #efedff; --sig: #2c2858;
+  --band: #efedff; --band-fg: #100e24; --foot-bg: #1b1838; --foot-fg: #efedff;
 }
 @media (max-width: 640px) {
   :root { --gutter: 16px; --section: 72px; }
@@ -107,15 +107,13 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   text-transform: uppercase; letter-spacing: 0.02em;
 }
 .site-header nav { display: flex; align-items: center; gap: 2rem; }
-.site-header nav a,
-.install {
+.site-header nav a {
   display: inline-flex; align-items: center; min-height: 44px;
   font-size: 1rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
   text-decoration: none;
 }
 @media (hover: hover) {
-  .site-header nav a:hover,
-  .install:hover {
+  .site-header nav a:hover {
     color: var(--acc); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px;
   }
 }
@@ -156,19 +154,25 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   text-shadow: 0.05em 0.05em 0 var(--lav); user-select: none;
 }
 
-/* ---------- ticker: statis, tanpa loop ---------- */
+/* ---------- ticker: berjalan kanan ke kiri, satu-satunya loop di halaman ---------- */
+/* Dua salinan daftar. Salinan kedua aria-hidden. Geser 50% = tepat satu salinan, jadi sambungannya mulus. */
 .ticker {
-  display: flex; flex-wrap: wrap; justify-content: center;
-  padding: 22px var(--gutter);
+  overflow: hidden;
+  padding-block: 22px;
   background: var(--band); color: var(--band-fg);
   font-family: var(--font-display); font-size: 28px; line-height: 1.2; text-transform: uppercase;
 }
-.ticker li { display: inline-flex; align-items: center; }
-.ticker li::after {
-  content: ""; width: 10px; height: 10px; margin-inline: 28px; border-radius: 50%;
+.ticker-track { display: flex; width: max-content; animation: ticker 26s linear infinite; }
+.ticker-set { display: flex; flex: none; margin: 0; padding: 0; }
+.ticker-set li { display: inline-flex; align-items: center; white-space: nowrap; }
+.ticker-set li::after {
+  content: ""; flex: none; width: 10px; height: 10px; margin-inline: 28px; border-radius: 50%;
   background: var(--acc);
 }
-.ticker li:last-child::after { display: none; }
+@keyframes ticker { to { transform: translateX(-50%); } }
+@media (hover: hover) {
+  .ticker:hover .ticker-track { animation-play-state: paused; }
+}
 
 /* ---------- proyek ---------- */
 .projects { padding: var(--section) var(--gutter); scroll-margin-top: 96px; }
@@ -276,30 +280,33 @@ sakuga-tabs { display: block; max-width: 100%; }
 
 /* ---------- footer: balik warna ---------- */
 .site-footer {
-  padding: var(--section) var(--gutter) 32px;
+  /* Ruang bawah supaya toast (pojok kiri bawah, selalu ada kotaknya) tidak menutupi "Kembali ke atas". */
+  padding: var(--section) var(--gutter) 104px;
   background: var(--foot-bg); color: var(--foot-fg); overflow: hidden;
 }
 .site-footer .h-sec { color: var(--foot-fg); }
-.links-list {
-  margin-top: 32px;
-  font-family: var(--font-display); font-size: clamp(32px, 6vw, 56px); line-height: 1.1;
-  text-transform: uppercase;
-}
-.links-list a {
+.links-list { margin-top: 32px; }
+/* Semua tautan footer dan tombol Pasang aplikasi pakai gaya yang sama. */
+.links-list a,
+.links-list .install {
   display: inline-flex; align-items: center; min-height: 44px;
+  font-family: var(--font-display); font-size: clamp(32px, 6vw, 56px); line-height: 1.1;
+  text-transform: uppercase; text-align: left;
   color: var(--foot-fg); text-decoration: underline;
   text-decoration-color: var(--acc); text-decoration-thickness: 4px; text-underline-offset: 10px;
 }
-.footer-bottom {
-  display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline;
-  gap: 8px 16px; margin-top: 64px; font-size: 14px;
+/* Kembali ke atas: gaya sama dengan Tentang di header. */
+.footer-bottom { display: flex; justify-content: flex-end; margin-top: 64px; }
+.footer-bottom .to-top {
+  display: inline-flex; align-items: center; min-height: 44px;
+  font-family: var(--font-sans); font-size: 1rem; font-weight: 600; line-height: 1.55;
+  text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none;
+  color: var(--foot-fg);
 }
-.footer-bottom a {
-  display: inline-flex; align-items: center; min-height: 44px; color: var(--foot-fg);
-}
-.signature {
-  font-family: var(--font-display); font-size: 17vw; line-height: 1;
-  text-transform: uppercase; white-space: nowrap; color: var(--sig); user-select: none;
+@media (hover: hover) {
+  .footer-bottom .to-top:hover {
+    color: var(--acc); text-decoration: underline; text-decoration-thickness: 3px; text-underline-offset: 6px;
+  }
 }
 
 /* ---------- toast sakuga: pojok kiri bawah ---------- */
@@ -324,4 +331,9 @@ sakuga-tabs { display: block; max-width: 100%; }
 /* ---------- gerak: sakuga diam sendiri lewat reduced-motion, CSS ini ikut diam ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
+  /* ticker diam jadi daftar biasa yang turun ke baris baru. Salinan kedua disembunyikan. */
+  .ticker-track { width: 100%; justify-content: center; }
+  .ticker-set { flex: 0 1 auto; flex-wrap: wrap; justify-content: center; max-width: 100%; }
+  .ticker-set[aria-hidden="true"] { display: none; }
+  .ticker-set li:last-child::after { display: none; }
 }
