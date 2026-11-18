@@ -10,6 +10,10 @@
   <meta name="theme-color" content="#fbf9f4" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#100e24" media="(prefers-color-scheme: dark)">
   <link rel="apple-touch-icon" href="assets/icons/icon-192.png">
+  <script>
+    // Tema pilihan pengguna dipasang sebelum halaman tampil, supaya tidak berkedip.
+    try { var t = localStorage.getItem('nvanhub-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
   <link rel="preload" href="assets/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -84,6 +88,10 @@
       <li><a href="https://github.com/nopanpeno" target="_blank" rel="noopener" aria-label="GitHub, di tab baru">GitHub</a></li>
       <li><button type="button" class="install" id="btn-install" aria-controls="install-help" hidden>Pasang aplikasi</button></li>
     </ul>
+    <div class="theme-row">
+      <span class="theme-name" aria-hidden="true">Mode gelap</span>
+      <sakuga-toggle id="tema" label="Mode gelap"></sakuga-toggle>
+    </div>
     <div class="footer-bottom">
       <a class="to-top" href="#top">Kembali ke atas</a>
     </div>
@@ -108,8 +116,10 @@
   <script src="js/sakuga/button.js" defer></script>
   <script src="js/sakuga/tabs.js" defer></script>
   <script src="js/sakuga/toast.js" defer></script>
+  <script src="js/sakuga/toggle.js" defer></script>
   <script src="js/main.js" defer></script>
   <script src="js/install.js" defer></script>
+  <script src="js/theme.js" defer></script>
   <script>
     // PWA: daftar service worker supaya web bisa dipasang di layar utama dan terbuka saat offline.
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');

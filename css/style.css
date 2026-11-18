@@ -316,6 +316,17 @@ sakuga-tabs { display: block; max-width: 100%; }
   text-decoration-color: var(--acc); text-decoration-thickness: 3px; text-underline-offset: 6px;
 }
 /* Kembali ke atas: gaya sama dengan Tentang di header. */
+/* Saklar tema di footer. Warnanya dibalik supaya terbaca di latar footer.
+   Margin bawaan elemen sakuga terlalu besar untuk footer, jadi dinolkan. Percikannya boleh lewat tepi. */
+.theme-row {
+  display: flex; align-items: center; gap: 16px; margin-top: 32px;
+  --sk-ink: var(--foot-fg); --sk-card: var(--foot-bg); --sk-dim: var(--foot-fg); --sk-soft: var(--foot-fg); --sk-track: var(--foot-bg);
+}
+.theme-row sakuga-toggle { margin: 0; }
+.theme-name {
+  font-family: var(--font-sans); font-size: 1rem; font-weight: 600; line-height: 1.55;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--foot-fg);
+}
 .footer-bottom { display: flex; justify-content: flex-end; margin-top: 64px; }
 .footer-bottom .to-top {
   display: inline-flex; align-items: center; min-height: 44px;
