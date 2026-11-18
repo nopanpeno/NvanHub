@@ -144,20 +144,21 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
    Saat reduced-motion, ketiganya tampil diam. Semua kata tetap ada di DOM untuk pembaca layar. */
 .ln { display: block; }
 @media (prefers-reduced-motion: no-preference) {
-  .ln { animation: roleIn 3s var(--ease-out) infinite both; }
+  .ln { animation: roleIn 4.5s var(--ease-out) infinite both; }
   .ln:nth-child(2) { animation-delay: 0.25s; }
   .ln:nth-child(3) { animation-delay: 0.5s; }
 }
 @media (prefers-reduced-motion: no-preference) and (hover: hover) {
   .roles:hover .ln { animation-play-state: paused; }
 }
-/* Naik dari bawah, tahan sebentar, lalu naik dan hilang. Tiap kata mulai 0,25 detik setelah kata sebelumnya,
-   dan keluarnya juga berurutan dengan jeda yang sama. */
+/* Naik dari bawah (0,27 detik), tampil sekitar 3 detik, lalu naik dan hilang (0,27 detik).
+   Tiap kata mulai 0,25 detik setelah kata sebelumnya, dan keluarnya juga berurutan dengan jeda yang sama.
+   Putaran 4,5 detik: jeda kosong sebelum putaran berikutnya sekitar 0,5 detik. */
 @keyframes roleIn {
   0% { opacity: 0; transform: translateY(0.6em); }
   6% { opacity: 1; transform: none; }
-  40% { opacity: 1; transform: none; }
-  46%, 100% { opacity: 0; transform: translateY(-0.6em); }
+  72% { opacity: 1; transform: none; }
+  78%, 100% { opacity: 0; transform: translateY(-0.6em); }
 }
 .hero-panel {
   padding: 28px; background: var(--card);
