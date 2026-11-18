@@ -140,6 +140,22 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   font-family: var(--font-display); font-weight: 400;
   font-size: clamp(44px, 8vw, 104px); line-height: 1; text-transform: uppercase;
 }
+/* Tiga kata menumpuk di satu sel grid dan bergantian masuk dan keluar. Tinggi blok = satu baris.
+   Saat reduced-motion, kata disusun ke bawah dan tampil semua. Semua kata tetap ada di DOM untuk pembaca layar. */
+.roles { display: grid; }
+@media (prefers-reduced-motion: no-preference) {
+  .ln { grid-area: 1 / 1; animation: roleCycle 9s var(--ease-out) infinite both; }
+  .ln:nth-child(2) { animation-delay: 3s; }
+  .ln:nth-child(3) { animation-delay: 6s; }
+}
+@media (prefers-reduced-motion: no-preference) and (hover: hover) {
+  .roles:hover .ln { animation-play-state: paused; }
+}
+@keyframes roleCycle {
+  0% { opacity: 0; transform: translateY(0.25em); }
+  5%, 27% { opacity: 1; transform: none; }
+  33%, 100% { opacity: 0; transform: translateY(-0.25em); }
+}
 .hero-panel {
   padding: 28px; background: var(--card);
   border: var(--bw) solid var(--ink); border-radius: var(--r); box-shadow: var(--sh);
@@ -289,11 +305,11 @@ sakuga-tabs { display: block; max-width: 100%; }
 /* Semua tautan footer dan tombol Pasang aplikasi pakai gaya yang sama. */
 .links-list a,
 .links-list .install {
-  display: inline-flex; align-items: center; min-height: 44px;
-  font-family: var(--font-display); font-size: clamp(32px, 6vw, 56px); line-height: 1.1;
-  text-transform: uppercase; text-align: left;
+  display: inline-flex; align-items: center; min-height: 44px; padding: 0;
+  font-family: var(--font-sans); font-size: 1rem; font-weight: 600; line-height: 1.55;
+  letter-spacing: 0.08em; text-transform: uppercase; text-align: left;
   color: var(--foot-fg); text-decoration: underline;
-  text-decoration-color: var(--acc); text-decoration-thickness: 4px; text-underline-offset: 10px;
+  text-decoration-color: var(--acc); text-decoration-thickness: 3px; text-underline-offset: 6px;
 }
 /* Kembali ke atas: gaya sama dengan Tentang di header. */
 .footer-bottom { display: flex; justify-content: flex-end; margin-top: 64px; }
