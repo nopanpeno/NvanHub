@@ -71,6 +71,16 @@ async function visit(browser, base, { width, reduced }) {
   await page.waitForTimeout(reduced ? 0 : 1500);
   const top = await page.evaluate(() => window.scrollY);
   expect(top === 0, `[${label}] Kembali ke atas tidak membawa ke atas (scrollY ${top})`);
+  // Saklar tema di footer: klik mengganti tema, dan pilihannya diingat setelah muat ulang.
+  expect((await page.locator('sakuga-toggle#tema').count()) === 1, `[${label}] saklar tema tidak ada`);
+  await page.locator('#tema').scrollIntoViewIfNeeded();
+  await page.locator('#tema').click();
+  await page.waitForTimeout(reduced ? 0 : 200);
+  expect((await page.evaluate(() => document.documentElement.dataset.theme)) === 'dark', `[${label}] saklar tema tidak mengganti tema`);
+  await page.reload({ waitUntil: 'load' });
+  await page.waitForTimeout(600);
+  expect((await page.evaluate(() => document.documentElement.dataset.theme)) === 'dark', `[${label}] pilihan tema tidak diingat setelah muat ulang`);
+  expect((await page.evaluate(() => document.getElementById('tema').checked)) === true, `[${label}] saklar tema tidak menyala setelah muat ulang`);
   await ctx.close();
 }
 
