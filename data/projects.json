@@ -4,6 +4,7 @@
     "tagline": "Kirim file antar perangkat, langsung browser ke browser.",
     "desc": "Pakai WebRTC dan QR. Tanpa server, file tidak disimpan di mana pun.",
     "tags": ["JavaScript", "Transfer file"],
+    "kategori": "alat",
     "repo": "https://github.com/nopanpeno/NvanPass",
     "live": "https://nopanpeno.github.io/NvanHub/pass/"
   },
@@ -12,6 +13,7 @@
     "tagline": "Kumpulan game kecil, langsung main di browser.",
     "desc": "Tanpa akun, tanpa database. Skor disimpan di perangkat masing-masing.",
     "tags": ["JavaScript", "Game"],
+    "kategori": "game",
     "repo": "https://github.com/nopanpeno/NvanPlay",
     "live": "https://nopanpeno.github.io/NvanHub/play/"
   },
@@ -20,6 +22,7 @@
     "tagline": "Ubah gambar jadi vector XML untuk Alight Motion.",
     "desc": "Gambar jadi SVG, lalu jadi XML. Semua jalan di browser.",
     "tags": ["JavaScript", "Alight Motion"],
+    "kategori": "foto",
     "repo": "https://github.com/nopanpeno/NvanVector",
     "live": "https://nopanpeno.github.io/NvanHub/vector/"
   },
@@ -28,6 +31,7 @@
     "tagline": "Bikin dan pindai QR code, langsung di browser.",
     "desc": "QR untuk tautan, teks, dan Wi-Fi. Dibuat dan dipindai di perangkat, tidak dikirim ke server.",
     "tags": ["JavaScript", "QR Code"],
+    "kategori": "alat",
     "repo": "https://github.com/nopanpeno/NvanQR",
     "live": "https://nopanpeno.github.io/NvanHub/qr/"
   },
@@ -36,6 +40,7 @@
     "tagline": "Shortlink sederhana, pakai GitHub Pages.",
     "desc": "Tanpa backend. Alias disimpan di links.json, situs diterbitkan ulang lewat GitHub Actions.",
     "tags": ["HTML", "Shortlink"],
+    "kategori": "alat",
     "repo": "https://github.com/nopanpeno/NvanCut",
     "live": "https://nopanpeno.github.io/NvanHub/cut/"
   },
@@ -44,6 +49,7 @@
     "tagline": "Lihat dan hapus metadata foto, langsung di browser.",
     "desc": "Pilih metadata yang mau dibuang, lalu simpan foto yang sudah bersih. Foto tidak dikirim ke server.",
     "tags": ["JavaScript", "EXIF"],
+    "kategori": "foto",
     "repo": "https://github.com/nopanpeno/NvanExif",
     "live": "https://nopanpeno.github.io/NvanHub/exif/"
   }
