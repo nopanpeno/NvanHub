@@ -1,8 +1,8 @@
 [
   {
     "name": "NvanPass",
-    "tagline": "Kirim file antar perangkat, langsung browser ke browser.",
-    "desc": "Pakai WebRTC dan QR. Tanpa server, file tidak disimpan di mana pun.",
+    "tagline": "Kirim file antar perangkat, langsung dari browser ke browser.",
+    "desc": "Menggunakan WebRTC dan kode QR. Tanpa server, dan file tidak disimpan di mana pun.",
     "tags": ["JavaScript", "Transfer file"],
     "kategori": "alat",
     "repo": "https://github.com/nopanpeno/NvanPass",
@@ -10,8 +10,8 @@
   },
   {
     "name": "NvanPlay",
-    "tagline": "Kumpulan game kecil, langsung main di browser.",
-    "desc": "Tanpa akun, tanpa database. Skor disimpan di perangkat masing-masing.",
+    "tagline": "Kumpulan game kecil yang bisa langsung dimainkan di browser.",
+    "desc": "Tanpa akun dan tanpa basis data. Skor disimpan di perangkat masing-masing.",
     "tags": ["JavaScript", "Game"],
     "kategori": "game",
     "repo": "https://github.com/nopanpeno/NvanPlay",
@@ -19,8 +19,8 @@
   },
   {
     "name": "NvanVector",
-    "tagline": "Ubah gambar jadi vector XML untuk Alight Motion.",
-    "desc": "Gambar jadi SVG, lalu jadi XML. Semua jalan di browser.",
+    "tagline": "Ubah gambar menjadi vektor XML untuk Alight Motion.",
+    "desc": "Gambar dikonversi ke SVG, lalu ke XML. Seluruh proses berjalan di browser.",
     "tags": ["JavaScript", "Alight Motion"],
     "kategori": "foto",
     "repo": "https://github.com/nopanpeno/NvanVector",
@@ -28,8 +28,8 @@
   },
   {
     "name": "NvanQR",
-    "tagline": "Bikin dan pindai QR code, langsung di browser.",
-    "desc": "QR untuk tautan, teks, dan Wi-Fi. Dibuat dan dipindai di perangkat, tidak dikirim ke server.",
+    "tagline": "Buat dan pindai kode QR langsung di browser.",
+    "desc": "Kode QR untuk tautan, teks, dan Wi-Fi. Dibuat dan dipindai di perangkat, tanpa dikirim ke server.",
     "tags": ["JavaScript", "QR Code"],
     "kategori": "alat",
     "repo": "https://github.com/nopanpeno/NvanQR",
@@ -37,8 +37,8 @@
   },
   {
     "name": "NvanCut",
-    "tagline": "Shortlink sederhana, pakai GitHub Pages.",
-    "desc": "Tanpa backend. Alias disimpan di links.json, situs diterbitkan ulang lewat GitHub Actions.",
+    "tagline": "Pemendek tautan sederhana berbasis GitHub Pages.",
+    "desc": "Tanpa backend. Alias disimpan di links.json, lalu situs diterbitkan ulang melalui GitHub Actions.",
     "tags": ["HTML", "Shortlink"],
     "kategori": "alat",
     "repo": "https://github.com/nopanpeno/NvanCut",
@@ -46,8 +46,8 @@
   },
   {
     "name": "NvanExif",
-    "tagline": "Lihat dan hapus metadata foto, langsung di browser.",
-    "desc": "Pilih metadata yang mau dibuang, lalu simpan foto yang sudah bersih. Foto tidak dikirim ke server.",
+    "tagline": "Lihat dan hapus metadata foto langsung di browser.",
+    "desc": "Pilih metadata yang ingin dihapus, lalu simpan foto yang sudah bersih. Foto tidak dikirim ke server.",
     "tags": ["JavaScript", "EXIF"],
     "kategori": "foto",
     "repo": "https://github.com/nopanpeno/NvanExif",

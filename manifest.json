@@ -1,7 +1,7 @@
 {
   "name": "NvanHub",
   "short_name": "NvanHub",
-  "description": "Kumpulan tool kecil yang jalan langsung di browser.",
+  "description": "Kumpulan alat kecil yang berjalan langsung di browser.",
   "lang": "id",
   "start_url": "./",
   "scope": "./",
