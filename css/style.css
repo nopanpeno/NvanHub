@@ -96,6 +96,7 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 /* ---------- header ---------- */
 .site-header {
   position: sticky; top: 0; z-index: 30;
+  overflow-x: clip; /* percikan saklar tema keluar dari kotaknya, jangan sampai melebarkan halaman */
   display: flex; align-items: center; justify-content: space-between;
   padding: 12px var(--gutter);
   background: var(--paper); border-bottom: var(--bw) solid var(--ink);
@@ -316,16 +317,12 @@ sakuga-tabs { display: block; max-width: 100%; }
   text-decoration-color: var(--acc); text-decoration-thickness: 3px; text-underline-offset: 6px;
 }
 /* Kembali ke atas: gaya sama dengan Tentang di header. */
-/* Saklar tema di footer. Warnanya dibalik supaya terbaca di latar footer.
-   Margin bawaan elemen sakuga terlalu besar untuk footer, jadi dinolkan. Percikannya boleh lewat tepi. */
-.theme-row {
-  display: flex; align-items: center; gap: 16px; margin-top: 32px;
-  --sk-ink: var(--foot-fg); --sk-card: var(--foot-bg); --sk-dim: var(--foot-fg); --sk-soft: var(--foot-fg); --sk-track: var(--foot-bg);
-}
-.theme-row sakuga-toggle { margin: 0; }
-.theme-name {
-  font-family: var(--font-sans); font-size: 1rem; font-weight: 600; line-height: 1.55;
-  letter-spacing: 0.08em; text-transform: uppercase; color: var(--foot-fg);
+/* Saklar tema di header. Kotaknya lebih tinggi dari tautan, jadi margin vertikal dikurangi supaya header tidak ikut tinggi.
+   Percikannya boleh lewat tepi. Di layar sempit saklar diperkecil dan jarak nav dirapatkan. */
+.site-header nav sakuga-toggle { margin: -6px 0; }
+@media (max-width: 480px) {
+  .site-header nav { gap: 20px; }
+  .site-header nav sakuga-toggle { transform: scale(0.82); margin: -6px -10px; }
 }
 .footer-bottom { display: flex; justify-content: flex-end; margin-top: 64px; }
 .footer-bottom .to-top {
