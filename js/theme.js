@@ -15,6 +15,12 @@ saklar.addEventListener('change', () => {
   try { localStorage.setItem(KEY, v); } catch { /* penyimpanan mati: tema tetap jalan sampai halaman ditutup */ }
 });
 
+// Area sentuh di HP diperlebar lewat ::before (lihat CSS). Klik di area itu diteruskan ke tombol di dalam saklar.
+// Klik yang memang kena tombol punya composedPath()[0] di dalam saklar, jadi tidak dobel.
+saklar.addEventListener('click', (e) => {
+  if (e.composedPath()[0] === saklar) saklar.shadowRoot.querySelector('.tog').click();
+});
+
 // Tanpa pilihan tersimpan, saklar ikut berubah saat sistem ganti tema.
 sysDark.addEventListener('change', () => {
   if (!root.dataset.theme) saklar.checked = sysDark.matches;

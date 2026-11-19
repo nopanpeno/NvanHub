@@ -317,12 +317,14 @@ sakuga-tabs { display: block; max-width: 100%; }
   text-decoration-color: var(--acc); text-decoration-thickness: 3px; text-underline-offset: 6px;
 }
 /* Kembali ke atas: gaya sama dengan Tentang di header. */
-/* Saklar tema di header. Kotaknya lebih tinggi dari tautan, jadi margin vertikal dikurangi supaya header tidak ikut tinggi.
-   Percikannya boleh lewat tepi. Di layar sempit saklar diperkecil dan jarak nav dirapatkan. */
-.site-header nav sakuga-toggle { margin: -6px 0; }
+/* Saklar tema di header. Kotak tombolnya lebih tinggi dari tautan, jadi margin dikurangi supaya header tidak ikut tinggi.
+   Percikannya boleh lewat tepi. Di layar sempit saklar diperkecil ke 70%. Area sentuhnya diperlebar lewat ::before
+   supaya tetap 44px; klik di area itu diteruskan ke tombol (lihat js/theme.js). */
+.site-header nav sakuga-toggle { transform: scale(0.9); margin: -3px -5px; }
 @media (max-width: 480px) {
   .site-header nav { gap: 20px; }
-  .site-header nav sakuga-toggle { transform: scale(0.82); margin: -6px -10px; }
+  .site-header nav sakuga-toggle { transform: scale(0.7); margin: -8px -16px; }
+  .site-header nav sakuga-toggle::before { content: ""; position: absolute; inset: -5px 0; }
 }
 .footer-bottom { display: flex; justify-content: flex-end; margin-top: 64px; }
 .footer-bottom .to-top {
