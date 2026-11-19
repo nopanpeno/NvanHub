@@ -273,6 +273,14 @@ sakuga-tabs { display: block; max-width: 100%; }
 .story .s-close, .story[open] .s-open { display: none; }
 .story[open] .s-close { display: inline; }
 .story p { margin-top: 0.5rem; color: var(--ink-2); }
+/* Cerita terbuka: teks muncul naik pelan. Hanya opacity dan transform, jadi tinggi kartu tidak dianimasikan. */
+@media (prefers-reduced-motion: no-preference) {
+  .story[open] p { animation: storyIn var(--t-slow) var(--ease-out) both; }
+}
+@keyframes storyIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
 
 .empty {
   grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
