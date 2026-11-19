@@ -1,4 +1,4 @@
-// Saklar tema di footer (elemen sakuga-toggle). Tanpa pilihan, tema ikut sistem.
+// Saklar tema di header (elemen sakuga-toggle). Tanpa pilihan, tema ikut sistem.
 // Pilihan pengguna disimpan di perangkat dan dipasang lagi sebelum halaman tampil (lihat script di head).
 const KEY = 'nvanhub-theme';
 const root = document.documentElement;
