@@ -45,7 +45,8 @@ async function visit(browser, base, { width, reduced }) {
   expect((await page.locator('sakuga-button#cta').count()) === 1, `[${label}] tombol Lihat proyek tidak ada`);
   expect((await page.locator('sakuga-button.copy').count()) === total, `[${label}] tombol Salin tautan tidak ada di tiap kartu`);
   expect((await page.locator('#toast').count()) === 1, `[${label}] toast tidak ada`);
-  expect((await page.locator('header nav a').count()) === 1, `[${label}] nav header harus hanya berisi Tentang`);
+  expect((await page.locator('header nav a').count()) === 0, `[${label}] header tidak boleh punya tautan, hanya logo dan saklar`);
+  expect((await page.locator('.hero-link[href="#tentang"]').count()) === 1, `[${label}] tautan Kenalan di hero tidak ada`);
   // Tab kategori: pilih Alat, kartu menyaring; pilih Semua, kartu kembali lengkap.
   const tab = (name) => page.locator('#tabs [role=tab]', { hasText: name });
   const shown = () => page.locator('.card:not([hidden])').count();
