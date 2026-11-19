@@ -48,9 +48,9 @@ async function copyLink(btn, p) {
   try {
     await navigator.clipboard.writeText(p.live);
     btn.done();
-    toast.show(`Tautan ${p.name} disalin`);
+    toast.show(`Tautan ${p.name} berhasil disalin`);
   } catch {
-    toast.show('Belum bisa menyalin. Coba lagi.');
+    toast.show('Tautan belum dapat disalin. Silakan coba lagi.');
   }
 }
 
