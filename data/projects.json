@@ -6,7 +6,8 @@
     "tags": ["JavaScript", "Transfer file"],
     "kategori": "alat",
     "repo": "https://github.com/nopanpeno/NvanPass",
-    "live": "https://nopanpeno.github.io/NvanHub/pass/"
+    "live": "https://nopanpeno.github.io/NvanHub/pass/",
+    "story": "Memindahkan file antar perangkat sering berarti mengunggah ke layanan pihak ketiga. NvanPass menghubungkan dua perangkat secara langsung lewat WebRTC dan kode QR, sehingga file tidak pernah singgah di server."
   },
   {
     "name": "NvanPlay",
@@ -15,7 +16,8 @@
     "tags": ["JavaScript", "Game"],
     "kategori": "game",
     "repo": "https://github.com/nopanpeno/NvanPlay",
-    "live": "https://nopanpeno.github.io/NvanHub/play/"
+    "live": "https://nopanpeno.github.io/NvanHub/play/",
+    "story": "NvanPlay dibuat sebagai ruang untuk game ringan yang bisa langsung dimainkan tanpa mendaftar. Skor disimpan di perangkat pemain, sehingga tidak memerlukan akun maupun basis data."
   },
   {
     "name": "NvanVector",
@@ -24,7 +26,8 @@
     "tags": ["JavaScript", "Alight Motion"],
     "kategori": "foto",
     "repo": "https://github.com/nopanpeno/NvanVector",
-    "live": "https://nopanpeno.github.io/NvanHub/vector/"
+    "live": "https://nopanpeno.github.io/NvanHub/vector/",
+    "story": "Alight Motion memerlukan aset vektor dalam format XML, sementara kebanyakan gambar berupa piksel. NvanVector menjembatani keduanya: gambar diubah ke SVG, lalu ke XML, semuanya di browser."
   },
   {
     "name": "NvanQR",
@@ -33,7 +36,8 @@
     "tags": ["JavaScript", "QR Code"],
     "kategori": "alat",
     "repo": "https://github.com/nopanpeno/NvanQR",
-    "live": "https://nopanpeno.github.io/NvanHub/qr/"
+    "live": "https://nopanpeno.github.io/NvanHub/qr/",
+    "story": "Membuat kode QR biasanya berarti membuka situs yang meminta data Anda. NvanQR membuat dan memindai kode untuk tautan, teks, dan Wi-Fi sepenuhnya di perangkat, tanpa mengirim apa pun ke server."
   },
   {
     "name": "NvanCut",
@@ -42,7 +46,8 @@
     "tags": ["HTML", "Shortlink"],
     "kategori": "alat",
     "repo": "https://github.com/nopanpeno/NvanCut",
-    "live": "https://nopanpeno.github.io/NvanHub/cut/"
+    "live": "https://nopanpeno.github.io/NvanHub/cut/",
+    "story": "NvanCut membuktikan bahwa pemendek tautan tidak harus punya backend. Alias disimpan dalam satu berkas JSON, dan GitHub Actions menerbitkan ulang situs setiap kali ada perubahan."
   },
   {
     "name": "NvanExif",
@@ -51,6 +56,7 @@
     "tags": ["JavaScript", "EXIF"],
     "kategori": "foto",
     "repo": "https://github.com/nopanpeno/NvanExif",
-    "live": "https://nopanpeno.github.io/NvanHub/exif/"
+    "live": "https://nopanpeno.github.io/NvanHub/exif/",
+    "story": "Foto membawa metadata, termasuk lokasi, yang sering tidak disadari pemiliknya. NvanExif menampilkannya dan memungkinkan Anda memilih apa yang dihapus, tanpa mengunggah foto ke server."
   }
 ]
