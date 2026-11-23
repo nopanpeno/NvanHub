@@ -198,12 +198,6 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   background: var(--acc);
 }
 @keyframes ticker { to { transform: translateX(-50%); } }
-/* Kata di bawah kursor diberi latar aksen (langsung, tanpa transisi). Padding dan margin negatif menjaga jarak tetap. */
-.ticker-set li > span { display: inline-block; padding-inline: 0.2em; margin-inline: -0.2em; }
-@media (hover: hover) {
-  .ticker:hover .ticker-track { animation-play-state: paused; }
-  .ticker-set li > span:hover { background: var(--acc); color: var(--on-acc); }
-}
 
 /* ---------- proyek ---------- */
 .projects { padding: var(--section) var(--gutter); scroll-margin-top: 96px; }
