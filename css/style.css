@@ -262,26 +262,6 @@ sakuga-tabs { display: block; max-width: 100%; }
   text-decoration-color: var(--acc); text-decoration-thickness: 3px; text-underline-offset: 6px;
 }
 
-.story { width: 100%; }
-.story summary {
-  display: inline-flex; align-items: center; min-height: 44px;
-  font-weight: 600; cursor: pointer; list-style: none;
-  text-decoration: underline; text-decoration-color: var(--acc);
-  text-decoration-thickness: 3px; text-underline-offset: 6px;
-}
-.story summary::-webkit-details-marker { display: none; }
-.story .s-close, .story[open] .s-open { display: none; }
-.story[open] .s-close { display: inline; }
-.story p { margin-top: 0.5rem; color: var(--ink-2); }
-/* Cerita terbuka: teks muncul naik pelan. Hanya opacity dan transform, jadi tinggi kartu tidak dianimasikan. */
-@media (prefers-reduced-motion: no-preference) {
-  .story[open] p { animation: storyIn var(--t-slow) var(--ease-out) both; }
-}
-@keyframes storyIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: none; }
-}
-
 .empty {
   grid-column: 1 / -1; display: flex; flex-direction: column; align-items: flex-start; gap: 12px;
   padding: 28px; background: var(--card); border: var(--bw) solid var(--ink); border-radius: var(--r);
