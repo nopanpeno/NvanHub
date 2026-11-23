@@ -29,20 +29,6 @@ function makeLink(href, label, text, cls) {
   return a;
 }
 
-// Cerita opsional ("kenapa aku bikin ini"). Pakai <details> asli, jadi Enter dan Space jalan sendiri.
-function makeStory(p) {
-  const box = el('details', 'story');
-  const sum = el('summary');
-  const open = el('span', 's-open', 'Baca ceritanya');
-  const close = el('span', 's-close', 'Tutup cerita');
-  const who = el('span', 'sr-only', ` ${p.name}`);
-  open.append(who.cloneNode(true));
-  close.append(who);
-  sum.append(open, close);
-  box.append(sum, el('p', null, p.story));
-  return box;
-}
-
 // Salin tautan: tanda selesai hanya kalau benar-benar tersalin.
 async function copyLink(btn, p) {
   try {
@@ -81,7 +67,6 @@ function makeCard(p, no) {
     el('p', 'desc', p.desc),
     el('p', 'meta', p.tags.join(' · ')),
   );
-  if (p.story) card.append(makeStory(p));
   card.append(actions);
   return card;
 }

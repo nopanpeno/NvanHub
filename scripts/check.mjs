@@ -34,8 +34,6 @@ if (projects) {
       for (const k of ['name', 'tagline', 'desc']) if (!text(p[k])) fail(`${at}: kolom "${k}" kosong`);
       for (const k of ['repo', 'live']) if (!isHttps(p[k])) fail(`${at}: kolom "${k}" harus tautan https`);
       if (!Array.isArray(p.tags) || p.tags.length === 0 || !p.tags.every(text)) fail(`${at}: "tags" harus daftar teks, minimal satu`);
-      if ('story' in p && !text(p.story)) fail(`${at}: "story" kalau ada tidak boleh kosong`);
-      if (p.story && p.story.length > 300) fail(`${at}: "story" ${p.story.length} karakter, jaga di bawah 300 supaya kartu tidak kepanjangan`);
       if (!['alat', 'foto', 'game'].includes(p.kategori)) fail(`${at}: "kategori" harus alat, foto, atau game (sesuai tab)`);
       if (names.has(p.name)) fail(`${at}: nama proyek dobel`);
       names.add(p.name);

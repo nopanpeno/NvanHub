@@ -1,6 +1,6 @@
 # NvanHub
 
-Web utama buat semua repo saya. Isinya kartu proyek, cerita singkat, dan tautan.
+Web utama buat semua repo saya. Isinya kartu proyek dan tautan.
 
 Dibuat dengan HTML, CSS, dan JS biasa. Hosting di GitHub Pages. Font Anton dan Onest disimpan di repo, tanpa CDN. Tanpa framework dan tanpa build.
 
@@ -31,16 +31,6 @@ Buka `data/projects.json`, lalu tambah satu objek di akhir daftar:
 ```
 
 Semua kolom di atas wajib diisi. `kategori` harus salah satu dari `alat`, `foto`, atau `game`, sesuai tab kategori di halaman. Kartu dan filter dibuat otomatis dari file ini. Tidak ada kode lain yang perlu diubah.
-
-### Cerita di kartu (opsional)
-
-Tambah kolom `story` kalau mau cerita "kenapa aku bikin ini":
-
-```json
-"story": "Dua tiga kalimat. Kenapa dibuat, apa yang dipelajari."
-```
-
-Kartu yang punya `story` dapat tombol "Baca ceritanya" yang membuka teks di tempat. Kartu tanpa `story` tampil seperti biasa. Jaga tetap pendek (di bawah 300 karakter, sekitar 200 lebih baik), supaya kartu tidak terlalu panjang di HP.
 
 ## Ubah teks halaman
 
@@ -79,7 +69,7 @@ Cek jalan di GitHub Actions tiap PR dan push ke `main`: cek statis, cek kontrak 
 node scripts/check.mjs
 ```
 
-Memeriksa `projects.json` (kolom wajib, tautan https, panjang story), syntax semua file JS, file yang dirujuk `index.html` dan CSS harus ada, dan tidak ada yang dimuat dari CDN.
+Memeriksa `projects.json` (kolom wajib, tautan https), syntax semua file JS, file yang dirujuk `index.html` dan CSS harus ada, dan tidak ada yang dimuat dari CDN.
 
 ```
 npm install --no-save playwright
