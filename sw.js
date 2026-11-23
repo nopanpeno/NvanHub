@@ -3,7 +3,7 @@
 // Tiap tool (folder) punya cache sendiri. Kalau satu tool gagal di-cache, hub dan tool lain
 // tetap jalan. Ganti nomor versi tool hanya kalau daftar filenya berubah.
 const HUB = {
-  cache: 'nvanhub-v11',
+  cache: 'nvanhub-v12',
   assets: [
     './',
     'index.html',
