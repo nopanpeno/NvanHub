@@ -124,12 +124,13 @@ const TOOLS = {
     ],
   },
   exif: {
-    cache: 'nvanhub-exif-v1',
+    cache: 'nvanhub-exif-v2',
     assets: [
       'exif/',
       'exif/index.html',
       'exif/logo.svg',
       'exif/src/style.css',
+      'exif/src/theme-boot.js',
       'exif/src/main.js',
       'exif/src/clean.js',
       'exif/src/exif-groups.js',
@@ -141,8 +142,6 @@ const TOOLS = {
       'exif/src/png.js',
       'exif/src/scan.js',
       'exif/src/webp.js',
-      'exif/src/fonts/dm-sans-latin-wght-normal.woff2',
-      'exif/src/fonts/space-grotesk-latin-wght-normal.woff2',
       'exif/vendor/exifr.esm.js',
       'exif/vendor/piexifjs.esm.js',
       'exif/vendor/leaflet.esm.js',
