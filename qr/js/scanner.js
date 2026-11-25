@@ -14,6 +14,10 @@ function status(message, isError = false) {
   $('#scan-status').classList.toggle('error', isError);
 }
 
+function notify(message) {
+  $('#toast').show(message);
+}
+
 function showResult(value) {
   stopCamera();
   $('#result-text').textContent = value;
@@ -142,18 +146,14 @@ async function scanImage(file) {
   }
 }
 
-document.querySelectorAll('.scanner-tab').forEach((tab) => tab.addEventListener('click', () => {
-  const isCamera = tab.id === 'camera-tab';
+// Tab cara memindai (sakuga-tabs): "kamera" atau "gambar".
+$('#scan-tabs').addEventListener('change', (event) => {
+  const isCamera = event.detail.value === 'kamera';
   stopCamera();
-  document.querySelectorAll('.scanner-tab').forEach((item) => {
-    const active = item === tab;
-    item.classList.toggle('active', active);
-    item.setAttribute('aria-selected', String(active));
-  });
   $('#camera-panel').hidden = !isCamera;
   $('#image-panel').hidden = isCamera;
   status(isCamera ? 'Arahkan kamera ke QR code yang ingin dibaca.' : 'Pilih gambar yang berisi QR code.');
-}));
+});
 
 $('#camera-button').addEventListener('click', startCamera);
 $('#image-input').addEventListener('change', (event) => scanImage(event.target.files[0]));
@@ -161,6 +161,7 @@ $('#copy-button').addEventListener('click', async () => {
   try {
     await navigator.clipboard.writeText($('#result-text').textContent);
     $('#copy-button').textContent = 'Tersalin';
+    notify('Teks sudah disalin');
     setTimeout(() => { $('#copy-button').textContent = 'Salin teks'; }, 1600);
   } catch {
     status('Tidak bisa menyalin otomatis. Pilih teks hasil pindai untuk menyalinnya.', true);

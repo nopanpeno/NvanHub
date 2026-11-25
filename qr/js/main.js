@@ -75,7 +75,13 @@ function setDownloadState(enabled) {
   $('#download-svg').disabled = !enabled;
 }
 
-async function refresh() {
+// Hasil aksi juga tampil sebagai teks (toast), tidak hanya lewat animasi sakuga.
+function notify(message) {
+  $('#toast').show(message);
+}
+
+// Galat validasi hanya tampil setelah kolom ditinggalkan (blur). Saat mengetik atau fokus lagi, galat hilang.
+async function refresh(showErrors = false) {
   const thisRender = ++renderId;
   const result = getPayload();
   if (result.error) {
@@ -83,7 +89,8 @@ async function refresh() {
     canvas.hidden = true;
     $('#qr-placeholder').hidden = false;
     setDownloadState(false);
-    setStatus(result.error, Boolean($('#link-input').value || $('#text-input').value || $('#ssid-input').value));
+    if (showErrors) setStatus(result.error, true);
+    else setStatus('Isi data untuk melihat QR code.');
     return;
   }
   try {
@@ -100,7 +107,7 @@ async function refresh() {
     setDownloadState(true);
     const ratio = contrastRatio($('#foreground-input').value, $('#background-input').value);
     if (ratio < 4) {
-      setStatus('Kontras warna rendah. QR mungkin sulit dipindai. Pilih warna yang lebih kontras.', true);
+      setStatus('Kontras warna rendah. Pilih warna yang lebih kontras agar QR mudah dipindai.', true);
     } else {
       setStatus('QR code siap dipindai.');
     }
@@ -110,29 +117,24 @@ async function refresh() {
     canvas.hidden = true;
     $('#qr-placeholder').hidden = false;
     setDownloadState(false);
-    setStatus('Konten terlalu panjang untuk dibuat sebagai QR code.', true);
+    setStatus('Konten terlalu panjang untuk QR code. Persingkat teks atau tautannya.', true);
   }
 }
 
-function updateActiveTab(type) {
+// Tab jenis konten (sakuga-tabs) memberi tahu lewat event "change" dengan detail.value.
+function updateActiveType(type) {
   contentType = type;
-  document.querySelectorAll('.tab').forEach((tab) => {
-    const active = tab.dataset.type === type;
-    tab.classList.toggle('active', active);
-    tab.setAttribute('aria-selected', String(active));
-    tab.tabIndex = active ? 0 : -1;
-  });
   document.querySelectorAll('.form-panel').forEach((panel) => {
-    const active = panel.dataset.panel === type;
-    panel.hidden = !active;
-    panel.classList.toggle('active', active);
+    panel.hidden = panel.dataset.panel !== type;
   });
-  $('#content-panel').setAttribute('aria-labelledby', `tab-${type}`);
   refresh();
 }
 
-document.querySelectorAll('.tab').forEach((tab) => tab.addEventListener('click', () => updateActiveTab(tab.dataset.type)));
-['#link-input', '#text-input', '#ssid-input', '#password-input', '#security-input', '#hidden-input', '#foreground-input', '#background-input'].forEach((selector) => $(selector).addEventListener('input', refresh));
+$('#content-tabs').addEventListener('change', (event) => updateActiveType(event.detail.value));
+['#link-input', '#text-input', '#ssid-input', '#password-input', '#security-input', '#hidden-input', '#foreground-input', '#background-input'].forEach((selector) => $(selector).addEventListener('input', () => refresh(false)));
+const textFields = ['#link-input', '#text-input', '#ssid-input', '#password-input'];
+textFields.forEach((selector) => $(selector).addEventListener('blur', () => refresh(true)));
+textFields.forEach((selector) => $(selector).addEventListener('focus', () => refresh(false)));
 $('#security-input').addEventListener('change', () => {
   const hasPassword = $('#security-input').value !== 'nopass';
   $('#password-field').hidden = !hasPassword;
@@ -166,6 +168,7 @@ $('#download-png').addEventListener('click', async () => {
     color: { dark: $('#foreground-input').value, light: $('#background-input').value }
   });
   download(data, 'nvanqr.png');
+  notify('PNG sudah diunduh');
 });
 
 $('#download-svg').addEventListener('click', async () => {
@@ -178,6 +181,7 @@ $('#download-svg').addEventListener('click', async () => {
     color: { dark: $('#foreground-input').value, light: $('#background-input').value }
   });
   download(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`, 'nvanqr.svg');
+  notify('SVG sudah diunduh');
 });
 
 function download(href, filename) {
@@ -185,29 +189,6 @@ function download(href, filename) {
   anchor.href = href;
   anchor.download = filename;
   anchor.click();
-}
-
-// Titik latar bergeser sedikit mengikuti kursor (paralaks halus), seperti NvanCut.
-// Hanya untuk mouse, dan dimatikan jika pengguna minta gerak minimal.
-if (matchMedia('(pointer: fine)').matches && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  const root = document.documentElement;
-  const RANGE = 6;
-  let targetX = 0, targetY = 0, currentX = 0, currentY = 0, frame = 0;
-
-  const tick = () => {
-    currentX += (targetX - currentX) * 0.12;
-    currentY += (targetY - currentY) * 0.12;
-    root.style.setProperty('--dx', `${currentX.toFixed(2)}px`);
-    root.style.setProperty('--dy', `${currentY.toFixed(2)}px`);
-    const settled = Math.abs(targetX - currentX) < 0.05 && Math.abs(targetY - currentY) < 0.05;
-    frame = settled ? 0 : requestAnimationFrame(tick);
-  };
-
-  window.addEventListener('pointermove', (event) => {
-    targetX = (0.5 - event.clientX / window.innerWidth) * 2 * RANGE;
-    targetY = (0.5 - event.clientY / window.innerHeight) * 2 * RANGE;
-    if (!frame) frame = requestAnimationFrame(tick);
-  }, { passive: true });
 }
 
 refresh();

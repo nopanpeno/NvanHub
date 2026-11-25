@@ -94,7 +94,7 @@ const TOOLS = {
     ],
   },
   qr: {
-    cache: 'nvanhub-qr-v1',
+    cache: 'nvanhub-qr-v2',
     assets: [
       'qr/',
       'qr/index.html',
@@ -105,8 +105,6 @@ const TOOLS = {
       'qr/logo.svg',
       'qr/vendor/qrcode.js',
       'qr/vendor/jsQR.js',
-      'qr/fonts/dm-sans-latin-wght-normal.woff2',
-      'qr/fonts/space-grotesk-latin-wght-normal.woff2',
     ],
   },
   cut: {
