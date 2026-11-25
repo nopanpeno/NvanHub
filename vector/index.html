@@ -3,109 +3,136 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#0b100d">
+  <meta name="theme-color" content="#fbf9f4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#100e24" media="(prefers-color-scheme: dark)">
   <meta name="description" content="Ubah gambar atau SVG jadi XML Alight Motion. Semua jalan di browser, file tidak diunggah.">
-  <title>SVG ke XML Alight Motion</title>
+  <link rel="icon" type="image/svg+xml" href="../assets/logo.svg">
+  <link rel="preload" href="../assets/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <title>SVG ke XML Alight Motion — NvanVector</title>
+  <script>
+    // Tema pilihan pengguna dipasang sebelum halaman tampil, supaya tidak berkedip.
+    try { var t = localStorage.getItem('nvanhub-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <nav class="hub-nav" aria-label="NvanHub">
-    <a class="hub-back" href="../">&larr; Kembali ke NvanHub</a>
-  </nav>
-  <header class="top">
-    <a class="brand" href="./" aria-label="NvanVector">
-      <span class="brand-mark" aria-hidden="true">&gt;_</span>
-      <span>NvanVector</span>
+  <a class="skip-link" href="#main">Lewati ke konten</a>
+
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="NvanVector, beranda">
+      <img class="mark" src="../assets/logo.svg" width="36" height="36" alt="" aria-hidden="true">
+      <span class="brand-name">NvanVector</span>
     </a>
+    <nav aria-label="Menu utama">
+      <sakuga-toggle id="tema" label="Mode gelap"></sakuga-toggle>
+    </nav>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1">
     <noscript><p class="msg msg-warn">Halaman ini butuh JavaScript untuk mengubah gambar jadi XML.</p></noscript>
 
-    <h1>SVG ke XML Alight Motion</h1>
-    <p class="lead">Gambar jadi garis vector, lalu bisa diimpor ke Alight Motion. Semua jalan di browser, file tidak diunggah ke mana-mana.</p>
+    <section class="hero" aria-labelledby="page-title">
+      <a class="hub-back" href="../">Kembali ke NvanHub</a>
+      <p class="eyebrow">Pengubah vector</p>
+      <h1 id="page-title">SVG ke XML<br>Alight Motion.</h1>
+      <p class="lead">Ubah gambar menjadi garis vector, lalu impor ke Alight Motion. Semua proses berjalan di browser dan file Anda tidak diunggah ke mana pun.</p>
+    </section>
 
-    <section>
-      <p class="step step-1">01 / 03</p>
-      <h2>Masukkan gambar atau SVG</h2>
-      <label class="drop" for="file">
-        <input id="file" type="file" accept="image/*,.svg" class="sr-only">
-        <span class="drop-title">Pilih file dari perangkat</span>
-        <span class="muted">Pilih gambar untuk ditrace, atau SVG untuk langsung dikonversi.</span>
-      </label>
+    <div class="workspace">
+      <div class="card editor">
+        <section class="block" aria-labelledby="step1-title">
+          <p class="step-label">Langkah 1</p>
+          <h2 id="step1-title">Masukkan gambar atau SVG</h2>
+          <label class="drop" for="file">
+            <input id="file" type="file" accept="image/*,.svg" class="visually-hidden">
+            <strong class="drop-title">Pilih file dari perangkat</strong>
+            <span>Pilih gambar untuk di-trace, atau SVG untuk langsung dikonversi.</span>
+          </label>
 
-      <div id="traceBox" hidden>
-        <div class="grid">
-          <div>
-            <label for="colors">Maks jumlah warna</label>
-            <input id="colors" type="number" min="2" max="64" value="8" aria-describedby="traceHelp">
+          <div id="traceBox" hidden>
+            <div class="grid">
+              <div>
+                <label for="colors">Maks jumlah warna</label>
+                <input id="colors" class="field" type="number" min="2" max="64" value="8" aria-describedby="traceHelp">
+              </div>
+              <div class="wide">
+                <p class="field-name" id="detail-label">Detail</p>
+                <sakuga-tabs id="detail" label="Detail trace" selected="1">
+                  <option value="low">Ringan</option>
+                  <option value="mid">Sedang</option>
+                  <option value="high">Tinggi</option>
+                </sakuga-tabs>
+              </div>
+              <div>
+                <label for="maxside">Ukuran trace, sisi terpanjang (px)</label>
+                <input id="maxside" class="field" type="number" min="100" max="1500" value="1500">
+              </div>
+            </div>
+            <p class="note">Ringan: sedikit shape. Tinggi: banyak shape.</p>
+            <p id="traceHelp" class="note">Gambar diperbesar atau diperkecil ke ukuran ini sebelum trace, jadi tepinya halus. Makin besar, garis tipis (garis tepi anime) makin utuh, tapi trace lebih lama dan pathnya lebih banyak. Kalau di HP terlalu lama, turunkan ke 900. Warna campuran di tepi dibuang otomatis, jadi hasilnya bisa kurang dari angka maksimum. Latar transparan tidak dihitung sebagai warna. Kalau palet akhirnya dua warna (logo hitam putih), trace memakai Potrace yang dimuat dari internet, hasilnya lebih halus. Logo dua warna: isi 2. Gambar berwarna: 8 sampai 16 paling bersih, 16 menjaga warna kecil dan kulit. Di atas 16 warna lapis saling menimpa supaya tidak ada celah putih. Jangan isi 2 untuk gambar berwarna, semua warnanya jadi satu.</p>
+            <div class="actions"><sakuga-button id="traceBtn">Trace jadi SVG</sakuga-button></div>
           </div>
-          <div>
-            <label for="detail">Detail</label>
-            <select id="detail">
-              <option value="low">Ringan (sedikit shape)</option>
-              <option value="mid" selected>Sedang</option>
-              <option value="high">Tinggi (banyak shape)</option>
-            </select>
+
+          <p class="or" aria-hidden="true">atau</p>
+          <label for="svgText" class="label">Tempel kode SVG</label>
+          <p class="note">Tempel dokumen SVG lengkap kalau Anda sudah punya kodenya.</p>
+          <textarea id="svgText" class="field" spellcheck="false" placeholder="<svg ...>...</svg>"></textarea>
+        </section>
+
+        <section class="block" aria-labelledby="step2-title">
+          <p class="step-label">Langkah 2</p>
+          <h2 id="step2-title">Atur proyek</h2>
+          <div class="grid">
+            <div><label for="w">Lebar kanvas</label><input id="w" class="field" type="number" value="1080"></div>
+            <div><label for="h">Tinggi kanvas</label><input id="h" class="field" type="number" value="1920"></div>
+            <div><label for="fit">Ukuran gambar (%)</label><input id="fit" class="field" type="number" min="10" max="300" value="100"></div>
+            <div><label for="dur">Durasi (ms)</label><input id="dur" class="field" type="number" value="5000"></div>
+            <div><label for="bg">Warna latar (#AARRGGBB)</label><sakuga-input id="bg" label="Warna latar (#AARRGGBB)" type="text" value="#ff000000"></sakuga-input></div>
+            <div><label for="minarea">Buang bercak kecil (% luas gambar)</label><input id="minarea" class="field" type="number" min="0" step="0.01" value="0.05"></div>
+            <div><label for="maxshapes">Maks jumlah shape (0 = bebas)</label><input id="maxshapes" class="field" type="number" min="0" value="200"></div>
           </div>
+          <div class="checks">
+            <sakuga-checkbox id="layer" checked>Mode trace: buang lubang, urut dari besar ke kecil</sakuga-checkbox>
+            <sakuga-checkbox id="merge" checked>Gabung bentuk kecil berwarna sama (yang besar, misal bulatan mahkota, tetap shape sendiri selama muat di batas shape)</sakuga-checkbox>
+            <sakuga-checkbox id="stroke" checked>Bawa garis pinggir</sakuga-checkbox>
+          </div>
+          <div class="actions"><sakuga-button id="convertBtn">Ubah ke XML</sakuga-button></div>
+          <p id="status" class="msg" role="status"></p>
+        </section>
+      </div>
+
+      <aside class="card preview-card" aria-label="Pratinjau dan unduhan">
+        <div class="preview-top">
           <div>
-            <label for="maxside">Ukuran trace, sisi terpanjang (px)</label>
-            <input id="maxside" type="number" min="100" max="1500" value="1500">
+            <p class="step-label">Pratinjau</p>
+            <h2>Hasil</h2>
           </div>
         </div>
-        <p id="traceHelp" class="muted">Gambar diperbesar atau diperkecil ke ukuran ini sebelum trace, jadi tepinya halus. Makin besar, garis tipis (garis tepi anime) makin utuh, tapi trace lebih lama dan pathnya lebih banyak. Kalau di HP terlalu lama, turunkan ke 900. Warna campuran di tepi dibuang otomatis, jadi hasilnya bisa kurang dari angka maksimum. Latar transparan tidak dihitung sebagai warna. Kalau palet akhirnya dua warna (logo hitam putih), trace memakai Potrace yang dimuat dari internet, hasilnya lebih halus. Logo dua warna: isi 2. Gambar berwarna: 8 sampai 16 paling bersih, 16 menjaga warna kecil dan kulit. Di atas 16 warna lapis saling menimpa supaya tidak ada celah putih. Jangan isi 2 untuk gambar berwarna, semua warnanya jadi satu.</p>
-        <div class="actions"><button id="traceBtn" type="button" class="btn btn-primary">Trace jadi SVG</button></div>
-      </div>
+        <p id="previewEmpty" class="empty">Pratinjau muncul setelah gambar dipilih atau hasil dikonversi.</p>
+        <div class="preview" id="srcPreview" hidden>
+          <figure><figcaption>Gambar asli</figcaption><img id="srcImg" alt="Gambar asli"></figure>
+          <figure><figcaption>Hasil SVG</figcaption><img id="svgImg" alt="Hasil SVG"></figure>
+        </div>
+        <div class="preview" id="outPreview" hidden>
+          <figure>
+            <figcaption>Pratinjau seperti di Alight Motion (garis pinggir belum digambar)</figcaption>
+            <img id="outImg" alt="Pratinjau hasil XML">
+          </figure>
+        </div>
 
-      <div class="preview" id="srcPreview" hidden>
-        <figure><figcaption>Gambar asli</figcaption><img id="srcImg" alt="gambar asli"></figure>
-        <figure><figcaption>Hasil SVG</figcaption><img id="svgImg" alt="hasil svg"></figure>
-      </div>
-
-      <p class="or" aria-hidden="true">atau</p>
-      <label for="svgText" class="field">Tempel kode SVG</label>
-      <p class="muted">Tempel dokumen SVG lengkap kalau kamu sudah punya kodenya.</p>
-      <textarea id="svgText" spellcheck="false" placeholder="<svg ...>...</svg>"></textarea>
-    </section>
-
-    <section>
-      <p class="step step-2">02 / 03</p>
-      <h2>Atur proyek</h2>
-      <div class="grid">
-        <div><label for="w">Lebar kanvas</label><input id="w" type="number" value="1080"></div>
-        <div><label for="h">Tinggi kanvas</label><input id="h" type="number" value="1920"></div>
-        <div><label for="fit">Ukuran gambar (%)</label><input id="fit" type="number" min="10" max="300" value="100"></div>
-        <div><label for="dur">Durasi (ms)</label><input id="dur" type="number" value="5000"></div>
-        <div><label for="bg">Warna latar (#AARRGGBB)</label><input id="bg" type="text" value="#ff000000"></div>
-        <div><label for="minarea">Buang bercak kecil (% luas gambar)</label><input id="minarea" type="number" min="0" step="0.01" value="0.05"></div>
-        <div><label for="maxshapes">Maks jumlah shape (0 = bebas)</label><input id="maxshapes" type="number" min="0" value="200"></div>
-      </div>
-      <div class="checks">
-        <label class="check"><input id="layer" type="checkbox" checked> Mode trace: buang lubang, urut dari besar ke kecil</label>
-        <label class="check"><input id="merge" type="checkbox" checked> Gabung bentuk kecil berwarna sama (yang besar, misal bulatan mahkota, tetap shape sendiri selama muat di batas shape)</label>
-        <label class="check"><input id="stroke" type="checkbox" checked> Bawa garis pinggir</label>
-      </div>
-      <div class="actions"><button id="convertBtn" type="button" class="btn btn-primary">Convert ke XML</button></div>
-      <p id="status" class="msg" role="status"></p>
-    </section>
-
-    <section>
-      <p class="step step-3">03 / 03</p>
-      <h2>Unduh hasil XML</h2>
-      <div class="preview" id="outPreview" hidden>
-        <figure>
-          <figcaption>Pratinjau seperti di Alight Motion (garis pinggir belum digambar)</figcaption>
-          <img id="outImg" alt="Pratinjau hasil XML">
-        </figure>
-      </div>
-      <textarea id="xmlOut" spellcheck="false" readonly placeholder="XML muncul di sini"></textarea>
-      <div class="actions">
-        <button id="dlBtn" type="button" class="btn btn-primary" disabled>Download .xml</button>
-        <button id="copyBtn" type="button" class="btn" disabled>Salin</button>
-      </div>
-      <ul id="warnList" aria-live="polite"></ul>
-      <p class="muted">Impor file XML-nya ke Alight Motion sama seperti preset XML biasa. Impor dan urutan layer sudah dites di aplikasi. Alight Motion tidak menampilkan lubang di dalam satu path, jadi mode trace membuang lubang dan memakai shape di atasnya buat mengisi. Lebar garis pinggir belum dites.</p>
-    </section>
+        <section class="block" aria-labelledby="step3-title">
+          <p class="step-label">Langkah 3</p>
+          <h2 id="step3-title">Unduh hasil XML</h2>
+          <textarea id="xmlOut" class="field" spellcheck="false" readonly placeholder="XML muncul di sini"></textarea>
+          <div class="actions">
+            <sakuga-button id="dlBtn" disabled>Unduh .xml</sakuga-button>
+            <sakuga-button id="copyBtn" variant="secondary" disabled>Salin</sakuga-button>
+          </div>
+          <ul id="warnList" aria-live="polite"></ul>
+          <p class="note">Impor file XML-nya ke Alight Motion sama seperti preset XML biasa. Impor dan urutan layer sudah dites di aplikasi. Alight Motion tidak menampilkan lubang di dalam satu path, jadi mode trace membuang lubang dan memakai shape di atasnya buat mengisi. Lebar garis pinggir belum dites.</p>
+        </section>
+      </aside>
+    </div>
   </main>
 
   <footer class="foot">
@@ -113,13 +140,24 @@
     <a href="https://github.com/nopanpeno/NvanVector" rel="noopener">GitHub</a>
   </footer>
 
-<script src="vendor/imagetracer_v1.2.6.js"></script>
-<script src="palette.js"></script>
-<script src="tumpang.js"></script>
-<script src="binarytrace.js"></script>
-<script src="converter.js"></script>
+  <sakuga-toast id="toast" class="toast"></sakuga-toast>
+
+  <!-- Elemen sakuga-vfx dan saklar tema dipakai bersama dengan NvanHub (js/sakuga, js/theme.js). -->
+  <script src="../js/sakuga/button.js" defer></script>
+  <script src="../js/sakuga/tabs.js" defer></script>
+  <script src="../js/sakuga/toast.js" defer></script>
+  <script src="../js/sakuga/toggle.js" defer></script>
+  <script src="../js/sakuga/checkbox.js" defer></script>
+  <script src="../js/sakuga/input.js" defer></script>
+  <script src="../js/theme.js" defer></script>
+  <script src="vendor/imagetracer_v1.2.6.js"></script>
+  <script src="palette.js"></script>
+  <script src="tumpang.js"></script>
+  <script src="binarytrace.js"></script>
+  <script src="converter.js"></script>
 <script>
-(function () {
+// Dijalankan setelah elemen sakuga terdaftar, supaya properti disabled dan value berfungsi.
+document.addEventListener('DOMContentLoaded', function () {
   var $ = function (id) { return document.getElementById(id); };
   var fileEl = $('file'), traceBox = $('traceBox'), srcPrev = $('srcPreview');
   var srcImg = $('srcImg'), svgImg = $('svgImg'), svgText = $('svgText');
@@ -162,7 +200,7 @@
         $('layer').checked = false; // SVG buatan sendiri: jaga urutan aslinya
         traceBox.hidden = true;
         srcPrev.hidden = true;
-        say('SVG dimuat. Lanjut atur proyek lalu Convert.', 'ok');
+        say('SVG dimuat. Lanjut atur proyek lalu ubah ke XML.', 'ok');
       };
       r.readAsText(f);
       return;
@@ -225,6 +263,7 @@
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(currentImage, 0, 0, cw, ch);
         var imgd = ctx.getImageData(0, 0, cw, ch);
+        // $('detail').value: nilai tab yang dipilih (low, mid, high)
         var detail = { low: { pathomit: 20, ltres: 2, qtres: 2 }, mid: { pathomit: 8, ltres: 1, qtres: 1 }, high: { pathomit: 2, ltres: 0.5, qtres: 0.5 } }[$('detail').value];
         var colors = Math.min(64, Math.max(2, parseInt($('colors').value, 10) || 8));
         var pal = NvanPalette.makePalette(imgd, colors);
@@ -257,8 +296,8 @@
         showSvg(svg);
         $('layer').checked = true; // hasil trace: lubang diisi lapisan di atasnya
         say(usedPotrace
-          ? 'Trace selesai (Potrace, dua warna). Lanjut atur proyek lalu Convert.'
-          : 'Trace selesai.' + note + ' Untuk logo dua warna, coba Jumlah warna 2. Lanjut atur proyek lalu Convert.', note ? 'warn' : 'ok');
+          ? 'Trace selesai (Potrace, dua warna). Lanjut atur proyek lalu ubah ke XML.'
+          : 'Trace selesai.' + note + ' Untuk logo dua warna, coba Jumlah warna 2. Lanjut atur proyek lalu ubah ke XML.', note ? 'warn' : 'ok');
       } catch (e) {
         say('Trace gagal: ' + e.message, 'warn');
       }
@@ -322,17 +361,24 @@
     a.click();
     document.body.removeChild(a);
     setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+    $('toast').show('File ' + lastName + '.xml sudah diunduh');
   });
 
   copyBtn.addEventListener('click', function () {
-    var done = function () { say('XML disalin.', 'ok'); };
+    var done = function () { say('XML disalin.', 'ok'); $('toast').show('XML disalin'); };
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(xmlOut.value).then(done, function () { xmlOut.select(); document.execCommand('copy'); done(); });
     } else {
       xmlOut.select(); document.execCommand('copy'); done();
     }
   });
-})();
+
+  // Klik label harus memindahkan fokus ke kolom sakuga-input (label for= tidak selalu membawa fokus ke elemen custom).
+  document.querySelectorAll('label[for]').forEach(function (label) {
+    var target = document.getElementById(label.htmlFor);
+    if (target && target.tagName === 'SAKUGA-INPUT') label.addEventListener('click', function () { target.focus(); });
+  });
+});
 </script>
 </body>
 </html>
