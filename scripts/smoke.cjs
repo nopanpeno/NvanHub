@@ -216,6 +216,15 @@ async function visitExif(browser, base, { width }) {
   await page.setInputFiles('#file', path.join(root, 'exif/test/fixtures/sample.jpg'));
   await page.waitForSelector('#result:not([hidden])', { timeout: 8000 }).catch(() => {});
   expect(await page.locator('#result').isVisible(), `[${label}] hasil baca metadata tidak tampil`);
+  // Checkbox sakuga: orientasi ada, dan kotak field yang bisa dihapus ikut menghitung tombol "Hapus yang dicentang".
+  expect((await page.locator('sakuga-checkbox#orient').count()) === 1, `[${label}] checkbox orientasi sakuga tidak ada`);
+  expect((await page.locator('#groups sakuga-checkbox').count()) > 0, `[${label}] checkbox field sakuga tidak tampil`);
+  const removable = page.locator('#groups sakuga-checkbox:not([disabled])').first();
+  if (await removable.count()) {
+    await removable.click();
+    expect((await page.textContent('#btn-sel')).includes('(1)'), `[${label}] tombol "Hapus yang dicentang" tidak menghitung checkbox sakuga`);
+    await removable.click();
+  }
   await page.click('#btn-all');
   await page.waitForSelector('#done:not([hidden])', { timeout: 15000 }).catch(() => {});
   expect(await page.locator('#done').isVisible(), `[${label}] hasil foto bersih tidak tampil`);
