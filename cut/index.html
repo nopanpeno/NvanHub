@@ -3,113 +3,116 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#fff9ed">
+  <meta name="description" content="NvanCut membantu kamu membagikan tautan panjang dengan lebih ringkas.">
+  <meta name="theme-color" content="#fbf9f4" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#100e24" media="(prefers-color-scheme: dark)">
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="./apple-touch-icon.png">
-  <meta name="description" content="NvanCut membantu kamu membagikan tautan panjang dengan lebih ringkas.">
   <title>NvanCut — Link panjang? Pangkas aja.</title>
-  <link rel="preload" href="./fonts/dm-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
-  <link rel="preload" href="./fonts/space-grotesk-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <script>
+    // Tema pilihan pengguna dipasang sebelum halaman tampil, supaya tidak berkedip.
+    try { var t = localStorage.getItem('nvanhub-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+  <link rel="preload" href="../assets/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="./styles.css">
-  <script src="./app.js" defer></script>
 </head>
 <body>
-  <nav class="hub-nav" aria-label="NvanHub"><a class="hub-back" href="../">&larr; Kembali ke NvanHub</a></nav>
+  <a class="skip-link" href="#main">Lewati ke konten</a>
+
   <header class="site-header">
-    <a class="brand" href="./" aria-label="NvanCut beranda">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M24,232 V24 H84 L176,146 V24 H232 V232 H172 L80,110 V232 Z"/></svg>
-      </span>
-      <span class="brand-word">NvanCut</span>
+    <a class="brand" href="./" aria-label="NvanCut, beranda">
+      <img class="mark" src="../assets/logo.svg" width="36" height="36" alt="" aria-hidden="true">
+      <span class="brand-name">NvanCut</span>
     </a>
-    <nav class="header-nav" aria-label="Navigasi utama">
-      <span class="availability"><span class="availability-dot"></span> LINK PENDEK, SIAP PAKAI</span>
+    <nav aria-label="Navigasi utama">
       <a class="header-link" href="#cara-kerja">Cara kerja</a>
+      <sakuga-toggle id="tema" label="Mode gelap"></sakuga-toggle>
     </nav>
   </header>
 
-  <main>
+  <main id="main" tabindex="-1">
     <section class="hero" aria-labelledby="hero-title">
       <div class="hero-copy">
-        <div class="eyebrow">LINK PANJANG? PANGKAS AJA.</div>
-        <h1 id="hero-title">Link panjang?<br><span>Pangkas aja.</span></h1>
-        <p class="hero-description">Bikin tautan yang lebih ringkas, gampang diingat, dan enak dibagikan ke siapa saja.</p>
-        <div class="hero-benefits" aria-label="Keunggulan NvanCut">
-          <span>Simpel digunakan</span>
-          <span>Cocok untuk Docs &amp; Drive</span>
-          <span>Gratis, tanpa akun</span>
-        </div>
-        <a class="hero-scroll" href="#link-pilihan">LIHAT LINK YANG TERSEDIA</a>
-        <span class="hero-sticker" aria-hidden="true">POTONG<br>YANG<br>PANJANG!</span>
+        <a class="hub-back" href="../">Kembali ke NvanHub</a>
+        <p class="eyebrow">Link panjang? Pangkas aja.</p>
+        <h1 id="hero-title">Link panjang?<br>Pangkas aja.</h1>
+        <p class="lead">Bikin tautan yang lebih ringkas, gampang diingat, dan enak dibagikan ke siapa saja.</p>
+        <ul class="benefits" aria-label="Keunggulan NvanCut">
+          <li>Simpel digunakan</li>
+          <li>Cocok untuk Docs &amp; Drive</li>
+          <li>Gratis, tanpa akun</li>
+        </ul>
+        <a class="hero-link" href="#link-pilihan">Lihat link yang tersedia</a>
       </div>
 
-      <section class="form-card" aria-labelledby="form-title">
-        <div class="card-heading">
-          <div><span class="card-kicker">01 / SIAPKAN LINK</span><h2 id="form-title">Siapkan shortlink</h2></div>
-        </div>
+      <section class="card form-card" aria-labelledby="form-title">
+        <p class="step-label">Langkah 1</p>
+        <h2 id="form-title">Siapkan shortlink</h2>
         <form id="shortlink-form" novalidate>
           <label for="destination">Link tujuan</label>
           <div class="input-wrap">
-                        <input id="destination" name="destination" type="url" placeholder="https://docs.google.com/..." autocomplete="url" required>
+            <input id="destination" class="field" name="destination" type="url" placeholder="https://docs.google.com/..." autocomplete="url" required>
           </div>
           <p class="field-hint">Tempel link dokumen atau halaman yang ingin kamu bagikan.</p>
 
           <label for="alias">Pilih nama pendek</label>
-          <div class="alias-wrap">
-            <span class="alias-hash" aria-hidden="true">#</span>
-            <input id="alias" name="alias" type="text" placeholder="notulen-rapat" autocomplete="off" maxlength="48" required aria-describedby="alias-help">
+          <div class="input-wrap">
+            <span aria-hidden="true">#</span>
+            <input id="alias" class="field" name="alias" type="text" placeholder="notulen-rapat" autocomplete="off" maxlength="48" required aria-describedby="alias-help">
           </div>
           <p class="field-hint" id="alias-help">Huruf, angka, tanda hubung, atau garis bawah.</p>
 
           <div class="preview-box">
-            <span class="preview-label">PREVIEW SHORTLINK</span>
+            <span class="preview-label">Pratinjau shortlink</span>
             <code id="alias-preview" aria-live="polite"></code>
           </div>
-          <button class="primary-button" type="submit">Cek &amp; siapkan</button>
+          <sakuga-button id="submit-button" type="submit">Cek dan siapkan</sakuga-button>
           <div id="form-message" class="form-message" role="status" aria-live="polite" hidden></div>
         </form>
-        <div class="static-note"><span class="note-icon" aria-hidden="true">!</span><span>Link baru aktif setelah pemilik situs menjalankan workflow “Tambah shortlink” di GitHub, biasanya 1–2 menit.</span></div>
+        <p class="static-note">Link baru aktif setelah pemilik situs menjalankan workflow “Tambah shortlink” di GitHub, biasanya 1–2 menit.</p>
       </section>
     </section>
 
     <section class="links-section" id="link-pilihan" aria-labelledby="links-title">
+      <p class="step-label">Langkah 2</p>
       <div class="section-heading">
-        <div><span class="card-kicker">02 / SIAP DIBAGIKAN</span><h2 id="links-title">Link pendek pilihan</h2></div>
-        <span id="link-count" class="link-count"></span>
+        <h2 id="links-title">Link pendek pilihan</h2>
+        <span id="link-count" class="count"></span>
       </div>
       <div id="links-list" class="links-list" aria-live="polite"></div>
-      <div id="links-empty" class="empty-state" hidden>Belum ada shortlink. Pemilik situs bisa menambahkan link lewat workflow <code>Tambah shortlink</code> di GitHub.</div>
+      <p id="links-empty" class="empty-state" hidden>Belum ada shortlink. Pemilik situs bisa menambahkan link lewat workflow <code>Tambah shortlink</code> di GitHub.</p>
     </section>
 
-    <section class="how-section" id="cara-kerja" aria-labelledby="how-title">
-      <div class="how-title">
-        <span class="card-kicker">NGGAK PAKE RIBET</span>
-        <h2 id="how-title">Dua langkah.<br><span>Satu link rapi.</span></h2>
-        <p>Semua link yang siap pakai bisa ditemukan di satu tempat.</p>
-      </div>
-      <div class="steps">
-        <article class="step">
-          <span class="step-number">01</span>
+    <section class="card how-section" id="cara-kerja" aria-labelledby="how-title">
+      <p class="step-label">Tanpa ribet</p>
+      <h2 id="how-title">Dua langkah. Satu link rapi.</h2>
+      <p class="how-lead">Semua link yang siap pakai bisa ditemukan di satu tempat.</p>
+      <ol class="steps">
+        <li class="step">
+          <span class="step-number" aria-hidden="true">01</span>
           <div><h3>Tempel link tujuan</h3><p>Salin URL dokumen atau halaman yang ingin kamu bagikan.</p></div>
-        </article>
-        <article class="step">
-          <span class="step-number">02</span>
+        </li>
+        <li class="step">
+          <span class="step-number" aria-hidden="true">02</span>
           <div><h3>Pilih nama pendek</h3><p>Gunakan alias yang gampang diingat, lalu bagikan shortlink-nya.</p></div>
-        </article>
-      </div>
+        </li>
+      </ol>
       <p class="how-footnote">Link baru dikelola pemilik situs agar semua pengunjung mendapat tujuan yang sama.</p>
     </section>
   </main>
 
-  <footer>
-    <a class="brand footer-brand" href="./" aria-label="NvanCut beranda">
-      <span class="brand-mark" aria-hidden="true">
-        <svg viewBox="0 0 256 256" aria-hidden="true" focusable="false"><path fill="currentColor" fill-rule="evenodd" d="M24,232 V24 H84 L176,146 V24 H232 V232 H172 L80,110 V232 Z"/></svg>
-      </span>
-      <span class="brand-word">NvanCut</span>
-    </a>
-    <span class="footer-tagline">LINK RINGKAS. BERES.</span>
-    <span class="footer-copyright">© 2026 NVANCUT</span>
+  <footer class="foot">
+    <span>© 2026 NvanCut</span>
+    <span>Link ringkas. Beres.</span>
   </footer>
+
+  <sakuga-toast id="toast" class="toast"></sakuga-toast>
+
+  <!-- Elemen sakuga-vfx dan saklar tema dipakai bersama dengan NvanHub (js/sakuga, js/theme.js). -->
+  <script src="../js/sakuga/button.js" defer></script>
+  <script src="../js/sakuga/toast.js" defer></script>
+  <script src="../js/sakuga/toggle.js" defer></script>
+  <script src="./app.js" defer></script>
+  <script src="../js/theme.js" defer></script>
 </body>
 </html>

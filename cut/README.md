@@ -43,5 +43,5 @@ Jalankan `pages` setelah `add` atau `remove`. Halaman `/cut/` juga butuh server 
 - `links.json`: daftar alias.
 - `scripts/links.mjs`: cek, tambah, hapus, dan buat halaman alias.
 - `<alias>/index.html`: halaman alihkan per alias (dibuat script).
-- `fonts/`: DM Sans dan Space Grotesk (SIL OFL 1.1), teks lisensinya ada di folder yang sama.
-- `logo/`, `favicon.svg`, `apple-touch-icon.png`: logo dan ikon.
+- Font Anton dan Onest dipakai dari `../assets/fonts/` (satu salinan untuk seluruh NvanHub).
+- `logo/`, `favicon.svg`, `apple-touch-icon.png`: logo dan ikon. Header memakai logo NvanHub (`../assets/logo.svg`).

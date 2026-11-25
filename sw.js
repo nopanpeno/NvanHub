@@ -110,7 +110,7 @@ const TOOLS = {
     ],
   },
   cut: {
-    cache: 'nvanhub-cut-v1',
+    cache: 'nvanhub-cut-v2',
     assets: [
       'cut/',
       'cut/index.html',
@@ -119,8 +119,6 @@ const TOOLS = {
       'cut/favicon.svg',
       'cut/apple-touch-icon.png',
       'cut/links.json',
-      'cut/fonts/dm-sans-latin-wght-normal.woff2',
-      'cut/fonts/space-grotesk-latin-wght-normal.woff2',
     ],
   },
   exif: {

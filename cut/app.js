@@ -10,31 +10,9 @@ const list = document.querySelector("#links-list");
 const count = document.querySelector("#link-count");
 const empty = document.querySelector("#links-empty");
 const aliasPreview = document.querySelector("#alias-preview");
+const toast = document.querySelector("#toast");
 
 const siteBase = new URL("./", window.location.href);
-// Ikon salin: dua persegi, digambar SVG (bukan karakter).
-// Kartu link "dipotong": garis gunting melintas, lalu kartu muncul saat terlihat.
-const cardObserver =
-  "IntersectionObserver" in window && !matchMedia("(prefers-reduced-motion: reduce)").matches
-    ? new IntersectionObserver(
-        (items, observer) => {
-          for (const item of items) {
-            if (item.isIntersecting) {
-              item.target.classList.add("is-in");
-              observer.unobserve(item.target);
-            }
-          }
-        },
-        { threshold: 0.2 },
-      )
-    : null;
-
-function revealCard(card) {
-  if (cardObserver) cardObserver.observe(card);
-  else card.classList.add("is-in");
-}
-
-const COPY_ICON = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" focusable="false"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>';
 
 function shortUrl(alias) {
   return new URL(encodeURIComponent(alias), siteBase).href;
@@ -47,10 +25,16 @@ function updateAliasPreview() {
 updateAliasPreview();
 aliasField.addEventListener("input", updateAliasPreview);
 
-function showMessage(text, type = "error") {
+// Pesan galat: kalau dari validasi kolom, dicatat di dataset.field supaya bisa dihapus saat kolom difokus.
+function showMessage(text, type = "error", field = "") {
   message.textContent = text;
   message.className = `form-message ${type}`;
+  message.dataset.field = field;
   message.hidden = false;
+}
+
+function clearFieldError(fieldId) {
+  if (message.dataset.field === fieldId && message.classList.contains("error")) message.hidden = true;
 }
 
 function validDestination(value) {
@@ -62,8 +46,42 @@ function validDestination(value) {
   }
 }
 
-function normalizeAlias(value) {
-  return value.trim();
+function destinationError(value) {
+  if (!value) return "Link tujuan wajib diisi.";
+  if (!validDestination(value)) return "Masukkan URL yang valid dengan protokol http:// atau https://.";
+  return "";
+}
+
+function aliasError(value) {
+  if (!value) return "Nama pendek wajib diisi.";
+  if (!ALIAS_PATTERN.test(value)) return "Nama pendek hanya boleh berisi huruf, angka, tanda hubung, dan garis bawah.";
+  if (RESERVED_ALIASES.includes(value.toLowerCase())) return "Nama pendek ini dipakai oleh situs. Coba alias lain.";
+  return "";
+}
+
+// Validasi saat kolom ditinggalkan (blur). Saat kolom difokus lagi atau diketik, galatnya hilang.
+function checkOnBlur(field, errorText) {
+  const error = errorText(field.value.trim());
+  if (error) showMessage(error, "error", field.id);
+  else clearFieldError(field.id);
+}
+destinationField.addEventListener("blur", () => checkOnBlur(destinationField, destinationError));
+aliasField.addEventListener("blur", () => checkOnBlur(aliasField, aliasError));
+for (const field of [destinationField, aliasField]) {
+  field.addEventListener("focus", () => clearFieldError(field.id));
+  field.addEventListener("input", () => clearFieldError(field.id));
+}
+
+// Enter di kolom teks langsung kirim, karena form ini tidak punya tombol submit asli.
+form.addEventListener("keydown", (event) => {
+  if (event.key === "Enter" && event.target.tagName === "INPUT") {
+    event.preventDefault();
+    form.requestSubmit();
+  }
+});
+
+function notify(text) {
+  toast.show(text);
 }
 
 async function copyText(value) {
@@ -82,21 +100,32 @@ async function copyText(value) {
   if (!copied) throw new Error("copy_failed");
 }
 
-function copyInlineButton(label, value) {
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "copy-inline";
-  button.textContent = label;
+// Tombol salin: sakuga-button. Label terlihat, dan teks tersembunyi menyebut alias untuk pembaca layar.
+function setButtonLabel(button, visible, hidden = "") {
+  const parts = [document.createTextNode(visible)];
+  if (hidden) {
+    const note = document.createElement("span");
+    note.className = "visually-hidden";
+    note.textContent = hidden;
+    parts.push(note);
+  }
+  button.replaceChildren(...parts);
+}
+
+function copyButton(label, value, hidden = "") {
+  const button = document.createElement("sakuga-button");
+  button.setAttribute("variant", "secondary");
+  button.setAttribute("type", "button");
+  setButtonLabel(button, label, hidden);
   button.addEventListener("click", async () => {
     try {
       await copyText(value);
-      button.textContent = "Tersalin";
+      setButtonLabel(button, "Tersalin", hidden);
+      notify("Teks sudah disalin");
     } catch {
-      button.textContent = "Gagal menyalin";
+      setButtonLabel(button, "Gagal menyalin", hidden);
     }
-    window.setTimeout(() => {
-      button.textContent = label;
-    }, 1500);
+    window.setTimeout(() => setButtonLabel(button, label, hidden), 1500);
   });
   return button;
 }
@@ -107,12 +136,9 @@ function renderLinks(links) {
   empty.hidden = entries.length > 0;
   list.replaceChildren();
 
-  for (const [index, [alias, destination]] of entries.entries()) {
+  for (const [alias, destination] of entries) {
     const card = document.createElement("article");
     card.className = "link-card";
-    card.style.setProperty("--d", `${index * 90}ms`);
-    const info = document.createElement("div");
-    info.className = "link-info";
     const link = document.createElement("a");
     link.className = "link-alias";
     link.href = shortUrl(alias);
@@ -121,41 +147,25 @@ function renderLinks(links) {
     target.className = "link-url";
     target.textContent = destination;
     target.title = destination;
-    info.append(link, target);
-    const button = document.createElement("button");
-    button.className = "copy-button";
-    button.type = "button";
-    button.setAttribute("aria-label", `Salin shortlink ${alias}`);
-    button.title = "Salin shortlink";
-    button.innerHTML = COPY_ICON;
-    button.addEventListener("click", async () => {
-      try {
-        await copyText(link.href);
-        button.textContent = "OK";
-        button.setAttribute("aria-label", `Shortlink ${alias} disalin`);
-        window.setTimeout(() => {
-          button.innerHTML = COPY_ICON;
-          button.setAttribute("aria-label", `Salin shortlink ${alias}`);
-        }, 1500);
-      } catch {
-        showMessage("Gagal menyalin otomatis. Pilih dan salin alamat shortlink secara manual.");
-      }
-    });
+    const actions = document.createElement("div");
+    actions.className = "link-actions";
+    actions.append(
+      copyButton("Salin", link.href, `shortlink /${alias}`),
+    );
     const remove = document.createElement("button");
-    remove.className = "delete-button";
+    remove.className = "text-button";
     remove.type = "button";
     remove.setAttribute("aria-label", `Hapus shortlink ${alias}`);
     remove.title = "Hapus shortlink";
     remove.textContent = "Hapus";
     remove.addEventListener("click", () => showDeleteHelp(alias));
-    card.append(info, button, remove);
+    actions.append(remove);
+    card.append(link, target, actions);
     list.append(card);
-    revealCard(card);
   }
 }
 
 function showDeleteHelp(alias) {
-  message.replaceChildren();
   const title = document.createElement("strong");
   title.textContent = `Siap dihapus: /${alias}`;
   const steps = document.createElement("span");
@@ -163,14 +173,15 @@ function showDeleteHelp(alias) {
   const actions = document.createElement("div");
   actions.className = "message-actions";
   const workflow = document.createElement("a");
-  workflow.className = "copy-inline";
+  workflow.className = "btn";
   workflow.href = DELETE_WORKFLOW_URL;
   workflow.target = "_blank";
   workflow.rel = "noopener noreferrer";
   workflow.textContent = "Buka workflow";
-  actions.append(copyInlineButton("Salin alias", alias), workflow);
-  message.append(title, document.createElement("br"), steps, actions);
+  actions.append(copyButton("Salin alias", alias), workflow);
+  message.replaceChildren(title, steps, actions);
   message.className = "form-message success";
+  message.dataset.field = "";
   message.hidden = false;
   message.scrollIntoView({ block: "nearest" });
 }
@@ -192,34 +203,20 @@ async function loadLinks() {
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  message.hidden = true;
-  const alias = normalizeAlias(aliasField.value);
+  const alias = aliasField.value.trim();
   const destination = destinationField.value.trim();
 
-  if (!destination) {
-    showMessage("Link tujuan wajib diisi.");
+  // Fokus dulu, baru tampilkan pesan: fokus ikut menghapus galat kolom itu.
+  const destinationProblem = destinationError(destination);
+  if (destinationProblem) {
     destinationField.focus();
+    showMessage(destinationProblem, "error", "destination");
     return;
   }
-  if (!validDestination(destination)) {
-    showMessage("Masukkan URL yang valid dengan protokol http:// atau https://.");
-    destinationField.focus();
-    return;
-  }
-  if (!alias) {
-    showMessage("Nama pendek wajib diisi.");
+  const aliasProblem = aliasError(alias);
+  if (aliasProblem) {
     aliasField.focus();
-    return;
-  }
-  if (!ALIAS_PATTERN.test(alias)) {
-    showMessage("Nama pendek hanya boleh berisi huruf, angka, tanda hubung, dan garis bawah.");
-    aliasField.focus();
-    return;
-  }
-
-  if (RESERVED_ALIASES.includes(alias.toLowerCase())) {
-    showMessage("Nama pendek ini dipakai oleh situs. Coba alias lain.");
-    aliasField.focus();
+    showMessage(aliasProblem, "error", "alias");
     return;
   }
 
@@ -229,12 +226,11 @@ form.addEventListener("submit", async (event) => {
     return;
   }
   if (Object.keys(links).some((registered) => registered.toLowerCase() === alias.toLowerCase())) {
-    showMessage("Nama pendek ini sudah dipakai. Coba alias lain.");
     aliasField.focus();
+    showMessage("Nama pendek ini sudah dipakai. Coba alias lain.", "error", "alias");
     return;
   }
 
-  message.replaceChildren();
   const title = document.createElement("strong");
   title.textContent = `Siap ditambahkan: ${shortUrl(alias)}`;
   const steps = document.createElement("span");
@@ -242,42 +238,16 @@ form.addEventListener("submit", async (event) => {
   const actions = document.createElement("div");
   actions.className = "message-actions";
   const workflow = document.createElement("a");
-  workflow.className = "copy-inline";
+  workflow.className = "btn";
   workflow.href = WORKFLOW_URL;
   workflow.target = "_blank";
   workflow.rel = "noopener noreferrer";
   workflow.textContent = "Buka workflow";
-  actions.append(copyInlineButton("Salin alias", alias), copyInlineButton("Salin link tujuan", destination), workflow);
-  message.append(title, document.createElement("br"), steps, actions);
+  actions.append(copyButton("Salin alias", alias), copyButton("Salin link tujuan", destination), workflow);
+  message.replaceChildren(title, steps, actions);
   message.className = "form-message success";
+  message.dataset.field = "";
   message.hidden = false;
 });
-
-// Titik latar bergeser sedikit mengikuti kursor (paralaks halus).
-// Hanya untuk mouse, dan dimatikan jika pengguna minta gerak minimal.
-if (matchMedia("(pointer: fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  const root = document.documentElement;
-  const RANGE = 6;
-  let targetX = 0;
-  let targetY = 0;
-  let currentX = 0;
-  let currentY = 0;
-  let frame = 0;
-
-  const tick = () => {
-    currentX += (targetX - currentX) * 0.12;
-    currentY += (targetY - currentY) * 0.12;
-    root.style.setProperty("--dx", `${currentX.toFixed(2)}px`);
-    root.style.setProperty("--dy", `${currentY.toFixed(2)}px`);
-    const settled = Math.abs(targetX - currentX) < 0.05 && Math.abs(targetY - currentY) < 0.05;
-    frame = settled ? 0 : requestAnimationFrame(tick);
-  };
-
-  window.addEventListener("pointermove", (event) => {
-    targetX = (0.5 - event.clientX / window.innerWidth) * 2 * RANGE;
-    targetY = (0.5 - event.clientY / window.innerHeight) * 2 * RANGE;
-    if (!frame) frame = requestAnimationFrame(tick);
-  }, { passive: true });
-}
 
 loadLinks();
