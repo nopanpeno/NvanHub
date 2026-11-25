@@ -66,7 +66,7 @@
           <sakuga-button id="btn-all">Hapus semua metadata</sakuga-button>
           <sakuga-button id="btn-sel" variant="secondary" disabled>Hapus yang dicentang (0)</sakuga-button>
           <sakuga-button id="btn-sens" variant="secondary">Centang field sensitif</sakuga-button>
-          <label id="orient-wrap" class="orient"><input id="orient" type="checkbox" checked /> Pertahankan orientasi foto</label>
+          <sakuga-checkbox id="orient" checked>Pertahankan orientasi foto</sakuga-checkbox>
         </div>
         <p id="note" class="note"></p>
         <div id="groups"></div>
@@ -100,6 +100,7 @@
     <!-- Elemen sakuga-vfx dan saklar tema dipakai bersama dengan NvanHub (js/sakuga, js/theme.js). -->
     <script src="../js/sakuga/button.js" defer></script>
     <script src="../js/sakuga/toggle.js" defer></script>
+    <script src="../js/sakuga/checkbox.js" defer></script>
     <script type="module" src="./src/main.js"></script>
     <script src="../js/theme.js" defer></script>
   </body>

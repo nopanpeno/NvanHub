@@ -104,7 +104,7 @@ function swapUrl(slot, blob) {
 }
 
 function selectedKeys() {
-  return [...groupsEl.querySelectorAll('input[type=checkbox]:checked')].map((c) => c.dataset.key);
+  return [...groupsEl.querySelectorAll('sakuga-checkbox')].filter((c) => c.checked).map((c) => c.dataset.key);
 }
 
 function updateSelButton() {
@@ -134,15 +134,11 @@ function renderGroups(container, groups, { selectable }) {
       const row = el('div', f.sensitive ? 'row sensitive' : 'row');
       const dt = el('dt');
       if (selectable) {
-        const cb = el('input');
-        cb.type = 'checkbox';
+        const cb = el('sakuga-checkbox', '', f.key);
         cb.dataset.key = f.key;
-        cb.id = `cb-${f.key}`;
         cb.disabled = !state.removable.has(f.key);
         cb.addEventListener('change', updateSelButton);
-        const lab = el('label', '', f.key);
-        lab.htmlFor = cb.id;
-        dt.append(cb, lab);
+        dt.append(cb);
       } else {
         dt.textContent = f.key;
       }
@@ -271,7 +267,7 @@ async function run(job) {
 btnAll.addEventListener('click', () => run(() => cleanAll(state.file, { keepOrientation: orient.checked })));
 btnSel.addEventListener('click', () => run(() => cleanSelected(state.file, selectedKeys())));
 btnSens.addEventListener('click', () => {
-  for (const row of groupsEl.querySelectorAll('.row.sensitive input[type=checkbox]')) {
+  for (const row of groupsEl.querySelectorAll('.row.sensitive sakuga-checkbox')) {
     if (!row.disabled) row.checked = true;
   }
   updateSelButton();
