@@ -208,17 +208,8 @@ label, .label { display: block; margin-bottom: 8px; font-size: 16px; font-weight
 textarea.field { min-height: 120px; resize: vertical; }
 select.field { appearance: auto; }
 
-.input-wrap {
-  display: flex; align-items: stretch; overflow: hidden;
-  border: var(--bw) solid var(--ink); border-radius: 10px; background: var(--paper);
-}
-.input-wrap > span {
-  display: flex; align-items: center; flex: none; padding: 0 12px;
-  background: var(--track); color: var(--ink); font-weight: 500; white-space: nowrap;
-  border-right: var(--bw) solid var(--ink);
-}
-.input-wrap .field { border: 0; border-radius: 0; background: transparent; }
-.input-wrap:focus-within { outline: 3px solid var(--ink); outline-offset: 3px; }
+/* Kolom teks sakuga (sakuga-input): lebarnya ikut kolom form, warnanya dari token --sk-* di :root. */
+sakuga-input { display: block; --sk-input-width: 100%; }
 
 .field-hint { margin-top: 8px; font-size: 14px; color: var(--ink-2); }
 .field-meta { display: flex; justify-content: space-between; gap: 12px; margin-top: 8px; font-size: 14px; color: var(--ink-2); }
