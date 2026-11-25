@@ -100,6 +100,9 @@ async function refresh(showErrors = false) {
       errorCorrectionLevel: 'M',
       color: { dark: $('#foreground-input').value, light: $('#background-input').value }
     });
+    // qrcode.js menulis lebar 360px sebagai style inline. Hapus, supaya CSS (.qr-frame canvas) yang mengatur ukuran.
+    canvas.style.width = '';
+    canvas.style.height = '';
     if (thisRender !== renderId) return;
     currentPayload = result.value;
     canvas.hidden = false;
@@ -135,10 +138,14 @@ $('#content-tabs').addEventListener('change', (event) => updateActiveType(event.
 const textFields = ['#link-input', '#text-input', '#ssid-input', '#password-input'];
 textFields.forEach((selector) => $(selector).addEventListener('blur', () => refresh(true)));
 textFields.forEach((selector) => $(selector).addEventListener('focus', () => refresh(false)));
+// Klik label harus memindahkan fokus ke kolom sakuga-input (label for= tidak selalu membawa fokus ke elemen custom).
+document.querySelectorAll('label[for]').forEach((label) => {
+  const target = document.getElementById(label.htmlFor);
+  if (target && target.tagName === 'SAKUGA-INPUT') label.addEventListener('click', () => target.focus());
+});
 $('#security-input').addEventListener('change', () => {
   const hasPassword = $('#security-input').value !== 'nopass';
   $('#password-field').hidden = !hasPassword;
-  $('#password-input').required = hasPassword;
   refresh();
 });
 $('#text-input').addEventListener('input', () => { $('#char-count').textContent = `${$('#text-input').value.length} / 1.200`; });

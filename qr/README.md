@@ -28,6 +28,7 @@ Tidak ada build dan tidak ada `npm install`. Ubah file di folder ini langsung.
 - `css/style.css`: gaya NvanHub (token warna di `:root`, mode gelap ikut sistem atau pilihan di saklar tema).
 - `js/main.js`: pembuat QR.
 - `js/scanner.js`: pemindai (kamera dan gambar).
+- `../js/sakuga/input.js`: kolom teks `sakuga-input` untuk tautan, nama jaringan, dan kata sandi (dipakai bersama NvanHub).
 - `vendor/qrcode.js`: pustaka `qrcode` 1.5.4 (MIT). Diambil dari `lib/browser.js` lalu dibundel jadi satu file dengan esbuild (`--bundle --format=iife --global-name=QRCode --minify`).
 - `vendor/jsQR.js`: pustaka `jsQR` 1.4.0 (Apache-2.0), disalin apa adanya dari npm.
 - `logo.svg`: ikon tab peramban. Logo di header memakai `../assets/logo.svg` (NvanHub), font Anton dan Onest dari `../assets/fonts/`.

@@ -53,7 +53,7 @@
           <div id="content-panel" class="content-panel" role="region" aria-label="Isi QR code">
             <div class="form-panel" data-panel="link">
               <label for="link-input">URL tujuan</label>
-              <div class="input-wrap"><span aria-hidden="true">https://</span><input id="link-input" class="field" type="url" inputmode="url" placeholder="contoh.com/halaman" autocomplete="url" /></div>
+              <sakuga-input id="link-input" label="URL tujuan" type="url" placeholder="contoh.com/halaman" autocomplete="url"></sakuga-input>
               <p class="field-hint">Awalan https:// dipakai otomatis. Tulis http:// bila perlu.</p>
             </div>
             <div class="form-panel" data-panel="text" hidden>
@@ -63,7 +63,7 @@
             </div>
             <div class="form-panel" data-panel="wifi" hidden>
               <label for="ssid-input">Nama jaringan (SSID)</label>
-              <input id="ssid-input" class="field" type="text" autocomplete="off" placeholder="Contoh: Kantor-Lt2" />
+              <sakuga-input id="ssid-input" label="Nama jaringan (SSID)" type="text" placeholder="Contoh: Kantor-Lt2"></sakuga-input>
               <div class="wifi-row">
                 <div>
                   <label for="security-input">Keamanan</label>
@@ -71,7 +71,7 @@
                 </div>
                 <div id="password-field">
                   <label for="password-input">Kata sandi</label>
-                  <input id="password-input" class="field" type="password" autocomplete="new-password" />
+                  <sakuga-input id="password-input" label="Kata sandi" type="password" autocomplete="new-password"></sakuga-input>
                 </div>
               </div>
               <label class="check-row"><input id="hidden-input" type="checkbox" /><span>Jaringan tersembunyi</span></label>
@@ -144,6 +144,7 @@
     <script src="../js/sakuga/tabs.js" defer></script>
     <script src="../js/sakuga/toast.js" defer></script>
     <script src="../js/sakuga/toggle.js" defer></script>
+    <script src="../js/sakuga/input.js" defer></script>
     <script src="vendor/qrcode.js"></script>
     <script src="js/main.js" defer></script>
     <script src="../js/theme.js" defer></script>

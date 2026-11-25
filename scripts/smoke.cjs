@@ -161,8 +161,17 @@ async function visitQr(browser, base, { width }) {
   await page.goto(`${base}qr/`, { waitUntil: 'load' });
   await page.waitForTimeout(500);
   expect((await page.locator('a.hub-back').getAttribute('href')) === '../', `[${label}] tombol kembali ke NvanHub tidak ada`);
-  await page.fill('#link-input', 'contoh.com/halaman');
+  // Kolom tautan adalah sakuga-input: isinya diisi lewat input di dalam shadow DOM (Playwright menembusnya).
+  await page.fill('sakuga-input#link-input input', 'contoh.com/halaman');
   await page.waitForTimeout(300);
+  expect((await page.evaluate(() => document.getElementById('link-input').value)) === 'contoh.com/halaman', `[${label}] el.value sakuga-input tidak sama dengan isi kolom`);
+  // Pratinjau harus berada di dalam bingkai, tidak melebar keluar (qrcode.js dulu menulis ukuran inline).
+  const inside = await page.evaluate(() => {
+    const c = document.getElementById('qr-canvas').getBoundingClientRect();
+    const f = document.getElementById('qr-frame').getBoundingClientRect();
+    return c.left >= f.left && c.right <= f.right && c.top >= f.top && c.bottom <= f.bottom;
+  });
+  expect(inside, `[${label}] pratinjau QR keluar dari bingkai`);
   expect(await page.locator('#qr-canvas').isVisible(), `[${label}] QR tidak muncul setelah tautan diisi`);
   const over = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(over <= 0, `[${label}] ada scroll horizontal (${over}px)`);
