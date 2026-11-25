@@ -172,7 +172,7 @@ async function visitQr(browser, base, { width }) {
     scan.on('pageerror', (e) => problems.push(`[${label}] pindai error JS: ${e.message}`));
     await scan.goto(`${base}qr/scan.html`, { waitUntil: 'load' });
     expect((await scan.locator('a.hub-back').getAttribute('href')) === '../', `[${label}] tombol kembali di halaman pindai tidak ada`);
-    await scan.click('#image-tab');
+    await scan.click('#scan-tabs [data-value="gambar"]');
     await scan.setInputFiles('#image-input', { name: 'qr.png', mimeType: 'image/png', buffer: Buffer.from(dataUrl.split(',')[1], 'base64') });
     await scan.waitForFunction(() => /berhasil dibaca/.test(document.getElementById('scan-status').textContent), null, { timeout: 8000 }).catch(() => {});
     const result = (await scan.textContent('#result-text')).trim();

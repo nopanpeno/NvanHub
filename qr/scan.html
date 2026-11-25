@@ -3,63 +3,92 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#f4ecdd" />
-    <link rel="icon" type="image/svg+xml" href="logo.svg" />
     <meta name="description" content="Pindai QR code dan baca isinya dengan aman di browser." />
+    <meta name="theme-color" content="#fbf9f4" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#100e24" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/svg+xml" href="logo.svg" />
+    <link rel="preload" href="../assets/fonts/anton-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <title>Pindai QR — NvanQR</title>
+    <script>
+      // Tema pilihan pengguna dipasang sebelum halaman tampil, supaya tidak berkedip.
+      try { var t = localStorage.getItem('nvanhub-theme'); if (t === 'dark' || t === 'light') document.documentElement.dataset.theme = t; } catch (e) {}
+    </script>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
-    <nav class="hub-nav" aria-label="NvanHub"><a class="hub-back" href="../">&larr; Kembali ke NvanHub</a></nav>
-    <div class="app-shell scan-shell">
-      <header class="topbar">
-        <a class="brand" href="./index.html" aria-label="NvanQR, kembali ke beranda">
-          <img class="brand-mark" src="logo.svg" alt="" width="34" height="34" />
-          <span>nvan<span class="brand-light">qr</span></span>
-        </a>
-        <a class="scan-link" href="./index.html">Buat QR <span aria-hidden="true">↗</span></a>
-      </header>
+    <a class="skip-link" href="#main">Lewati ke konten</a>
 
-      <main class="scan-main">
-        <section class="intro" aria-labelledby="page-title">
-          <p class="eyebrow">QR CODE READER</p>
-          <h1 id="page-title">Baca isi<br /><span>QR code.</span></h1>
-          <p class="intro-copy">Pindai dengan kamera atau pilih gambar QR. Teks hasil pindai tampil di sini dan tetap di perangkatmu.</p>
+    <header class="site-header">
+      <a class="brand" href="./" aria-label="NvanQR, kembali ke pembuat QR">
+        <img class="mark" src="../assets/logo.svg" width="36" height="36" alt="" aria-hidden="true" />
+        <span class="brand-name">NvanQR</span>
+      </a>
+      <nav aria-label="Menu utama">
+        <a class="header-link" href="./">Buat QR</a>
+        <sakuga-toggle id="tema" label="Mode gelap"></sakuga-toggle>
+      </nav>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <section class="hero" aria-labelledby="page-title">
+        <a class="hub-back" href="../">Kembali ke NvanHub</a>
+        <p class="eyebrow">QR code reader</p>
+        <h1 id="page-title">Baca isi<br />QR code.</h1>
+        <p class="lead">Pindai dengan kamera atau pilih gambar QR. Teks hasil pindai tampil di sini dan tetap di perangkatmu.</p>
+      </section>
+
+      <section class="card scanner-card" aria-label="Pemindai QR code">
+        <sakuga-tabs id="scan-tabs" label="Pilih cara memindai">
+          <option value="kamera">Kamera</option>
+          <option value="gambar">Pilih gambar</option>
+        </sakuga-tabs>
+
+        <div id="camera-panel" class="scanner-panel">
+          <div class="camera-box" id="camera-box">
+            <video id="camera-video" playsinline muted hidden></video>
+            <div class="camera-placeholder" id="camera-placeholder"><p>Kamera akan aktif setelah kamu menekan tombol mulai.</p></div>
+            <div class="scan-guide" aria-hidden="true"><span></span></div>
+          </div>
+          <sakuga-button id="camera-button">Mulai pindai</sakuga-button>
+        </div>
+
+        <div id="image-panel" class="scanner-panel" hidden>
+          <label class="upload-box" for="image-input">
+            <strong>Pilih gambar QR</strong>
+            <span>PNG, JPG, atau tangkapan layar</span>
+            <input id="image-input" class="visually-hidden" type="file" accept="image/*" />
+          </label>
+        </div>
+
+        <p id="scan-status" class="status scan-status" role="status" aria-live="polite">Arahkan kamera ke QR code yang ingin dibaca.</p>
+
+        <section id="result-panel" class="result-panel" aria-labelledby="result-title" hidden>
+          <div class="result-heading">
+            <h2 id="result-title">Isi QR code</h2>
+            <sakuga-button id="copy-button" variant="secondary">Salin teks</sakuga-button>
+          </div>
+          <pre id="result-text" class="result-text"></pre>
+          <a id="open-link" class="btn open-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Buka tautan</a>
         </section>
+      </section>
 
-        <section class="scanner-card card" aria-label="Pemindai QR code">
-          <div class="scanner-tabs" role="tablist" aria-label="Pilih cara memindai">
-            <button class="scanner-tab active" id="camera-tab" role="tab" aria-selected="true" aria-controls="camera-panel" type="button">Kamera</button>
-            <button class="scanner-tab" id="image-tab" role="tab" aria-selected="false" aria-controls="image-panel" type="button">Pilih gambar</button>
-          </div>
+      <p class="scanner-privacy">Kamera hanya dipakai saat memindai. Gambar dan hasil pindai tidak diunggah atau disimpan.</p>
+    </main>
 
-          <div id="camera-panel" class="scanner-panel" role="tabpanel" aria-labelledby="camera-tab">
-            <div class="camera-box" id="camera-box">
-              <video id="camera-video" playsinline muted hidden></video>
-              <div class="camera-placeholder" id="camera-placeholder"><span class="camera-icon" aria-hidden="true">▣</span><p>Kamera akan aktif setelah kamu menekan tombol mulai.</p></div>
-              <div class="scan-guide" aria-hidden="true"><span></span></div>
-            </div>
-            <button class="download-button primary scanner-action" id="camera-button" type="button">Mulai pindai</button>
-          </div>
+    <footer class="foot">
+      <span>© 2026 NvanQR</span>
+      <a href="./">Kembali ke pembuat QR</a>
+    </footer>
 
-          <div id="image-panel" class="scanner-panel" role="tabpanel" aria-labelledby="image-tab" hidden>
-            <label class="upload-box" for="image-input"><span class="upload-icon" aria-hidden="true">↑</span><strong>Pilih gambar QR</strong><span>PNG, JPG, atau tangkapan layar</span><input id="image-input" type="file" accept="image/*" /></label>
-          </div>
+    <sakuga-toast id="toast" class="toast"></sakuga-toast>
 
-          <p id="scan-status" class="status scan-status" role="status" aria-live="polite">Arahkan kamera ke QR code yang ingin dibaca.</p>
-
-          <section id="result-panel" class="result-panel" aria-labelledby="result-title" hidden>
-            <div class="result-heading"><h2 id="result-title">Isi QR code</h2><button id="copy-button" class="copy-button" type="button">Salin teks</button></div>
-            <pre id="result-text" class="result-text"></pre>
-            <a id="open-link" class="open-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Buka tautan <span aria-hidden="true">↗</span></a>
-          </section>
-        </section>
-
-        <p class="scanner-privacy"><span aria-hidden="true">◈</span> Kamera hanya dipakai saat memindai. Gambar dan hasil pindai tidak diunggah atau disimpan.</p>
-      </main>
-      <footer><span>© 2026 NvanQR</span><a href="./index.html">Kembali ke pembuat QR</a></footer>
-    </div>
+    <!-- Elemen sakuga-vfx dan saklar tema dipakai bersama dengan NvanHub (js/sakuga, js/theme.js). -->
+    <script src="../js/sakuga/button.js" defer></script>
+    <script src="../js/sakuga/tabs.js" defer></script>
+    <script src="../js/sakuga/toast.js" defer></script>
+    <script src="../js/sakuga/toggle.js" defer></script>
     <script src="vendor/jsQR.js"></script>
     <script src="js/scanner.js" defer></script>
+    <script src="../js/theme.js" defer></script>
   </body>
 </html>
