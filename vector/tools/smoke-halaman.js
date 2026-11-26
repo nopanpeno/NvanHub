@@ -20,6 +20,8 @@ const path = require('path');
 const assert = require('assert');
 
 const ROOT = path.join(__dirname, '..');
+// Server melayani root repo (seperti GitHub Pages): halaman memuat ../js/sakuga dan ../assets.
+const REPO = path.join(ROOT, '..');
 const { serve } = require('./serve.js');
 
 let chromium;
@@ -32,7 +34,7 @@ async function scenario(browser, base, name, imagePath, potraceOk, check) {
   page.on('pageerror', (e) => errors.push(e.message));
   // Potrace gagal dimuat: permintaan modulnya dibatalkan, halaman harus jatuh ke imagetracer
   if (!potraceOk) await page.route('**/vendor/esm-potrace-wasm/index.js', (r) => r.abort());
-  await page.goto(base + 'index.html');
+  await page.goto(base + 'vector/index.html');
   await page.setInputFiles('#file', imagePath);
   await page.waitForFunction(() => /Gambar dimuat/.test(document.body.innerText), null, { timeout: 8000 });
   await page.click('#traceBtn');
@@ -69,7 +71,7 @@ async function scenario(browser, base, name, imagePath, potraceOk, check) {
 }
 
 (async () => {
-  const srv = await serve(ROOT);
+  const srv = await serve(REPO);
   const browser = await chromium.launch(process.env.PW_CHROME ? { executablePath: process.env.PW_CHROME }
     : process.env.CI ? { channel: 'chrome' } : {});
 
