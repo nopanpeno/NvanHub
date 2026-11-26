@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#0b100d">
   <meta name="description" content="Kirim file antar perangkat lewat QR, langsung dari browser ke browser. Tanpa akun, tanpa server penyimpan.">
   <meta name="referrer" content="no-referrer">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self'; connect-src 'self'; media-src 'self' blob:; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self'; media-src 'self' blob:; base-uri 'none'; form-action 'none'">
   <title>NvanPass</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
   <!-- Pakai manifest hub: NvanPass ikut satu app NvanHub, bukan app terpisah. -->
@@ -76,7 +76,7 @@
       </div>
       <p class="msg msg-error" id="pick-error" role="alert" hidden></p>
       <div class="actions">
-        <button type="button" class="btn btn-primary" id="pick-next" data-i18n="pick.next" disabled></button>
+        <sakuga-button id="pick-next" data-i18n="pick.next" disabled></sakuga-button>
         <button type="button" class="btn btn-quiet" data-back data-i18n="common.back"></button>
       </div>
     </section>
@@ -107,7 +107,7 @@
         <p class="step step-2" data-i18n="offer.step2"></p>
         <h2 data-i18n="offer.title2"></h2>
         <div class="route">
-          <button type="button" class="btn btn-primary" id="offer-scan" data-i18n="offer.scan"></button>
+          <sakuga-button id="offer-scan" data-i18n="offer.scan"></sakuga-button>
         </div>
         <label class="field" for="offer-paste" data-i18n="offer.paste.label"></label>
         <textarea id="offer-paste" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="nvp1.…"></textarea>
@@ -124,7 +124,7 @@
     <section data-screen="recv" hidden>
       <h1 tabindex="-1" data-i18n="recv.title"></h1>
       <div class="route">
-        <button type="button" class="btn btn-primary" id="recv-scan" data-i18n="recv.scan"></button>
+        <sakuga-button id="recv-scan" data-i18n="recv.scan"></sakuga-button>
       </div>
       <label class="field" for="recv-paste" data-i18n="recv.paste.label"></label>
       <textarea id="recv-paste" rows="3" spellcheck="false" autocomplete="off" autocapitalize="off" placeholder="nvp1.…"></textarea>
@@ -171,7 +171,7 @@
         <p class="msg msg-warn" id="in-risky" role="alert" hidden></p>
         <p class="muted" data-i18n="incoming.hint"></p>
         <div class="actions">
-          <button type="button" class="btn btn-primary" id="in-accept" data-i18n="incoming.accept"></button>
+          <sakuga-button id="in-accept" data-i18n="incoming.accept"></sakuga-button>
           <button type="button" class="btn" id="in-decline" data-i18n="incoming.decline"></button>
         </div>
       </div>
@@ -214,7 +214,7 @@
           <li data-i18n="err.tip.4"></li>
         </ul>
       </div>
-      <div class="actions"><button type="button" class="btn btn-primary" id="err-restart" data-i18n="common.restart"></button></div>
+      <div class="actions"><sakuga-button id="err-restart" data-i18n="common.restart"></sakuga-button></div>
     </section>
   </main>
 
@@ -229,19 +229,24 @@
     <h2 id="scan-title" data-i18n="scan.title"></h2>
     <div class="viewfinder"><video id="scan-video" playsinline muted></video><i class="reticle"></i></div>
     <p class="msg" id="scan-msg" role="status"></p>
-    <div class="actions"><button type="button" class="btn btn-primary" id="scan-close" data-i18n="scan.close"></button></div>
+    <div class="actions"><sakuga-button id="scan-close" data-i18n="scan.close"></sakuga-button></div>
   </dialog>
+
+  <sakuga-toast id="toast" role="status"></sakuga-toast>
 
   <!-- Peringatan privasi sebelum membagikan kode -->
   <dialog id="warn-dialog" aria-labelledby="warn-title">
     <h2 id="warn-title" data-i18n="warn.title"></h2>
     <p data-i18n="warn.body"></p>
     <div class="actions">
-      <button type="button" class="btn btn-primary" id="warn-ok" data-i18n="warn.ok"></button>
+      <sakuga-button id="warn-ok" data-i18n="warn.ok"></sakuga-button>
       <button type="button" class="btn" id="warn-cancel" data-i18n="common.cancel"></button>
     </div>
   </dialog>
 
+  <!-- Elemen sakuga-vfx (MIT, lihat ../js/sakuga/LICENSE-sakuga-vfx.txt), dipakai bersama hub. -->
+  <script src="../js/sakuga/button.js" defer></script>
+  <script src="../js/sakuga/toast.js" defer></script>
   <script src="vendor/qrcode.js"></script>
   <script src="vendor/jsQR.js"></script>
   <script type="module" src="js/app.js"></script>

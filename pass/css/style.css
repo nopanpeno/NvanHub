@@ -47,6 +47,12 @@
   --font-sans: "Onest", system-ui, sans-serif;
   --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Mono", Menlo, Consolas, "Liberation Mono", monospace;
   --t-fast: 150ms;
+  /* Token untuk elemen sakuga (js/sakuga). Sama dengan landing: ikut token di atas, jadi mode gelap ikut. */
+  --sk-card: var(--card); --sk-ink: var(--ink); --sk-dim: var(--ink-2); --sk-soft: var(--lav); --sk-fill: var(--lav);
+  --sk-pri: var(--acc); --sk-pri-ink: var(--on-acc); --sk-on-pri: var(--on-acc); --sk-acc: var(--acc);
+  --sk-track: var(--track); --sk-tick: var(--ink); --sk-r: 10px; --sk-bw: 3px; --sk-sh: 4px 4px 0 var(--lav);
+  --sk-btn-line: var(--ink); --sk-btn-sh: 4px 4px 0 var(--lav);
+  --sk-alt-line: var(--ink); --sk-alt-sh: 3px 3px 0 var(--lav);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   color-scheme: light;
 }
@@ -353,6 +359,10 @@ dialog > * + * { margin-top: 14px; }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
 }
+
+/* Toast sakuga: melayang di pojok kiri bawah, di atas konten. Posisinya diatur di sini, bukan di komponen. */
+#toast { position: fixed; left: 16px; bottom: 16px; z-index: 50; }
+sakuga-button { display: inline-block; }
 
 /* ---------- halaman teks ---------- */
 .prose { padding-bottom: 2rem; }

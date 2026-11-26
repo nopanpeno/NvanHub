@@ -134,7 +134,8 @@ function confirmShare() {
 
 async function copyWithWarning(text, msgEl) {
   if (!(await confirmShare())) return;
-  setMsg(msgEl, (await copyText(text)) ? t('common.copied') : t('share.copyfail'));
+  if (await copyText(text)) { $('toast').show(t('common.copied')); setMsg(msgEl, ''); }
+  else setMsg(msgEl, t('share.copyfail'));
 }
 
 async function shareWithWarning(payload, copyValue, msgEl) {
@@ -147,7 +148,8 @@ async function shareWithWarning(payload, copyValue, msgEl) {
       if (e?.name === 'AbortError') return;
     }
   }
-  setMsg(msgEl, (await copyText(copyValue)) ? t('share.copied') : t('share.copyfail'));
+  if (await copyText(copyValue)) { $('toast').show(t('share.copied')); setMsg(msgEl, ''); }
+  else setMsg(msgEl, t('share.copyfail'));
 }
 
 function codeErrorText(err) {
