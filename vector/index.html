@@ -111,7 +111,7 @@
         <p id="previewEmpty" class="empty">Pratinjau muncul setelah gambar dipilih atau hasil dikonversi.</p>
         <div class="preview" id="srcPreview" hidden>
           <figure><figcaption>Gambar asli</figcaption><img id="srcImg" alt="Gambar asli"></figure>
-          <figure><figcaption>Hasil SVG</figcaption><img id="svgImg" alt="Hasil SVG"></figure>
+          <figure id="svgFig" hidden><figcaption>Hasil SVG</figcaption><img id="svgImg" alt="Hasil SVG"></figure>
         </div>
         <div class="preview" id="outPreview" hidden>
           <figure>
@@ -123,6 +123,7 @@
         <section class="block" aria-labelledby="step3-title">
           <p class="step-label">Langkah 3</p>
           <h2 id="step3-title">Unduh hasil XML</h2>
+          <label for="xmlOut">Hasil XML (hanya baca)</label>
           <textarea id="xmlOut" class="field" spellcheck="false" readonly placeholder="XML muncul di sini"></textarea>
           <div class="actions">
             <sakuga-button id="dlBtn" disabled>Unduh .xml</sakuga-button>
@@ -185,6 +186,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var url = URL.createObjectURL(new Blob([text], { type: 'image/svg+xml' }));
     svgImg.onload = function () { URL.revokeObjectURL(url); };
     svgImg.src = url;
+    $('svgFig').hidden = false;
   }
 
   fileEl.addEventListener('change', function () {
@@ -210,6 +212,8 @@ document.addEventListener('DOMContentLoaded', function () {
     img.onload = function () {
       currentImage = img;
       srcImg.src = url;
+      $('svgFig').hidden = true; // gambar baru: SVG hasil lama jangan tampil lagi
+      svgImg.removeAttribute('src');
       traceBox.hidden = false;
       srcPrev.hidden = false;
       say('Gambar dimuat. Tekan Trace jadi SVG.', 'ok');

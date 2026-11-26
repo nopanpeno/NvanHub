@@ -88,6 +88,7 @@ main:focus { outline: none; }
 }
 .skip-link {
   position: absolute; left: 16px; top: -100px; z-index: 100;
+  display: inline-flex; align-items: center; min-height: 44px;
   padding: 8px 12px; background: var(--ink); color: var(--paper); font-weight: 600;
 }
 .skip-link:focus { top: 16px; }
@@ -110,11 +111,11 @@ main:focus { outline: none; }
   text-transform: uppercase; letter-spacing: 0.02em;
 }
 .site-header nav { display: flex; align-items: center; gap: 20px; }
-/* Saklar tema: sama dengan NvanHub. Area sentuhnya diperlebar lewat ::before di layar sempit. */
+/* Saklar tema: sama dengan NvanHub. Klik ada di tombol dalam, jadi ukurannya dikecilkan dengan zoom
+   (mengubah layout, bukan cuma tampilan), supaya tetap di atas 44px dan muat di 375px. */
 .site-header nav sakuga-toggle { transform: scale(0.9); margin: -3px -5px; }
 @media (max-width: 480px) {
-  .site-header nav sakuga-toggle { transform: scale(0.7); margin: -8px -16px; }
-  .site-header nav sakuga-toggle::before { content: ""; position: absolute; inset: -5px 0; }
+  .site-header nav sakuga-toggle { transform: none; margin: 0; zoom: 0.9; }
 }
 
 /* Efek sakuga (kanvas di dalam tombol) bisa melebar sampai tepi, tapi tidak boleh bikin scroll halaman.
@@ -222,15 +223,28 @@ textarea[readonly].field { min-height: 160px; }
 sakuga-input { display: block; --sk-input-width: 100%; }
 /* Tab sakuga untuk pilihan Detail: lebarnya ikut kolom. */
 sakuga-tabs { display: block; max-width: 100%; }
-/* Target sentuh tab minimal 44px (profil). Lewat ::part, tanpa mengubah komponennya. */
-sakuga-tabs::part(tab) { min-height: 44px; }
+/* Font: komponen sakuga bawa font sendiri (tombol italic 800, tab 800, toast 700, host -apple-system).
+   Di sini dipaksa ke Onest 400/500/600 sesuai profil. Lewat ::part, tanpa mengubah komponennya. */
+sakuga-button, sakuga-tabs, sakuga-checkbox, sakuga-input, sakuga-toggle, sakuga-toast { font-family: var(--font-sans); }
+sakuga-button::part(button) { font: 600 16px/1.2 var(--font-sans); font-style: normal; }
+/* Target sentuh tab minimal 44px (profil). */
+sakuga-tabs::part(tab) { font: 600 16px/1.2 var(--font-sans); min-height: 44px; }
+sakuga-toast::part(toast) { font: 600 16px/1.3 var(--font-sans); }
+/* Toast hilang sendiri 2,6 detik. Tombol ✕ bawaan dibuang (profil: tidak ada ikon). */
+sakuga-toast::part(close) { display: none; }
+/* Fokus: profil minta outline 3px ink, offset 3px. Komponen sakuga pakai 2,5px warna aksen, jadi ditimpa di sini. */
+sakuga-input::part(input):focus-visible,
+sakuga-toggle::part(switch):focus-visible,
+sakuga-tabs::part(tab):focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+/* Kotak centang: fokus ada di input tersembunyi di dalam, jadi pakai :focus-within pada host. */
+sakuga-checkbox:focus-within::part(box) { outline: 3px solid var(--ink); outline-offset: 3px; }
 
 .note { margin-top: 8px; font-size: 14px; line-height: 1.55; color: var(--ink-2); max-width: 65ch; }
 .or { margin-top: 28px; text-align: center; font-size: 14px; color: var(--ink-2); }
 
 /* Kotak centang: komponen sakuga-checkbox. Warnanya dari token --sk-* di :root. */
 .checks { display: grid; gap: 16px; margin-top: 24px; }
-sakuga-checkbox { display: flex; max-width: 100%; font-size: 16px; }
+sakuga-checkbox { display: flex; max-width: 100%; min-height: 44px; font-size: 16px; }
 
 /* ---------- pratinjau dan unduh ---------- */
 .preview-card { display: grid; gap: 0; align-content: start; }
