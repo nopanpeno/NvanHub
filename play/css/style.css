@@ -245,12 +245,14 @@ sakuga-button[disabled] { opacity: .45; }
 
 /* ---------- data ---------- */
 .panel {
-  display: grid; gap: 14px; padding: 24px; margin-top: 24px;
+  display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; padding: 24px; margin-top: 24px;
+  /* Efek sakuga (canvas) melebar 160px ke tiap sisi tombol. Dipotong di panel supaya tidak melebarkan halaman. */
+  overflow: hidden;
   background: var(--card); border: var(--bw) solid var(--ink); border-radius: var(--r); box-shadow: var(--sh);
 }
 .panel h2 { font-family: var(--font-display); font-weight: 400; font-size: 36px; line-height: 1.05; text-transform: uppercase; }
 .panel p { color: var(--ink-2); }
-.panel input[type="file"] { min-height: 44px; }
+.panel input[type="file"] { display: block; max-width: 100%; min-width: 0; min-height: 44px; }
 main > p { color: var(--ink-2); max-width: 40rem; }
 .status { min-height: 1.5em; margin-top: 16px; }
 .status.error { color: var(--acc); font-weight: 600; }
